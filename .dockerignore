@@ -1,0 +1,13 @@
+/node_modules
+*.log
+.DS_Store
+.env
+.vercel
+/.cache
+/public/build
+/build
+/test-results/
+/playwright-report/
+/playwright/.cache/
+storageState.json
+auth.json

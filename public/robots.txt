@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /api/
+Disallow: /reports/
+Disallow: /settings/
+Disallow: /subscriptions/
+Disallow: /transaction/
+Disallow: /verifyEmail
+Disallow: /dashboard
+Disallow: /auth/forgotPassword

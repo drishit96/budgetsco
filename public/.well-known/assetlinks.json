@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.app.budgetsco",
+      "sha256_cert_fingerprints": [
+        "DA:D0:90:B3:6F:8F:6E:F1:38:B0:AA:73:18:7B:60:7D:67:70:17:07:FF:08:1A:99:A6:EE:66:B1:26:44:5A:67",
+        "04:B1:70:A2:41:69:43:5B:C2:8D:7B:19:1A:C8:D5:B7:B1:B5:BC:74:BC:3C:AF:B3:BD:6D:D6:8F:68:02:20:DE"
+      ]
+    }
+  }
+]
