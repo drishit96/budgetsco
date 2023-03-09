@@ -9,8 +9,8 @@ import {
   syncNewCustomCategoriesToLocalStorage,
 } from "~/utils/category.utils";
 import { isNullOrEmpty } from "~/utils/text.utils";
-import CheckIcon from "./CheckIcon";
-import DeleteIcon from "./DeleteIcon";
+import CheckIcon from "./icons/CheckIcon";
+import DeleteIcon from "./icons/DeleteIcon";
 import { InlineSpacer } from "./InlineSpacer";
 import { Input } from "./Input";
 import { Spacer } from "./Spacer";

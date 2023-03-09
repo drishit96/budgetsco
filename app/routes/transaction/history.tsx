@@ -14,9 +14,9 @@ import {
   useSubmit,
   useTransition,
 } from "@remix-run/react";
-import NextIcon from "~/components/NextIcon";
-import AddIcon from "~/components/AddIcon";
-import PrevIcon from "~/components/PrevIcon";
+import NextIcon from "~/components/icons/NextIcon";
+import AddIcon from "~/components/icons/AddIcon";
+import PrevIcon from "~/components/icons/PrevIcon";
 import { Spacer } from "~/components/Spacer";
 import { Transaction } from "~/components/Transaction";
 import type { TransactionResponse } from "~/modules/transaction/transaction.schema";
@@ -33,7 +33,7 @@ import {
   parseDate,
 } from "~/utils/date.utils";
 import SubscriptionRequiredBottomSheet from "~/components/SubscriptionRequiredBottomSheet";
-import FilterIcon from "~/components/FilterIcon";
+import FilterIcon from "~/components/icons/FilterIcon";
 import { InlineSpacer } from "~/components/InlineSpacer";
 import type { NewFilter } from "~/components/FilterBottomSheet";
 import FilterBottomSheet from "~/components/FilterBottomSheet";

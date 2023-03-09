@@ -9,7 +9,7 @@ import {
   useOutletContext,
   useTransition,
 } from "@remix-run/react";
-import CheckIcon from "~/components/CheckIcon";
+import CheckIcon from "~/components/icons/CheckIcon";
 import { InlineSpacer } from "~/components/InlineSpacer";
 import { parseCurrencyPreferenceInput } from "~/modules/settings/settings.schema";
 import {

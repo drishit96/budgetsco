@@ -1,5 +1,5 @@
 import { Ripple } from "@rmwc/ripple";
-import DeleteIcon from "./DeleteIcon";
+import DeleteIcon from "./icons/DeleteIcon";
 import { InlineSpacer } from "./InlineSpacer";
 
 function getSizeSpecificClassNames(size: "sm" | "md" | "lg") {

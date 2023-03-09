@@ -12,7 +12,7 @@ import {
   useTransition,
 } from "@remix-run/react";
 
-import CheckIcon from "~/components/CheckIcon";
+import CheckIcon from "~/components/icons/CheckIcon";
 import { ErrorValidation } from "~/components/ErrorValidation";
 import { InlineSpacer } from "~/components/InlineSpacer";
 import NumberInputLarge from "~/components/NumberInputLarge";

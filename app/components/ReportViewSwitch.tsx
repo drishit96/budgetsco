@@ -1,6 +1,6 @@
 import { Ripple } from "@rmwc/ripple";
 import Report from "./Report";
-import TableIcon from "./TableIcon";
+import TableIcon from "./icons/TableIcon";
 
 export default function ReportViewSwitch({
   chartView,

@@ -7,11 +7,11 @@ import type { AppContext } from "~/root";
 import { getTransactionColor } from "~/utils/colors.utils";
 import { formatDate_DD_MMMM_YYYY_hh_mm_aa } from "~/utils/date.utils";
 import { formatNumber } from "~/utils/number.utils";
-import CheckIcon from "./CheckIcon";
-import InfoIcon from "./InfoIcon";
+import CheckIcon from "./icons/CheckIcon";
+import InfoIcon from "./icons/InfoIcon";
 import { Spacer } from "./Spacer";
-import TrashIcon from "./TrashIcon";
-import EditIcon from "./EditIcon";
+import TrashIcon from "./icons/TrashIcon";
+import EditIcon from "./icons/EditIcon";
 
 export function RecurringTransaction({
   transaction,

@@ -9,7 +9,7 @@ import {
   useTransition,
 } from "@remix-run/react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import AddIcon from "~/components/AddIcon";
+import AddIcon from "~/components/icons/AddIcon";
 import { Spacer } from "~/components/Spacer";
 import { Transaction } from "~/components/Transaction";
 import type { TransactionResponse } from "~/modules/transaction/transaction.schema";

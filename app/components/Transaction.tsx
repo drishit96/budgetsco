@@ -8,11 +8,11 @@ import type { AppContext } from "~/root";
 import { getTransactionColor } from "~/utils/colors.utils";
 import { formatDate_DD_MMMM_YYYY } from "~/utils/date.utils";
 import { formatNumber } from "~/utils/number.utils";
-import EditIcon from "./EditIcon";
-import InfoIcon from "./InfoIcon";
-import RepeatIcon from "./RepeatIcon";
+import EditIcon from "./icons/EditIcon";
+import InfoIcon from "./icons/InfoIcon";
+import RepeatIcon from "./icons/RepeatIcon";
 import { Spacer } from "./Spacer";
-import TrashIcon from "./TrashIcon";
+import TrashIcon from "./icons/TrashIcon";
 import SubscriptionRequiredBottomSheet from "./SubscriptionRequiredBottomSheet";
 
 export function Transaction({

@@ -1,5 +1,5 @@
 import { isNotNullAndEmpty } from "~/utils/text.utils";
-import ErrorIcon from "./ErrorIcon";
+import ErrorIcon from "./icons/ErrorIcon";
 import { InlineSpacer } from "./InlineSpacer";
 
 export function ErrorText({

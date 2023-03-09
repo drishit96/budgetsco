@@ -4,7 +4,7 @@ import { matchSorter } from "match-sorter";
 import { isMobileDevice } from "~/utils/browser.utils";
 import { Ripple } from "@rmwc/ripple";
 import { useState } from "react";
-import DownIcon from "./DownIcon";
+import DownIcon from "./icons/DownIcon";
 
 export interface ComboBoxProps<T> extends UseComboboxProps<T> {
   onCreateItem?: (item: T) => void;

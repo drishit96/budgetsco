@@ -10,8 +10,8 @@ import {
   useTransition,
 } from "@remix-run/react";
 import { Badge } from "~/components/Badge";
-import CheckIcon from "~/components/CheckIcon";
-import InfoIcon from "~/components/InfoIcon";
+import CheckIcon from "~/components/icons/CheckIcon";
+import InfoIcon from "~/components/icons/InfoIcon";
 import { InlineSpacer } from "~/components/InlineSpacer";
 import RecurringSetup from "~/components/RecurringSetup";
 import { Spacer } from "~/components/Spacer";

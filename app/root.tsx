@@ -30,7 +30,7 @@ import { Spacer } from "./components/Spacer";
 import { isNotNullAndEmpty } from "./utils/text.utils";
 import Back from "./components/Back";
 import { Ripple } from "@rmwc/ripple";
-import SettingIcon from "./components/SettingIcon";
+import SettingIcon from "./components/icons/SettingIcon";
 import usePreferredCurrency from "./lib/usePreferredCurrency.hook";
 import type { Currency } from "./utils/number.utils";
 import {
@@ -42,7 +42,7 @@ import {
 } from "@rmwc/dialog";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import clsx from "clsx";
-import DashboardIcon from "./components/DashboardIcon";
+import DashboardIcon from "./components/icons/DashboardIcon";
 import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import usePreferredLocale from "./lib/usePreferredLocale.hook";
 import type { UserSessionData } from "./utils/auth.utils.server";

@@ -5,8 +5,8 @@ import { Form, useSubmit } from "@remix-run/react";
 import { isMobileDevice } from "~/utils/browser.utils";
 import { getAllMonths, getAllYears } from "~/utils/category.utils";
 import { format_MMMM_YYYY } from "~/utils/date.utils";
-import CompareIcon from "./CompareIcon";
-import EditIcon from "./EditIcon";
+import CompareIcon from "./icons/CompareIcon";
+import EditIcon from "./icons/EditIcon";
 import { Spacer } from "./Spacer";
 
 const months = getAllMonths();

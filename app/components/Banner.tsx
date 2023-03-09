@@ -5,9 +5,9 @@ import {
   getBoolSettingFromLocalStorage,
   saveBoolSettingToLocalStorage,
 } from "~/utils/setting.utils";
-import BulbIcon from "./BulbIcon";
-import ErrorIcon from "./ErrorIcon";
-import InfoIcon from "./InfoIcon";
+import BulbIcon from "./icons/BulbIcon";
+import ErrorIcon from "./icons/ErrorIcon";
+import InfoIcon from "./icons/InfoIcon";
 import { InlineSpacer } from "./InlineSpacer";
 import { Spacer } from "./Spacer";
 

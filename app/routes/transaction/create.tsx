@@ -14,7 +14,7 @@ import {
   useTransition,
 } from "@remix-run/react";
 
-import CheckIcon from "~/components/CheckIcon";
+import CheckIcon from "~/components/icons/CheckIcon";
 import { ErrorValidation } from "~/components/ErrorValidation";
 import { InfoText } from "~/components/InfoText";
 import { InlineSpacer } from "~/components/InlineSpacer";
