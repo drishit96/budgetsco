@@ -1,4 +1,4 @@
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/drishit96/budgetsco/blob/main/LICENSE)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/drishit96/budgetsco/blob/main/LICENSE.md)
 
 # Budgetsco
 
@@ -39,4 +39,4 @@ See also the list of [contributors](https://github.com/drishit96/budgetsco/graph
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 license - see the [LICENSE.md](https://github.com/drishit96/budgetsco/blob/main/LICENSE) file for details
+This project is licensed under the GNU General Public License v3.0 license - see the [LICENSE.md](https://github.com/drishit96/budgetsco/blob/main/LICENSE.md) file for details
