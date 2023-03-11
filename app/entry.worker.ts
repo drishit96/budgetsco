@@ -6,6 +6,7 @@ import { initializeApp } from "firebase/app";
 import { getMessaging, onBackgroundMessage } from "firebase/messaging/sw";
 import { Queue } from "workbox-background-sync";
 import { firebaseConfig } from "./lib/ui.config";
+import escapeRegExp from "lodash.escaperegexp";
 
 const queue = new Queue("budgetsco");
 
@@ -37,7 +38,7 @@ async function handleMessage(event: ExtendableMessageEvent) {
 
   if (event.data.type === "REMIX_NAVIGATION") {
     const { isMount, location } = event.data;
-    const documentUrl = location.pathname + location.search + location.hash;
+    const documentUrl = escapeRegExp(location.pathname + location.search + location.hash);
 
     const [documentCache, existingDocument] = await Promise.all([
       caches.open(DOCUMENT_CACHE),
