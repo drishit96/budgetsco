@@ -255,9 +255,8 @@ export default function EditTransaction() {
         categoryRemainingBudgetMap.current[selectedCategories[0]] === undefined
       ) {
         categoryRemainingBudgetFetcher.load(
-          `/api/getRemainingBudgetForCategory?category=${selectedCategories[0].replace(
-            "&",
-            "%26"
+          `/api/getRemainingBudgetForCategory?category=${encodeURIComponent(
+            selectedCategories[0]
           )}`
         );
       }

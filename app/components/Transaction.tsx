@@ -112,7 +112,7 @@ export function Transaction({
                   data-test-id={"btn-make-this-recurring"}
                   to={`/transaction/recurring/new?amount=${
                     transaction.amount
-                  }&category=${transaction.category.replace("&", "%26")}&type=${
+                  }&category=${encodeURIComponent(transaction.category)}&type=${
                     transaction.type
                   }&paymentMode=${transaction.paymentMode}&description=${
                     transaction.description
