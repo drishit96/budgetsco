@@ -65,8 +65,11 @@ jobs:
       - name: "Generate prisma schema"
         run: npx prisma generate
 
+      - name: "Remove dev dependencies"
+        run: npm prune --production --legacy-peer-deps
+
       - name: "Build"
-        run: DEPLOYMENT_TARGET=vercel npm run build
+        run: NODE_ENV=production DEPLOYMENT_TARGET=vercel npm run build
 
       - name: "Deploy to Vercel"
         run: |

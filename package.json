@@ -10,7 +10,7 @@
     "build:css": "tailwindcss -m -i ./styles/app.css -o app/styles/app.css",
     "build:worker": "esbuild ./app/entry.worker.ts --outfile=./public/entry.worker.js --minify --bundle --format=esm --define:process.env.NODE_ENV='\"production\"'",
     "deploy": "cp ./app/lib/prod.ui.config.ts ./app/lib/ui.config.ts && cp prod.server.js server.js && npm uninstall @remix-run/serve && DEPLOYMENT_TARGET=flyio npm run build && fly deploy --remote-only && npm install @remix-run/serve@1.11.1",
-    "stage-deploy": "cp ./app/lib/test.ui.config.ts ./app/lib/ui.config.ts && cp test.server.js server.js && DEPLOYMENT_TARGET=vercel npm run build && vercel deploy --prod",
+    "stage-deploy": "cp ./app/lib/test.ui.config.ts ./app/lib/ui.config.ts && cp test.server.js server.js && NODE_ENV=production DEPLOYMENT_TARGET=vercel npm run build && vercel deploy --prod",
     "dev": "cp ./app/lib/test.ui.config.ts ./app/lib/ui.config.ts && concurrently \"npm run dev:css\" \"npm run dev:worker\" \"remix dev\"",
     "dev:css": "tailwindcss -w -i ./styles/app.css -o app/styles/app.css",
     "dev:worker": "esbuild ./app/entry.worker.ts --outfile=./public/entry.worker.js --bundle --format=esm --define:process.env.NODE_ENV='\"development\"' --watch",
