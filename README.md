@@ -13,9 +13,10 @@ These instructions will get you a copy of the project up and running on your loc
 ### Installing
 
 1. Run `npm install` to install the packages
-2. Create a new file '.env' and set the environment variables as per [env.sample](https://github.com/drishit96/budgetsco/blob/main/env.sample) file
-3. Run `npm run dev` to start the dev server
-4. Open `http://localhost:3000` on your browser
+2. Replace all variables with actual values in [ui.config.ts](https://github.com/drishit96/budgetsco/blob/main/app/lib/ui.config.ts). These are public variables used in the UI.
+3. Create a new file '.env' and set the environment variables as per [env.sample](https://github.com/drishit96/budgetsco/blob/main/env.sample) file
+4. Run `npm run dev` to start the dev server
+5. Open `http://localhost:3000` on your browser
 
 ## Built With
 
