@@ -24,7 +24,11 @@ import {
   getSessionData,
   getUserDataFromIdToken,
 } from "~/utils/auth.utils.server";
-import { createUser, saveNotificationToken } from "~/modules/user/user.service";
+import {
+  createUser,
+  saveNotificationToken,
+  validateChallengeResponse,
+} from "~/modules/user/user.service";
 import {
   saveBrowserPreferences,
   getUserPreferences,
@@ -33,6 +37,7 @@ import { isNotNullAndEmpty, isNullOrEmpty } from "~/utils/text.utils";
 import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import type { AuthPageContext } from "../auth";
 import { saveBoolSettingToLocalStorage } from "~/utils/setting.utils";
+import Turnstile from "~/components/Turnstile";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.route.id === "root");
@@ -42,6 +47,9 @@ export const meta: V2_MetaFunction = ({ matches }) => {
 export const action: ActionFunction = async ({ request }) => {
   try {
     const form = await request.formData();
+    const isRequestFromHuman = await validateChallengeResponse(form, "register");
+    if (!isRequestFromHuman) return json({ apiError: "Invalid request" });
+
     const idToken = form.get("idToken")?.toString();
 
     if (request.method === "GET" || idToken == null) return redirect("/register");
@@ -132,12 +140,22 @@ export default function Register() {
       return;
     }
 
+    const challengeResponse = (window.turnstile && window.turnstile.getResponse()) ?? "";
+    if (!challengeResponse) {
+      setErrors((prev) => ({
+        ...prev,
+        confirmPassword: "Invalid request",
+      }));
+      return;
+    }
+
     const { idToken, error } = await createFirebaseUser(email, password);
     if (idToken) {
       const form = new FormData();
       form.set("idToken", idToken);
       form.set("browserTimezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
       form.set("browserLocale", navigator.language);
+      form.set("cf-turnstile-response", challengeResponse);
 
       const isNotificationsSupported = await isNotificationSupported();
       if (isNotificationsSupported && Notification.permission === "granted") {
@@ -224,6 +242,8 @@ export default function Register() {
               type="hidden"
               value={Intl.DateTimeFormat().resolvedOptions().timeZone}
             />
+
+            <Turnstile action="register" />
 
             <Spacer />
             <Ripple>
