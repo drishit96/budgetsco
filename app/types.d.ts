@@ -6,6 +6,9 @@ declare global {
   var prisma: PrismaClient;
   interface Window {
     getDigitalGoodsService: (serviceProvider: string) => Promise<DigitalGoodsService>;
+    turnstile: any;
+    turnstileWidgetId: string;
+    onloadTurnstileCallback: () => void;
   }
 
   namespace JSX {

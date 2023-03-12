@@ -62,3 +62,54 @@ export async function deleteInvalidTokens(tokens: string[]) {
     return 0;
   }
 }
+
+export type ChallengeAction = "login" | "register";
+type TurnstileResponse = {
+  success: boolean;
+  challenge_ts: string;
+  hostname: string;
+  "error-codes": [
+    | "missing-input-secret"
+    | "invalid-input-secret"
+    | "missing-input-response"
+    | "invalid-input-response"
+    | "bad-request"
+    | "timeout-or-duplicate"
+    | "internal-error"
+  ];
+  action: ChallengeAction;
+  cdata: string;
+};
+
+export async function validateChallengeResponse(form: FormData, action: ChallengeAction) {
+  try {
+    if (process.env.NODE_ENV !== "production") return true;
+
+    if (form == null) return false;
+    const token = form.get("cf-turnstile-response");
+    if (token == null) return false;
+
+    let formData = new FormData();
+    formData.append("secret", process.env.TURNSTILE_SECRET_KEY!);
+    formData.append("response", token.toString());
+
+    const url = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+    const result = await fetch(url, {
+      body: formData,
+      method: "POST",
+    });
+
+    const outcome: TurnstileResponse = await result.json();
+    if (outcome.success) {
+      if (outcome.action === action) return true;
+      throw new Error("Turnstile action mismatch for: " + JSON.stringify(outcome));
+    }
+    if (outcome.success === false && outcome["error-codes"][0] === "internal-error") {
+      throw new Error("Turnstile validation error for: " + JSON.stringify(outcome));
+    }
+    return outcome.success;
+  } catch (error) {
+    logError(error);
+    return false;
+  }
+}

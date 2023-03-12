@@ -11,3 +11,5 @@ export const VAPID_KEY = "#{VAPID_KEY}#";
 
 export const STR_PRICING_TABLE_ID = "#{STR_PRICING_TABLE_ID}#";
 export const STR_PUBLISHABLE_KEY = "#{STR_PUBLISHABLE_KEY}#";
+
+export const TURNSTILE_SITE_KEY = "#{TURNSTILE_SITE_KEY}";

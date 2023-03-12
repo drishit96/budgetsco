@@ -36,12 +36,16 @@ import {
 import { SuccessText } from "~/components/SuccessText";
 import { getUserPreferences } from "~/modules/settings/settings.service";
 import { isNotNullAndEmpty } from "~/utils/text.utils";
-import { saveNotificationToken } from "~/modules/user/user.service";
+import {
+  saveNotificationToken,
+  validateChallengeResponse,
+} from "~/modules/user/user.service";
 import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import type { AppContext } from "~/root";
 import type { Currency } from "~/utils/number.utils";
 import type { AuthPageContext } from "../auth";
 import { isMobileDevice } from "~/utils/browser.utils";
+import Turnstile from "~/components/Turnstile";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.route.id === "root");
@@ -51,6 +55,9 @@ export const meta: V2_MetaFunction = ({ matches }) => {
 export const action: ActionFunction = async ({ request }) => {
   try {
     const form = await request.formData();
+    const isRequestFromHuman = await validateChallengeResponse(form, "login");
+    if (!isRequestFromHuman) return json({ apiError: "Invalid request" });
+
     const idToken = form.get("idToken")?.toString();
 
     if (request.method === "GET" || idToken == null) {
@@ -174,12 +181,19 @@ export default function Login() {
   ) {
     e.preventDefault();
 
+    const challengeResponse = (window.turnstile && window.turnstile.getResponse()) ?? "";
+    if (!challengeResponse) {
+      setError("Invalid request");
+      return;
+    }
+
     setIsLoginInProgress(true);
     const { idToken, error } = await signInUser(email, password);
     if (idToken) {
       const form = new FormData();
       form.set("idToken", idToken);
       form.set("browserTimezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
+      form.set("cf-turnstile-response", challengeResponse);
 
       const isNotificationsSupported = await isNotificationSupported();
       if (isNotificationsSupported && Notification.permission === "granted") {
@@ -241,6 +255,8 @@ export default function Login() {
               type="hidden"
               value={Intl.DateTimeFormat().resolvedOptions().timeZone}
             />
+
+            <Turnstile action="login" />
 
             <Spacer />
             <Ripple>
