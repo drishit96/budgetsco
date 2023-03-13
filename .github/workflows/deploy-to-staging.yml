@@ -59,6 +59,9 @@ jobs:
       - name: Find and Replace STR_PUBLISHABLE_KEY - Using Build Variable
         run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{STR_PUBLISHABLE_KEY}#/${{ env.STR_PUBLISHABLE_KEY }}/g'' {} \;
 
+      - name: Find and Replace TURNSTILE_SITE_KEY - Using Build Variable
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{TURNSTILE_SITE_KEY}#/${{ env.TURNSTILE_SITE_KEY }}/g'' {} \;
+        
       - name: "Install packages"
         run: npm install --production=false --legacy-peer-deps
 
