@@ -68,9 +68,6 @@ jobs:
       - name: "Build"
         run: NODE_ENV=production DEPLOYMENT_TARGET=vercel npm run build
 
-      - name: "Remove dev dependencies"
-        run: npm prune --production --legacy-peer-deps
-
       - name: "Deploy to Vercel"
         run: |
           prodRun=""
