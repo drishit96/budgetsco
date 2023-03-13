@@ -74,6 +74,8 @@ jobs:
           if [[ ${GITHUB_REF} == "refs/heads/main" ]]; then
             prodRun="--prod"
           fi
+          
+          echo "$GITHUB_REF"
 
           npx vercel --token ${VERCEL_TOKEN} $prodRun
         env:
