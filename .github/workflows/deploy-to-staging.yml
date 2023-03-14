@@ -19,6 +19,7 @@ env:
   VAPID_KEY: ${{ vars.VAPID_KEY }}
   STR_PRICING_TABLE_ID: ${{ vars.STR_PRICING_TABLE_ID }}
   STR_PUBLISHABLE_KEY: ${{ vars.STR_PUBLISHABLE_KEY }}
+  TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
 
 jobs:
   vercel:
@@ -61,7 +62,7 @@ jobs:
 
       - name: Find and Replace TURNSTILE_SITE_KEY - Using Build Variable
         run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{TURNSTILE_SITE_KEY}#/${{ env.TURNSTILE_SITE_KEY }}/g'' {} \;
-        
+
       - name: "Install packages"
         run: npm install --production=false --legacy-peer-deps
 
