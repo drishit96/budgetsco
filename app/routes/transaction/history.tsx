@@ -5,15 +5,8 @@ import { useEffect, useState } from "react";
 import type { ActionFunction, LoaderFunction, V2_MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import type { ShouldRevalidateFunction } from "@remix-run/react";
-import { useLocation } from "@remix-run/react";
-import {
-  Form,
-  Link,
-  useLoaderData,
-  useOutletContext,
-  useSubmit,
-  useTransition,
-} from "@remix-run/react";
+import { useNavigation } from "@remix-run/react";
+import { Form, Link, useLoaderData, useOutletContext, useSubmit } from "@remix-run/react";
 import NextIcon from "~/components/icons/NextIcon";
 import AddIcon from "~/components/icons/AddIcon";
 import PrevIcon from "~/components/icons/PrevIcon";
@@ -105,7 +98,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 
 export default function TransactionHistory() {
   const submit = useSubmit();
-  const transition = useTransition();
+  const navigation = useNavigation();
   const [listParent] = useAutoAnimate<HTMLUListElement>();
   const context = useOutletContext<AppContext>();
   const {
@@ -260,7 +253,7 @@ export default function TransactionHistory() {
                 <li key={transaction.id}>
                   <Transaction
                     transaction={transaction}
-                    transition={transition}
+                    navigation={navigation}
                     hideDivider={index == transactions.length - 1}
                     index={index}
                     expandedIndex={expandedTransactionIndex}
