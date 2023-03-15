@@ -9,9 +9,9 @@ import {
   useActionData,
   useFetcher,
   useLoaderData,
+  useNavigation,
   useOutletContext,
   useSubmit,
-  useTransition,
 } from "@remix-run/react";
 
 import CheckIcon from "~/components/icons/CheckIcon";
@@ -134,7 +134,7 @@ const paymentModes = getAllPaymentModes();
 
 export default function EditTransaction() {
   const submit = useSubmit();
-  const transition = useTransition();
+  const navigation = useNavigation();
   const { monthData, transaction, isPastMonth } = useLoaderData<{
     monthData: {
       budget: number;
@@ -165,7 +165,7 @@ export default function EditTransaction() {
     errors?: { [key: string]: string };
     data?: { isTransactionSaved: boolean };
   }>();
-  const isSubmittingData = transition.state === "submitting";
+  const isSubmittingData = navigation.state === "submitting";
   const [selectedCategories, setSelectedCategories] = useState<string[]>([
     transaction.category,
   ]);

@@ -4,9 +4,9 @@ import { json } from "@remix-run/node";
 import {
   Form,
   useLoaderData,
+  useNavigation,
   useOutletContext,
   useSubmit,
-  useTransition,
 } from "@remix-run/react";
 import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import { Ripple } from "@rmwc/ripple";
@@ -97,7 +97,7 @@ export let action: ActionFunction = async ({ request }) => {
 };
 
 export default function AuthAction() {
-  const transition = useTransition();
+  const navigation = useNavigation();
   const {
     mode,
     oobCode,
@@ -185,7 +185,7 @@ export default function AuthAction() {
                 <Spacer />
                 <Ripple>
                   <button type="submit" className="btn-primary w-full">
-                    {transition.state === "submitting"
+                    {navigation.state === "submitting"
                       ? "Please wait..."
                       : "Set password"}
                   </button>

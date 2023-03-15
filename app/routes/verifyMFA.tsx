@@ -1,7 +1,7 @@
 import type { ActionFunction, LoaderFunction, V2_MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { Form, useActionData, useOutletContext, useTransition } from "@remix-run/react";
+import { Form, useActionData, useNavigation, useOutletContext } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { Input } from "~/components/Input";
 import { Spacer } from "~/components/Spacer";
@@ -89,7 +89,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function VerifyMFA() {
   const context = useOutletContext<AppContext>();
-  const transition = useTransition();
+  const navigation = useNavigation();
   const actionData = useActionData<{
     error?: string;
     customCategories: { [key: string]: string[] } | null;
@@ -124,7 +124,7 @@ export default function VerifyMFA() {
           {showSuccessText && <SuccessText text="Log in successfull, redirecting..." />}
           <div className="flex justify-center w-full md:w-3/4 lg:w-2/3 xl:w-1/2">
             <Form method="post">
-              <fieldset disabled={transition.state === "submitting"}>
+              <fieldset disabled={navigation.state === "submitting"}>
                 <Input
                   name="otp"
                   error={actionData?.error}
@@ -133,7 +133,7 @@ export default function VerifyMFA() {
                 />
                 <Spacer size={1} />
                 <button className="btn-primary w-full">
-                  {transition.state === "submitting" ? "Verifying code..." : "Continue"}
+                  {navigation.state === "submitting" ? "Verifying code..." : "Continue"}
                 </button>
               </fieldset>
             </Form>

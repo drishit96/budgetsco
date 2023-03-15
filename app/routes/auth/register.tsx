@@ -6,9 +6,9 @@ import {
   Link,
   useActionData,
   useLoaderData,
+  useNavigation,
   useOutletContext,
   useSubmit,
-  useTransition,
 } from "@remix-run/react";
 import { ErrorValidation } from "~/components/ErrorValidation";
 import { Input } from "~/components/Input";
@@ -97,7 +97,7 @@ export let loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function Register() {
-  const transition = useTransition();
+  const navigation = useNavigation();
   const { error }: { error: string } = useLoaderData();
   const actionData = useActionData();
   const [errors, setErrors] = useState<{
@@ -248,7 +248,7 @@ export default function Register() {
             <Spacer />
             <Ripple>
               <button type="submit" className="btn-primary w-full">
-                {transition.state === "submitting" ? "Registering..." : "Register"}
+                {navigation.state === "submitting" ? "Registering..." : "Register"}
               </button>
             </Ripple>
 

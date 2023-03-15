@@ -1,7 +1,7 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Ripple } from "@rmwc/ripple";
 import React, { useEffect, useRef, useState } from "react";
-import { Form, useFetcher, useSubmit, useTransition } from "@remix-run/react";
+import { Form, useFetcher, useNavigation, useSubmit } from "@remix-run/react";
 import type { AppContext } from "~/root";
 import {
   getAllExpenseCategoriesForSelection,
@@ -30,7 +30,7 @@ export default function TargetSetter({
     budget: number;
   }[];
 }) {
-  const transition = useTransition();
+  const navigation = useNavigation();
   const [categoryWiseTargetSetterParent] = useAutoAnimate<HTMLFieldSetElement>();
   const previousBudgetFetcher = useFetcher();
   const [totalBudget, setTotalBudget] = useState(0);
@@ -42,7 +42,7 @@ export default function TargetSetter({
       budget: number;
     }[]
   >([]);
-  const isSubmittingData = transition.state === "submitting";
+  const isSubmittingData = navigation.state === "submitting";
   const [maxKey, setMaxKey] = useState(1);
   const [existingCategoryBudgetMap, setExistingCategoryBudgetMap] = useState(
     new Map<string, number>()

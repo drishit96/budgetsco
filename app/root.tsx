@@ -7,6 +7,7 @@ import type {
 import { json } from "@remix-run/node";
 
 import type { ShouldRevalidateFunction } from "@remix-run/react";
+import { useNavigation } from "@remix-run/react";
 import {
   Link,
   Links,
@@ -18,7 +19,6 @@ import {
   useLoaderData,
   useLocation,
   useMatches,
-  useTransition,
 } from "@remix-run/react";
 
 import styles from "./styles/app.css";
@@ -213,7 +213,7 @@ export default function App() {
   const [userPreferredLocale, setUserPreferredLocale] = usePreferredLocale();
   const location = useLocation();
   let matches = useMatches();
-  const transition = useTransition();
+  const navigation = useNavigation();
   const loadingProgress = useRef<HTMLDivElement>(null);
   const [pageParent] = useAutoAnimate<HTMLDivElement>();
   const [isBackButtonVisible, showBackButton] = useState(false);
@@ -236,7 +236,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (transition.state === "loading") {
+    if (navigation.state === "loading") {
       loadingProgress.current?.classList.remove("w-0");
       loadingProgress.current?.classList.add("duration-1000", "w-full", "bg-yellow-500");
     } else {
@@ -247,7 +247,7 @@ export default function App() {
       );
       loadingProgress.current?.classList.add("w-0");
     }
-  }, [transition]);
+  }, [navigation]);
 
   useEffect(() => {
     let mounted = isMount;

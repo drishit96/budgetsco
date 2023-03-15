@@ -2,14 +2,7 @@ import { Ripple } from "@rmwc/ripple";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import {
-  Form,
-  Link,
-  useActionData,
-  useOutletContext,
-  useSubmit,
-  useTransition,
-} from "@remix-run/react";
+import { Form, Link, useActionData, useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
 import { ErrorValidation } from "~/components/ErrorValidation";
 import { Input } from "~/components/Input";
 import { Spacer } from "~/components/Spacer";
@@ -130,7 +123,7 @@ export let loader: LoaderFunction = async ({ request }) => {
 
 export default function Login() {
   const context = useOutletContext<AppContext>();
-  const transition = useTransition();
+  const navigation = useNavigation();
   const actionData = useActionData<{
     apiError?: string;
     idToken: string;
@@ -263,9 +256,9 @@ export default function Login() {
               <button
                 type="submit"
                 className="btn-primary w-full"
-                disabled={transition.state === "submitting" || isLoginInProgress}
+                disabled={navigation.state === "submitting" || isLoginInProgress}
               >
-                {transition.state === "submitting" || isLoginInProgress
+                {navigation.state === "submitting" || isLoginInProgress
                   ? "Logging in..."
                   : "Log in"}
               </button>

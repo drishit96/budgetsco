@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
+import type { Navigation } from "@remix-run/router";
 import {
   Link,
   useLoaderData,
+  useNavigation,
   useOutletContext,
   useSubmit,
-  useTransition,
 } from "@remix-run/react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import AddIcon from "~/components/icons/AddIcon";
@@ -176,7 +177,7 @@ export let loader: LoaderFunction = async ({ request }) => {
 
 function renderRecurringTransactions(
   recurringTransactions: RecurringTransactionsResponse,
-  transition: Transition,
+  navigation: Navigation,
   setExpandedTransactionIndex: React.Dispatch<React.SetStateAction<number | undefined>>,
   expandedTransactionIndex?: number
 ) {
@@ -185,7 +186,7 @@ function renderRecurringTransactions(
       <li key={transaction.id}>
         <RecurringTransaction
           transaction={transaction}
-          transition={transition}
+          navigation={navigation}
           hideDivider={index == recurringTransactions.length - 1}
           index={index}
           expandedIndex={expandedTransactionIndex}
@@ -198,7 +199,7 @@ function renderRecurringTransactions(
 
 function renderTransactions(
   transactions: TransactionResponse[],
-  transition: Transition,
+  navigation: Navigation,
   setExpandedRecurringTransactionIndex: React.Dispatch<
     React.SetStateAction<number | undefined>
   >,
@@ -209,7 +210,7 @@ function renderTransactions(
       <li key={transaction.id}>
         <Transaction
           transaction={transaction}
-          transition={transition}
+          navigation={navigation}
           hideDivider={index == transactions.length - 1}
           index={index}
           expandedIndex={expandedRecurringTransactionIndex}
@@ -221,7 +222,7 @@ function renderTransactions(
 }
 
 export default function Index() {
-  const transition = useTransition();
+  const navigation = useNavigation();
   const [bannerParent] = useAutoAnimate<HTMLDivElement>();
   const [listParent] = useAutoAnimate<HTMLUListElement>();
   const context = useOutletContext<AppContext>();
@@ -324,12 +325,12 @@ export default function Index() {
 
   useEffect(() => {
     if (
-      transition.state === "submitting" &&
-      transition.submission.formData.get("formName") === "SAVE_REGISTRATION_TOKEN"
+      navigation.state === "submitting" &&
+      navigation.formData.get("formName") === "SAVE_REGISTRATION_TOKEN"
     ) {
       context.setSnackBarMsg("Notifications enabled");
     }
-  }, [transition.state, transition.submission?.formData, context]);
+  }, [navigation.state, navigation.formData, context]);
 
   useEffect(() => {
     context.showBackButton(false);
@@ -378,9 +379,8 @@ export default function Index() {
                 message="Enable notifications for recurring transactions."
                 showAction
                 actionText={
-                  transition.state === "submitting" &&
-                  transition.submission.formData.get("formName") ===
-                    "SAVE_REGISTRATION_TOKEN"
+                  navigation.state === "submitting" &&
+                  navigation.formData.get("formName") === "SAVE_REGISTRATION_TOKEN"
                     ? "Enabling..."
                     : "Enable"
                 }
@@ -446,7 +446,7 @@ export default function Index() {
             <ul ref={listParent}>
               {renderRecurringTransactions(
                 overDueTransactions,
-                transition,
+                navigation,
                 setExpandedOverdueTransactionIndex,
                 expandedOverdueTransactionIndex
               )}
@@ -508,7 +508,7 @@ export default function Index() {
             <ul ref={listParent}>
               {renderRecurringTransactions(
                 upcomingTransactions,
-                transition,
+                navigation,
                 setExpandedUpcomingTransactionIndex,
                 expandedUpcomingTransactionIndex
               )}
@@ -525,7 +525,7 @@ export default function Index() {
             <ul ref={listParent}>
               {renderTransactions(
                 transactions,
-                transition,
+                navigation,
                 setExpandedTransactionIndex,
                 expandedTransactionIndex
               )}
