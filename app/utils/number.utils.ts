@@ -1,31 +1,37 @@
+import Decimal from "decimal.js";
 import type { CURRENCY_CODES } from "./category.utils";
+import { isNullOrEmpty } from "./text.utils";
 
 export type Currency = typeof CURRENCY_CODES[number] | null;
 
-export function formatNumber(number: number, locale?: string) {
+export function formatNumber(number: number | string, locale?: string) {
   return new Intl.NumberFormat(locale ?? "en-US", { minimumFractionDigits: 2 }).format(
-    number
+    number as number
   );
 }
 
-export function formatPercentage(number: number, locale?: string) {
+export function formatPercentage(number: number | string, locale?: string) {
   return new Intl.NumberFormat(locale ?? "en-US", {
     minimumFractionDigits: 1,
     minimumIntegerDigits: 1,
     maximumFractionDigits: 1,
-  }).format(number);
+  }).format(number as number);
 }
 
-export function formatToCurrency(number: number, locale?: string, currency?: Currency) {
+export function formatToCurrency(
+  number: number | string,
+  locale?: string,
+  currency?: Currency
+) {
   return new Intl.NumberFormat(locale ?? "en-US", {
     style: "currency",
     currency: currency ?? "INR",
     maximumFractionDigits: 2,
-  }).format(number);
+  }).format(number as number);
 }
 
 export function formatToCurrencyCompact(
-  number: number,
+  number: number | string,
   locale?: string,
   currency?: Currency
 ) {
@@ -33,7 +39,7 @@ export function formatToCurrencyCompact(
     style: "currency",
     currency: currency ?? "INR",
     notation: "compact",
-  }).format(number);
+  }).format(number as number);
 }
 
 export function getCurrencySymbol(locale?: string, currency?: Currency) {
@@ -42,4 +48,56 @@ export function getCurrencySymbol(locale?: string, currency?: Currency) {
     currency: currency ?? "INR",
   });
   return formatter.formatToParts(0).find((f) => f.type === "currency")?.value ?? "$";
+}
+
+export function calculate(startWith: string | number) {
+  if (isNullOrEmpty(startWith)) return new Decimal(0);
+  return new Decimal(startWith);
+}
+
+export function add(num1: string | number, num2: string | number) {
+  if (isNullOrEmpty(num1)) {
+    if (isNullOrEmpty(num2)) return "0";
+    return num2;
+  } else if (isNullOrEmpty(num2)) {
+    return num1;
+  }
+  return new Decimal(num1).add(num2).toString();
+}
+
+export function subtract(from: string | number, amt: string | number) {
+  if (isNullOrEmpty(from)) {
+    from = "0";
+  }
+  if (isNullOrEmpty(amt)) {
+    return from;
+  }
+  return new Decimal(from).minus(amt).toString();
+}
+
+export function divide(num1: string | number, num2: string | number) {
+  if (isNullOrEmpty(num1)) {
+    num1 = "0";
+  }
+  if (isNullOrEmpty(num2)) {
+    return num1;
+  }
+  return new Decimal(num1).dividedBy(num2).toString();
+}
+
+export function abs(num: string | number) {
+  return new Decimal(num).abs().toString();
+}
+
+export function round(number: string | number) {
+  return new Decimal(number).round().toString();
+}
+
+export function max(...args: string[]) {
+  return Decimal.max(...args).toString();
+}
+
+export function sum(args: string[]) {
+  if (args == null || args.length == 0) return "0";
+  return Decimal.sum(...args).toString();
 }
