@@ -6,8 +6,8 @@ import {
   Form,
   useActionData,
   useLoaderData,
+  useNavigation,
   useOutletContext,
-  useTransition,
 } from "@remix-run/react";
 import { Badge } from "~/components/Badge";
 import CheckIcon from "~/components/icons/CheckIcon";
@@ -106,9 +106,9 @@ export const loader: LoaderFunction = async ({ request }) => {
 const transactionTypes = getAllTransactionTypes();
 
 export default function NewRecurringTransaction() {
-  const transition = useTransition();
+  const navigation = useNavigation();
   const context = useOutletContext<AppContext>();
-  const isSubmittingData = transition.state === "submitting";
+  const isSubmittingData = navigation.state === "submitting";
   let { amount, category, type, paymentMode, description, startDate } = useLoaderData<{
     amount: string;
     category?: string;

@@ -1,5 +1,5 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import type { Transition } from "@remix-run/react/dist/transition";
+import type { Navigation } from "@remix-run/router";
 import { Ripple } from "@rmwc/ripple";
 import type { SubmitOptions } from "@remix-run/react";
 import { Form, Link, useOutletContext, useSubmit } from "@remix-run/react";
@@ -17,7 +17,7 @@ import SubscriptionRequiredBottomSheet from "./SubscriptionRequiredBottomSheet";
 
 export function Transaction({
   transaction,
-  transition,
+  navigation,
   hideDivider = false,
   index,
   expandedIndex,
@@ -25,7 +25,7 @@ export function Transaction({
   submitAction,
 }: {
   transaction: TransactionResponse;
-  transition: Transition;
+  navigation: Navigation;
   hideDivider?: boolean;
   index: number;
   expandedIndex?: number;
@@ -36,9 +36,9 @@ export function Transaction({
   const context = useOutletContext<AppContext>();
   const submit = useSubmit();
   const isTransactionUpdateInProgress =
-    transition.state === "submitting" &&
-    transition.submission.method === "DELETE" &&
-    transition.submission.formData.get("transactionId") === transaction.id;
+    navigation.state === "submitting" &&
+    navigation.formMethod === "delete" &&
+    navigation.formData.get("transactionId") === transaction.id;
 
   return (
     <div ref={listItemParent}>

@@ -9,9 +9,9 @@ import {
   useActionData,
   useFetcher,
   useLoaderData,
+  useNavigation,
   useOutletContext,
   useSubmit,
-  useTransition,
 } from "@remix-run/react";
 
 import CheckIcon from "~/components/icons/CheckIcon";
@@ -145,7 +145,7 @@ const paymentModes = getAllPaymentModes();
 
 export default function Create() {
   const submit = useSubmit();
-  const transition = useTransition();
+  const navigation = useNavigation();
   const { budget, expense } = useLoaderData<{
     budget: string;
     expense: string;
@@ -167,7 +167,7 @@ export default function Create() {
     errors?: { [key: string]: string };
     data?: { isTransactionSaved: boolean };
   }>();
-  const isSubmittingData = transition.state === "submitting";
+  const isSubmittingData = navigation.state === "submitting";
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [showRecurringSetup, setShowRecurringSetup] = useState(false);
   const [recurringSetupContainer] = useAutoAnimate<HTMLDivElement>();

@@ -2,9 +2,9 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { useLoaderData, useTransition } from "@remix-run/react";
+import { useLoaderData, useNavigation } from "@remix-run/react";
 import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
-import type { Transition } from "@remix-run/react/dist/transition";
+import type { Navigation } from "@remix-run/router";
 import { useState } from "react";
 import { RecurringTransaction } from "~/components/RecurringTransaction";
 import type { RecurringTransactionsResponse } from "~/modules/recurring/recurring.schema";
@@ -60,7 +60,7 @@ export let loader: LoaderFunction = async ({ request }): Promise<any> => {
 
 function renderRecurringTransactions(
   recurringTransactions: RecurringTransactionsResponse,
-  transition: Transition,
+  navigation: Navigation,
   setExpandedTransactionIndex: React.Dispatch<React.SetStateAction<number | undefined>>,
   expandedTransactionIndex?: number
 ) {
@@ -69,7 +69,7 @@ function renderRecurringTransactions(
       <li key={transaction.id}>
         <RecurringTransaction
           transaction={transaction}
-          transition={transition}
+          navigation={navigation}
           hideDivider={index == recurringTransactions.length - 1}
           manageView={true}
           index={index}
@@ -82,7 +82,7 @@ function renderRecurringTransactions(
 }
 
 export default function ManageRecurringTransactions() {
-  const transition = useTransition();
+  const navigation = useNavigation();
   const [listParent] = useAutoAnimate<HTMLUListElement>();
   const { recurringTransactions } = useLoaderData<{
     recurringTransactions: RecurringTransactionsResponse;
@@ -99,7 +99,7 @@ export default function ManageRecurringTransactions() {
             <ul ref={listParent}>
               {renderRecurringTransactions(
                 recurringTransactions as unknown as RecurringTransactionsResponse,
-                transition,
+                navigation,
                 setExpandedTransactionIndex,
                 expandedTransactionIndex
               )}

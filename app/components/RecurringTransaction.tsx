@@ -1,5 +1,5 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import type { Transition } from "@remix-run/react/dist/transition";
+import type { Navigation } from "@remix-run/router";
 import { Ripple } from "@rmwc/ripple";
 import { Form, Link, useOutletContext, useSubmit } from "@remix-run/react";
 import type { RecurringTransactionResponse } from "~/modules/recurring/recurring.schema";
@@ -15,7 +15,7 @@ import EditIcon from "./icons/EditIcon";
 
 export function RecurringTransaction({
   transaction,
-  transition,
+  navigation,
   hideDivider = false,
   manageView = false,
   index,
@@ -23,7 +23,7 @@ export function RecurringTransaction({
   setExpandedIndex,
 }: {
   transaction: RecurringTransactionResponse;
-  transition: Transition;
+  navigation: Navigation;
   hideDivider?: boolean;
   manageView?: boolean;
   index: number;
@@ -34,16 +34,15 @@ export function RecurringTransaction({
   const context = useOutletContext<AppContext>();
   const submit = useSubmit();
   const isTransactionUpdateInProgress =
-    transition.state === "submitting" &&
-    transition.submission.formData.get("transactionId") === transaction.id;
+    navigation.state === "submitting" &&
+    navigation.formData.get("transactionId") === transaction.id;
   const isTransactionMaskAsDoneInProgress =
     isTransactionUpdateInProgress &&
-    transition.submission.formData.get("formName") === "MARK_AS_DONE_FORM";
+    navigation.formData.get("formName") === "MARK_AS_DONE_FORM";
   const isTransactionDeleteInProgress =
     isTransactionUpdateInProgress &&
-    transition.submission.method === "DELETE" &&
-    transition.submission.formData.get("formName") ===
-      "DELETE_RECURRING_TRANSACTION_FORM";
+    navigation.formMethod === "delete" &&
+    navigation.formData.get("formName") === "DELETE_RECURRING_TRANSACTION_FORM";
 
   return (
     <div ref={listItemParent}>

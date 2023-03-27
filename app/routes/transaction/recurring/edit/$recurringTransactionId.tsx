@@ -7,9 +7,9 @@ import {
   Form,
   useActionData,
   useLoaderData,
+  useNavigation,
   useOutletContext,
   useSubmit,
-  useTransition,
 } from "@remix-run/react";
 
 import CheckIcon from "~/components/icons/CheckIcon";
@@ -140,7 +140,7 @@ const paymentModes = getAllPaymentModes();
 
 export default function EditRecurringTransaction() {
   const submit = useSubmit();
-  const transition = useTransition();
+  const navigation = useNavigation();
   const { startDate, recurringTransaction } = useLoaderData<{
     startDate: string;
     recurringTransaction: RecurringTransactionResponse;
@@ -156,7 +156,7 @@ export default function EditRecurringTransaction() {
     errors?: { [key: string]: string };
     data?: { isTransactionSaved: boolean };
   }>();
-  const isSubmittingData = transition.state === "submitting";
+  const isSubmittingData = navigation.state === "submitting";
   const [selectedCategories, setSelectedCategories] = useState<string[]>([
     recurringTransaction.category,
   ]);

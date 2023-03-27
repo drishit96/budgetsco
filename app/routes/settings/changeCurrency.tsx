@@ -6,8 +6,8 @@ import {
   Form,
   useActionData,
   useLoaderData,
+  useNavigation,
   useOutletContext,
-  useTransition,
 } from "@remix-run/react";
 import CheckIcon from "~/components/icons/CheckIcon";
 import { InlineSpacer } from "~/components/InlineSpacer";
@@ -83,7 +83,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function ChangeCurrency() {
   const context = useOutletContext<AppContext>();
-  const transition = useTransition();
+  const navigation = useNavigation();
   const actionData = useActionData<{
     data?: {
       isCurrencySaved: boolean;
@@ -97,7 +97,7 @@ export default function ChangeCurrency() {
     label: currencyOptions.find((c) => c.value === currency)?.label ?? "",
     value: currency,
   });
-  const isSubmittingData = transition.state === "submitting";
+  const isSubmittingData = navigation.state === "submitting";
 
   useEffect(() => {
     context.showBackButton(true);

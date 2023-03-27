@@ -1,6 +1,6 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Link, useLoaderData, useOutletContext, useTransition } from "@remix-run/react";
+import { Link, useLoaderData, useNavigation, useOutletContext } from "@remix-run/react";
 import { Spacer } from "~/components/Spacer";
 import { getSessionData } from "~/utils/auth.utils.server";
 import type { TrendingReportResponse } from "~/modules/reports/reports.service";
@@ -67,7 +67,7 @@ export default function TrendReport() {
     categoryExpensesByCategory,
   } = useLoaderData<TrendingReportResponse>();
 
-  const transition = useTransition();
+  const navigation = useNavigation();
   const reportsPageContext = useOutletContext<ReportsPageContext>();
 
   const moneyDistribution = [
@@ -109,10 +109,10 @@ export default function TrendReport() {
   }, [reportsPageContext]);
 
   useEffect(() => {
-    if (transition.type === "loaderSubmission") {
+    if (navigation.state === "loading") {
       setCategoryForCategoryExpenseTrend(categories[0]);
     }
-  }, [transition]);
+  }, [navigation]);
 
   return (
     <div>

@@ -2,7 +2,7 @@ import { Ripple } from "@rmwc/ripple";
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { Form, useTransition } from "@remix-run/react";
+import { Form, useNavigation } from "@remix-run/react";
 import { Input } from "~/components/Input";
 import { Spacer } from "~/components/Spacer";
 import { useState } from "react";
@@ -27,7 +27,7 @@ export let loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function ForgotPassword() {
-  const transition = useTransition();
+  const navigation = useNavigation();
   const [emailId, setEmailId] = useState("");
   const [errors, setErrors] = useState<{
     emailId?: string;
@@ -88,7 +88,7 @@ export default function ForgotPassword() {
 
             <Ripple>
               <button type="submit" className="w-full btn-primary float-right">
-                {transition.state === "submitting" ? "Please wait..." : "Reset password"}
+                {navigation.state === "submitting" ? "Please wait..." : "Reset password"}
               </button>
             </Ripple>
           </Form>
