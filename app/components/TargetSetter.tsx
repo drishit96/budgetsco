@@ -15,6 +15,7 @@ import { InlineSpacer } from "./InlineSpacer";
 import { Input } from "./Input";
 import { Spacer } from "./Spacer";
 import { ComboBox } from "./ComboBox";
+import { calculate, sum } from "~/utils/number.utils";
 
 export default function TargetSetter({
   errors,
@@ -27,32 +28,35 @@ export default function TargetSetter({
   mode?: "create" | "edit";
   defaultData?: {
     category: string;
-    budget: number;
+    budget: string;
   }[];
 }) {
   const transition = useTransition();
   const [categoryWiseTargetSetterParent] = useAutoAnimate<HTMLFieldSetElement>();
   const previousBudgetFetcher = useFetcher();
-  const [totalBudget, setTotalBudget] = useState(0);
+  const [totalBudget, setTotalBudget] = useState("0");
   const [totalBudgetError, setTotalBudgetError] = useState("");
   const [categoryBudgets, setCategoryBudgets] = useState<
     {
       index: number;
       category: string;
-      budget: number;
+      budget: string;
     }[]
   >([]);
   const isSubmittingData = transition.state === "submitting";
   const [maxKey, setMaxKey] = useState(1);
   const [existingCategoryBudgetMap, setExistingCategoryBudgetMap] = useState(
-    new Map<string, number>()
+    new Map<string, string>()
   );
   const submit = useSubmit();
   const categories = useRef(getAllExpenseCategoriesForSelection());
 
   function addNewCategoryBudget(e: React.MouseEvent) {
     e.preventDefault();
-    setCategoryBudgets([...categoryBudgets, { index: maxKey, category: "", budget: 0 }]);
+    setCategoryBudgets([
+      ...categoryBudgets,
+      { index: maxKey, category: "", budget: "0" },
+    ]);
     setMaxKey((prevKey) => prevKey + 1);
   }
 
@@ -74,14 +78,13 @@ export default function TargetSetter({
     }
     const form = new FormData();
 
-    let totalBudgetOfAllCategories = 0;
-    const newCategoryBudgetMap = new Map<string, number>();
+    let totalBudgetOfAllCategories = sum(categoryBudgets.map((c) => c.budget));
+    const newCategoryBudgetMap = new Map<string, string>();
     for (let item of categoryBudgets) {
-      totalBudgetOfAllCategories += item.budget;
       newCategoryBudgetMap.set(item.category, item.budget);
     }
 
-    if (totalBudget < totalBudgetOfAllCategories) {
+    if (calculate(totalBudget).lessThan(totalBudgetOfAllCategories)) {
       setTotalBudgetError(
         "Total budget must be greater than or equal to the sum of all category budgets"
       );
@@ -93,8 +96,8 @@ export default function TargetSetter({
       const existingBudget = item[1];
 
       if (!newCategoryBudgetMap.has(existingCategory)) {
-        newCategoryBudgetMap.set(existingCategory, 0);
-      } else if (newCategoryBudgetMap.get(existingCategory) == existingBudget) {
+        newCategoryBudgetMap.set(existingCategory, "0");
+      } else if (newCategoryBudgetMap.get(existingCategory) === existingBudget) {
         newCategoryBudgetMap.delete(existingCategory);
       }
     }
@@ -122,7 +125,7 @@ export default function TargetSetter({
           budget: item.budget,
         };
       });
-      const map = new Map<string, number>();
+      const map = new Map<string, string>();
       defaultData.forEach((item) => {
         map.set(item.category, item.budget);
       });
@@ -137,12 +140,7 @@ export default function TargetSetter({
   }, []);
 
   useEffect(() => {
-    setTotalBudget(
-      categoryBudgets.reduce(
-        (previousValue, currentValue) => previousValue + Number(currentValue.budget),
-        0
-      )
-    );
+    setTotalBudget(sum(categoryBudgets.map((c) => c.budget || "0")));
   }, [categoryBudgets]);
 
   useEffect(() => {
@@ -203,7 +201,7 @@ export default function TargetSetter({
                 autoFocus={true}
                 required={true}
                 error={errors?.totalBudget ?? totalBudgetError}
-                onChangeHandler={(e) => setTotalBudget(Number(e.target.value))}
+                onChangeHandler={(e) => setTotalBudget(e.target.value)}
               />
             </fieldset>
 
@@ -294,7 +292,7 @@ export default function TargetSetter({
                                 if (item.index == categoryBudget.index) {
                                   return {
                                     ...item,
-                                    budget: Number(e.target.value),
+                                    budget: e.target.value,
                                   };
                                 } else {
                                   return item;

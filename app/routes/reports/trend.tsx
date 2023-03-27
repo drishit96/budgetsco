@@ -14,12 +14,12 @@ import type { ReportsPageContext } from "../reports";
 import { useEffect, useState } from "react";
 import PieChartCard from "~/components/PieChartCard";
 import MonthYearSelector from "~/components/MonthYearSelector";
-import { sumOf } from "~/utils/array.utils";
 import { ErrorText } from "~/components/ErrorText";
 import { SuccessText } from "~/components/SuccessText";
 import { Ripple } from "@rmwc/ripple";
 import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import LineChartCard from "~/components/LineChartCard";
+import { add, calculate, max, sum } from "~/utils/number.utils";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.route.id === "root");
@@ -71,13 +71,17 @@ export default function TrendReport() {
   const reportsPageContext = useOutletContext<ReportsPageContext>();
 
   const moneyDistribution = [
-    { name: "Expense", value: Number(totalExpense.toFixed(2)) },
-    { name: "Investment", value: Number(totalInvestmentDone.toFixed(2)) },
+    { name: "Expense", value: calculate(totalExpense).toFixed(2) },
+    { name: "Investment", value: calculate(totalInvestmentDone).toFixed(2) },
     {
       name: "Not used",
-      value: Math.max(
-        0,
-        Number((totalIncomeEarned - totalExpense - totalInvestmentDone).toFixed(2))
+      value: max(
+        "0",
+        calculate(totalIncomeEarned)
+          .minus(totalExpense)
+          .minus(totalInvestmentDone)
+          .toFixed(2)
+          .toString()
       ),
     },
   ];
@@ -86,10 +90,10 @@ export default function TrendReport() {
     .map(([category, categoryExpenses]) => {
       return {
         name: category.toString(),
-        value: sumOf(categoryExpenses, "expense"),
+        value: sum(categoryExpenses.map((c) => c.expense)),
       };
     })
-    .sort((a, b) => b.value - a.value);
+    .sort((a, b) => (calculate(b.value).minus(a.value).gt(0) ? 1 : -1));
 
   const categories = Object.keys(categoryExpensesByCategory).map((key) => ({
     label: key,
@@ -124,7 +128,7 @@ export default function TrendReport() {
 
       <Spacer />
 
-      {totalIncomeEarned != 0 && totalExpense > totalIncomeEarned && (
+      {totalIncomeEarned !== "0" && calculate(totalExpense).gt(totalIncomeEarned) && (
         <ErrorText error="You have already spent more than you have earned" showIcon />
       )}
 
@@ -259,7 +263,7 @@ export default function TrendReport() {
           <PieChartCard
             title="How did you use your money?"
             data={moneyDistribution}
-            total={Math.max(totalIncomeEarned, totalExpense + totalInvestmentDone)}
+            total={max(totalIncomeEarned, add(totalExpense, totalInvestmentDone))}
             currency={reportsPageContext.userPreferredCurrency}
             locale={reportsPageContext.userPreferredLocale}
             colors={EXPENSE_TYPE_COLOR_MAP}

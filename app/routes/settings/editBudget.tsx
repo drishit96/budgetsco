@@ -54,14 +54,12 @@ export let action: ActionFunction = async ({ request }) => {
     const budget = form.get("totalBudget")?.toString();
     const categoryBudget = form.get("categoryBudgetMap")?.toString();
 
-    let categoryBudgetMap = new Map<string, number>();
+    let categoryBudgetMap = new Map<string, string>();
     if (categoryBudget != null) {
       categoryBudgetMap = new Map(JSON.parse(categoryBudget));
     }
 
-    const targetInput = {
-      budget: Number(budget),
-    };
+    const targetInput = { budget };
 
     let { errors, targetDetails: monthTargetDetails } =
       parseMonthlyTargetInput(targetInput);
@@ -115,7 +113,7 @@ export default function EditBudget() {
   const expensePerCategory = useLoaderData<
     {
       category: string;
-      budget: number;
+      budget: string;
     }[]
   >();
   const actionData = useActionData<{

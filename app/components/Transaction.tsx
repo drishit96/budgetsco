@@ -66,7 +66,7 @@ export function Transaction({
               >
                 {transaction.type === "income" ? "+" : "-"}
                 {formatNumber(
-                  transaction.amount,
+                  transaction.amount.toString(),
                   context.userPreferredLocale ?? context.locale
                 )}
               </span>

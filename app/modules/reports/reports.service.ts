@@ -8,41 +8,43 @@ import {
   getFirstDateOfXMonthsBeforeFormatted,
   parseDate,
 } from "~/utils/date.utils";
+import type { Prisma } from "@prisma/client";
+import Decimal from "decimal.js";
 
 export type ThisMonthReportResponse = {
-  budget: number;
-  expense: number;
+  budget: Prisma.Decimal;
+  expense: Prisma.Decimal;
   categoryWiseTargetExpense: {
     category: string;
-    budget: number;
-    expense: number;
+    budget: Prisma.Decimal;
+    expense: Prisma.Decimal;
   }[];
-  incomeEarned: number;
-  investmentDone: number;
+  incomeEarned: Prisma.Decimal;
+  investmentDone: Prisma.Decimal;
   paymentModeExpense: {
     name: string;
-    value: number;
+    value: Prisma.Decimal;
   }[];
   categoryWiseTargetInvestment: {
     category: string;
-    budget: number;
-    investment: number;
+    budget: Prisma.Decimal;
+    investment: Prisma.Decimal;
   }[];
 };
 
 export type ComparisonReportResponse = {
   month: number;
   year: number;
-  budgetForMonth: number;
-  totalExpenseForMonth: number;
-  remainingBudgetForMonth: number;
+  budgetForMonth: Prisma.Decimal;
+  totalExpenseForMonth: Prisma.Decimal;
+  remainingBudgetForMonth: Prisma.Decimal;
   compareToMonth: number;
   compareToYear: number;
-  budgetForCompareToMonth: number;
-  totalExpenseForCompareToMonth: number;
-  remainingBudgetForCompareToMonth: number;
+  budgetForCompareToMonth: Prisma.Decimal;
+  totalExpenseForCompareToMonth: Prisma.Decimal;
+  remainingBudgetForCompareToMonth: Prisma.Decimal;
   categoryExpenses: CompareCategoryExpenses[];
-  maxExpense: number;
+  maxExpense: Prisma.Decimal;
 };
 
 export type TrendingReportResponse = {
@@ -52,16 +54,16 @@ export type TrendingReportResponse = {
   endYear: number;
   targets: {
     date: string;
-    budget: number;
-    expense: number;
-    income: number;
-    incomeEarned: number;
-    investment: number;
-    investmentDone: number;
+    budget: Prisma.Decimal;
+    expense: Prisma.Decimal;
+    income: Prisma.Decimal;
+    incomeEarned: Prisma.Decimal;
+    investment: Prisma.Decimal;
+    investmentDone: Prisma.Decimal;
   }[];
-  totalExpense: number;
-  totalIncomeEarned: number;
-  totalInvestmentDone: number;
+  totalExpense: Prisma.Decimal;
+  totalIncomeEarned: Prisma.Decimal;
+  totalInvestmentDone: Prisma.Decimal;
   categoryExpensesByCategory: { [key: string]: CategoryExpenseDate[] };
 };
 
@@ -140,16 +142,24 @@ export async function getThisMonthReport(
   const paymentModeExpense = await paymentModeExpensePromise;
 
   return {
-    budget: overallTargetExpense?.budget ?? 0,
-    expense: overallTargetExpense?.expense ?? 0,
+    budget: overallTargetExpense?.budget ?? new Decimal(0),
+    expense: overallTargetExpense?.expense ?? new Decimal(0),
     categoryWiseTargetExpense: categoryWiseTargetExpense.map((c) => {
-      return { category: c.category, budget: c.budget ?? 0, expense: c.amount };
+      return {
+        category: c.category,
+        budget: c.budget ?? new Decimal(0),
+        expense: c.amount,
+      };
     }),
     categoryWiseTargetInvestment: categoryWiseTargetInvestment.map((c) => {
-      return { category: c.category, budget: c.budget ?? 0, investment: c.amount };
+      return {
+        category: c.category,
+        budget: c.budget ?? new Decimal(0),
+        investment: c.amount,
+      };
     }),
-    incomeEarned: overallTargetExpense?.incomeEarned ?? 0,
-    investmentDone: overallTargetExpense?.investmentDone ?? 0,
+    incomeEarned: overallTargetExpense?.incomeEarned ?? new Decimal(0),
+    investmentDone: overallTargetExpense?.investmentDone ?? new Decimal(0),
     paymentModeExpense: paymentModeExpense.map((p) => {
       return { name: p.paymentMode, value: p.amount };
     }),
@@ -205,18 +215,22 @@ export async function getComparisonReports(
     year: monthData.date.getFullYear(),
     budgetForMonth: monthData.budget,
     totalExpenseForMonth: monthData?.expense,
-    remainingBudgetForMonth: monthData.budget - monthData.expense,
+    remainingBudgetForMonth: monthData.budget.minus(monthData.expense),
     compareToMonth: compareToMonthData.date.getMonth() + 1,
     compareToYear: compareToMonthData.date.getFullYear(),
     budgetForCompareToMonth: compareToMonthData.budget,
     totalExpenseForCompareToMonth: compareToMonthData.expense,
-    remainingBudgetForCompareToMonth:
-      compareToMonthData.budget - compareToMonthData.expense,
-    categoryExpenses,
-    maxExpense: Math.max(
-      Math.max(...categoryExpenses.map((e) => e.amount)),
-      Math.max(...categoryExpenses.map((e) => e.amountForCompareToMonth))
+    remainingBudgetForCompareToMonth: compareToMonthData.budget.minus(
+      compareToMonthData.expense
     ),
+    categoryExpenses,
+    maxExpense:
+      categoryExpenses.length > 0
+        ? Decimal.max(
+            Decimal.max(...categoryExpenses.map((e) => e.amount)),
+            Decimal.max(...categoryExpenses.map((e) => e.amountForCompareToMonth))
+          )
+        : new Decimal(0),
   };
 
   return data;
@@ -243,14 +257,16 @@ export async function getTrendingReport(
     getExpensePerCategoryForTimeRange(userId, startDate, endDate),
   ]);
 
-  let totalExpense = 0;
-  let totalIncomeEarned = 0;
-  let totalInvestmentDone = 0;
-  for (let target of targets) {
-    totalExpense += target.expense;
-    totalIncomeEarned += target.incomeEarned;
-    totalInvestmentDone += target.investmentDone;
-  }
+  const totalExpense =
+    targets.length > 0 ? Decimal.sum(...targets.map((t) => t.expense)) : new Decimal(0);
+  const totalIncomeEarned =
+    targets.length > 0
+      ? Decimal.sum(...targets.map((t) => t.incomeEarned))
+      : new Decimal(0);
+  const totalInvestmentDone =
+    targets.length > 0
+      ? Decimal.sum(...targets.map((t) => t.investmentDone))
+      : new Decimal(0);
 
   return {
     startMonth: startDate.getMonth() + 1,
@@ -331,15 +347,19 @@ export async function getTargetsForComparison(
     let monthData = targetAchievementData.find(
       (d) => formatDate_YYY_MM(d.date) === month
     );
-    monthData = monthData ?? { date: parseDate(month), budget: 0, expense: 0 };
+    monthData = monthData ?? {
+      date: parseDate(month),
+      budget: new Decimal(0),
+      expense: new Decimal(0),
+    };
 
     let compareToMonthData = targetAchievementData.find(
       (d) => formatDate_YYY_MM(d.date) === compareToMonth
     );
     compareToMonthData = compareToMonthData ?? {
       date: parseDate(compareToMonth),
-      budget: 0,
-      expense: 0,
+      budget: new Decimal(0),
+      expense: new Decimal(0),
     };
 
     return {
@@ -356,8 +376,8 @@ export async function getTargetsForComparison(
 
 export type CompareCategoryExpenses = {
   category: string;
-  amount: number;
-  amountForCompareToMonth: number;
+  amount: Prisma.Decimal;
+  amountForCompareToMonth: Prisma.Decimal;
 };
 
 async function getExpensePerCategoryForComparison(
@@ -405,14 +425,14 @@ async function getExpensePerCategoryForComparison(
       if (expenseForMonth == null && expenseForCompareToMonth != null) {
         expensePerCategory.push({
           category,
-          amount: 0,
+          amount: new Decimal(0),
           amountForCompareToMonth: expenseForCompareToMonth.amount,
         });
       } else if (expenseForMonth != null && expenseForCompareToMonth == null) {
         expensePerCategory.push({
           category: expenseForMonth.category,
           amount: expenseForMonth.amount,
-          amountForCompareToMonth: 0,
+          amountForCompareToMonth: new Decimal(0),
         });
       } else if (expenseForMonth != null && expenseForCompareToMonth != null) {
         expensePerCategory.push({
@@ -431,12 +451,12 @@ async function getExpensePerCategoryForComparison(
 
 export type CategoryExpense = {
   category: string;
-  expense: number;
+  expense: Prisma.Decimal;
 };
 
 export type CategoryExpenseDate = {
   category: string;
-  expense: number;
+  expense: Prisma.Decimal;
   date: string;
 };
 
@@ -463,7 +483,7 @@ async function getExpensePerCategoryForTimeRange(
 
     return categoryExpenses.map((categoryExpense) => ({
       category: categoryExpense.category,
-      expense: Number(categoryExpense.amount.toFixed(2)),
+      expense: categoryExpense.amount,
       date: formatDate_MMM_YYYY(categoryExpense.date),
     }));
   } catch (error) {
@@ -493,9 +513,6 @@ async function getTargets(userId: string, startDate: Date, endDate: Date) {
   return targets.map((target) => {
     return {
       ...target,
-      expense: Number(target.expense.toFixed(2)),
-      incomeEarned: Number(target.incomeEarned.toFixed(2)),
-      investmentDone: Number(target.investmentDone.toFixed(2)),
       date: formatDate_MMM_YYYY(target.date),
     };
   });

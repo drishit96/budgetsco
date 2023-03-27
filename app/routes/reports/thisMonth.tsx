@@ -16,6 +16,7 @@ import {
   INVESTMENT_CHART_COLORS_MAP,
 } from "~/utils/colors.utils";
 import type { Currency } from "~/utils/number.utils";
+import { add, calculate, max, subtract } from "~/utils/number.utils";
 import { formatToCurrency } from "~/utils/number.utils";
 import { ErrorText } from "~/components/ErrorText";
 import { SuccessText } from "~/components/SuccessText";
@@ -55,27 +56,29 @@ export let loader: LoaderFunction = async ({ request }) => {
   }
 };
 
-function getBudgetUsedPercent(budget: number, expense: number) {
-  if ((budget == 0 && expense > 0) || expense > budget) {
+function getBudgetUsedPercent(budget: string, expense: string) {
+  if ((budget === "0" && calculate(expense).gt(0)) || calculate(expense).gt(budget)) {
     return 100;
   }
-  return budget > 0 ? (expense / budget) * 100 : 0;
+  return calculate(budget).gt(0)
+    ? calculate(expense).dividedBy(budget).mul(100).toString()
+    : 0;
 }
 
-function getBudgetText(budget: number, currency: Currency) {
-  if (budget == 0) return "No budget";
+function getBudgetText(budget: string, currency: Currency) {
+  if (budget === "0") return "No budget";
   return `Budget: ${formatToCurrency(budget, "en-US", currency)}`;
 }
 
-function getBudgetLeftText(budget: number, expense: number, currency: Currency) {
-  if (budget === 0) {
+function getBudgetLeftText(budget: string, expense: string, currency: Currency) {
+  if (budget === "0") {
     return `${formatToCurrency(expense, "en-US", currency)} overspent`;
   } else if (expense === budget) {
     return "On the edge";
-  } else if (expense < budget) {
-    return `${formatToCurrency(budget - expense, "en-US", currency)} left`;
+  } else if (calculate(expense).lessThan(budget)) {
+    return `${formatToCurrency(subtract(budget, expense), "en-US", currency)} left`;
   } else {
-    return `${formatToCurrency(expense - budget, "en-US", currency)} overspent`;
+    return `${formatToCurrency(subtract(expense, budget), "en-US", currency)} overspent`;
   }
 }
 
@@ -94,7 +97,13 @@ export default function ThisMonthReport() {
   const moneyDistribution = [
     { name: "Expense", value: expense },
     { name: "Investment", value: investmentDone },
-    { name: "Not used", value: Math.max(0, incomeEarned - expense - investmentDone) },
+    {
+      name: "Not used",
+      value: max(
+        "0",
+        calculate(incomeEarned).minus(expense).minus(investmentDone).toString()
+      ),
+    },
   ];
 
   const expenseDistribution = categoryWiseTargetExpense?.map((categoryExpense) => {
@@ -137,14 +146,14 @@ export default function ThisMonthReport() {
         />
         <StatisticsCard
           name="Savings"
-          num={budget - expense}
+          num={subtract(budget, expense)}
           color="blue"
           currency={reportsPageContext.userPreferredCurrency}
           locale={reportsPageContext.userPreferredLocale}
         />
       </div>
 
-      {incomeEarned != 0 && expense > incomeEarned && (
+      {incomeEarned !== "0" && calculate(expense).gt(incomeEarned) && (
         <>
           <Spacer />
           <ErrorText error="You have already spent more than you have earned" showIcon />
@@ -233,7 +242,7 @@ export default function ThisMonthReport() {
           <PieChartCard
             title="How did you use your money?"
             data={moneyDistribution}
-            total={Math.max(incomeEarned, expense + investmentDone)}
+            total={max(incomeEarned, calculate(expense).plus(investmentDone).toString())}
             currency={reportsPageContext.userPreferredCurrency}
             locale={reportsPageContext.userPreferredLocale}
             colors={EXPENSE_TYPE_COLOR_MAP}
@@ -254,7 +263,7 @@ export default function ThisMonthReport() {
           />
         </div>
 
-        {investmentDone > 0 && (
+        {calculate(investmentDone).gt(0) && (
           <div className="p-3 border border-gray-200 rounded-md w-full lg:w-5/12">
             <PieChartCard
               title="Investment breakdown"

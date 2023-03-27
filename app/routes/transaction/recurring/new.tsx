@@ -51,7 +51,7 @@ export let action: ActionFunction = async ({ request }) => {
     occurrence: form.get("occurrence"),
     interval: Number(form.get("interval")),
     description: form.get("description"),
-    amount: Number(form.get("amount")),
+    amount: form.get("amount")?.toString(),
     type: form.get("type"),
     category: form.get("category")?.toString().trim(),
     category2: form.get("category2")?.toString().trim(),
@@ -92,7 +92,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   }
 
   const urlParams = new URL(request.url).searchParams;
-  const amount = Number(urlParams.get("amount") ?? "0");
+  const amount = urlParams.get("amount") ?? "0";
   const category = urlParams.get("category");
   const type = urlParams.get("type") ?? "";
   const paymentMode = urlParams.get("paymentMode") ?? "";
@@ -110,7 +110,7 @@ export default function NewRecurringTransaction() {
   const context = useOutletContext<AppContext>();
   const isSubmittingData = transition.state === "submitting";
   let { amount, category, type, paymentMode, description, startDate } = useLoaderData<{
-    amount: number;
+    amount: string;
     category?: string;
     type: string;
     paymentMode: string;
@@ -120,7 +120,7 @@ export default function NewRecurringTransaction() {
   const actionData = useActionData<{
     isRecurringTransactionSaved?: boolean;
     data?: {
-      amount: number;
+      amount: string;
       category?: string;
       type: string;
       paymentMode: string;

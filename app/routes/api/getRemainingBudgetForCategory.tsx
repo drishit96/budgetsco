@@ -21,5 +21,7 @@ export let loader: LoaderFunction = async ({ request }): Promise<any> => {
     return json({ [category]: null });
   }
 
-  return json({ [category]: categoryBudget.budget - categoryBudget.amount });
+  return json({
+    [category]: categoryBudget.budget.minus(categoryBudget.amount),
+  });
 };

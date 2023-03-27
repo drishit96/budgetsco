@@ -62,7 +62,7 @@ export function RecurringTransaction({
               <span className="flex-grow"></span>
               <span className={getTransactionColor(transaction.type) + " font-bold"}>
                 {transaction.type === "income" ? "+" : "-"}
-                {formatNumber(transaction.amount, context.userPreferredLocale)}
+                {formatNumber(transaction.amount.toString(), context.userPreferredLocale)}
               </span>
             </div>
 

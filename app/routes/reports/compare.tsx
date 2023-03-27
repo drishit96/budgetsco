@@ -10,7 +10,7 @@ import { format_MMMM_YYYY, format_MMM_YYYY } from "~/utils/date.utils";
 import { useEffect } from "react";
 import type { ReportsPageContext } from "../reports";
 import MonthYearSelector from "~/components/MonthYearSelector";
-import { formatToCurrency } from "~/utils/number.utils";
+import { abs, calculate, formatToCurrency } from "~/utils/number.utils";
 import Bar from "~/components/Bar";
 import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 
@@ -96,9 +96,11 @@ export default function CompareReport() {
           num={budgetForMonth}
           color="green"
           positiveIsBetter={true}
-          perc={
-            ((budgetForMonth - budgetForCompareToMonth) / Math.abs(budgetForCompareToMonth)) * 100
-          }
+          perc={calculate(budgetForMonth)
+            .minus(budgetForCompareToMonth)
+            .dividedBy(abs(budgetForCompareToMonth))
+            .mul(100)
+            .toNumber()}
           currency={reportsPageContext.userPreferredCurrency}
           locale={reportsPageContext.userPreferredLocale}
         />
@@ -108,11 +110,11 @@ export default function CompareReport() {
           num={totalExpenseForMonth}
           color="red"
           positiveIsBetter={false}
-          perc={
-            ((totalExpenseForMonth - totalExpenseForCompareToMonth) /
-              Math.abs(totalExpenseForCompareToMonth)) *
-            100
-          }
+          perc={calculate(totalExpenseForMonth)
+            .minus(totalExpenseForCompareToMonth)
+            .dividedBy(abs(totalExpenseForCompareToMonth))
+            .mul(100)
+            .toNumber()}
           currency={reportsPageContext.userPreferredCurrency}
           locale={reportsPageContext.userPreferredLocale}
         />
@@ -122,11 +124,11 @@ export default function CompareReport() {
           num={remainingBudgetForMonth}
           color="blue"
           positiveIsBetter={true}
-          perc={
-            ((remainingBudgetForMonth - remainingBudgetForCompareToMonth) /
-              Math.abs(remainingBudgetForCompareToMonth)) *
-            100
-          }
+          perc={calculate(remainingBudgetForMonth)
+            .minus(remainingBudgetForCompareToMonth)
+            .dividedBy(abs(remainingBudgetForCompareToMonth))
+            .mul(100)
+            .toNumber()}
           currency={reportsPageContext.userPreferredCurrency}
           locale={reportsPageContext.userPreferredLocale}
         />
@@ -157,14 +159,18 @@ export default function CompareReport() {
                   </div>
                   <Spacer size={0.5} />
                   <Bar
-                    percentage={(categoryExpense.amount / maxExpense) * 100}
+                    percentage={calculate(categoryExpense.amount)
+                      .dividedBy(maxExpense)
+                      .mul(100)
+                      .toNumber()}
                     color="bg-cyan-700"
                   />
                   <Spacer size={0.5} />
                   <Bar
-                    percentage={
-                      (categoryExpense.amountForCompareToMonth / maxExpense) * 100
-                    }
+                    percentage={calculate(categoryExpense.amountForCompareToMonth)
+                      .dividedBy(maxExpense)
+                      .mul(100)
+                      .toNumber()}
                     color="bg-yellow-700"
                   />
                   <Spacer size={0.5} />

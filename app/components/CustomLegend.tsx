@@ -1,5 +1,6 @@
 import type { Color } from "~/utils/colors.utils";
 import type { Currency } from "~/utils/number.utils";
+import { calculate, sum } from "~/utils/number.utils";
 import { formatNumber } from "~/utils/number.utils";
 import { formatPercentage } from "~/utils/number.utils";
 import CustomLegendRow from "./CustomLegendRow";
@@ -11,16 +12,13 @@ export function CustomLegend({
   locale,
   colorSet,
 }: {
-  rows: { name: string; value: number }[];
+  rows: { name: string; value: string }[];
   valueType: "number" | "currency";
   currency?: Currency;
   locale: string;
   colorSet?: Color[];
 }) {
-  const total = rows.reduce(
-    (previousValue, currentValue) => previousValue + currentValue.value,
-    0
-  );
+  const total = sum(rows.map((r) => r.value));
 
   return (
     <>
@@ -34,7 +32,10 @@ export function CustomLegend({
               ? formatNumber(row.value, locale)
               : row.value.toString()
           }
-          percentage={formatPercentage((row.value / total) * 100, locale)}
+          percentage={formatPercentage(
+            calculate(row.value).dividedBy(total).mul(100).toString(),
+            locale
+          )}
         />
       ))}
     </>

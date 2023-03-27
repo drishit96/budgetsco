@@ -14,6 +14,7 @@ import {
 } from "~/modules/transaction/transaction.schema";
 import { useEffect } from "react";
 import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import Decimal from "decimal.js";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.route.id === "root");
@@ -46,7 +47,7 @@ export let action: ActionFunction = async ({ request }) => {
     const form = await request.formData();
     const budget = form.get("totalBudget")?.toString();
 
-    const map = new Map<string, number>();
+    const map = new Map<string, string>();
     let prevCategory = "";
     for (let item of form.entries()) {
       const key = item[0];
@@ -54,29 +55,22 @@ export let action: ActionFunction = async ({ request }) => {
       if (key !== "totalBudget") {
         if (key.startsWith("category")) {
           prevCategory = value.toString();
-          map.set(value.toString(), 0);
+          map.set(value.toString(), "0");
         } else {
-          map.set(prevCategory, Number(value));
+          map.set(prevCategory, value);
         }
       }
     }
 
-    const targetInput = {
-      budget: Number(budget),
-    };
-
+    const targetInput = { budget };
     let { errors, targetDetails: monthTargetDetails } =
       parseMonthlyTargetInput(targetInput);
     const { errors: categoryWiseErrors, categoryWiseTargetDetails } =
       parseMonthlyCategoryWiseTargetInput(map);
 
     if (monthTargetDetails != null && categoryWiseTargetDetails != null) {
-      let categoryTotal = 0;
-      for (let value of categoryWiseTargetDetails.values()) {
-        categoryTotal += value;
-      }
-
-      if (monthTargetDetails.budget < categoryTotal) {
+      const categoryTotal = Decimal.sum(...categoryWiseTargetDetails.values());
+      if (monthTargetDetails.budget.lessThan(categoryTotal)) {
         return json({
           errors: {
             totalBudget:
