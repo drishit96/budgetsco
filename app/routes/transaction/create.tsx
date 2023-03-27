@@ -37,7 +37,7 @@ import {
   getCombinedTransactionTypeCategoriesForSelection,
   getTransactionTypeCategoriesForSelection,
 } from "~/utils/category.utils";
-import { formatToCurrency, getCurrencySymbol } from "~/utils/number.utils";
+import { formatToCurrency, getCurrencySymbol, max, subtract } from "~/utils/number.utils";
 import { isNullOrEmpty } from "~/utils/text.utils";
 import RecurringSetup from "~/components/RecurringSetup";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
@@ -71,7 +71,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   const transactionInput = {
     description: form.get("description")?.toString(),
-    amount: Number(form.get("amount")),
+    amount: form.get("amount")?.toString(),
     type: form.get("type")?.toString(),
     category: category?.trim(),
     category2: category2?.trim(),
@@ -147,19 +147,17 @@ export default function Create() {
   const submit = useSubmit();
   const navigation = useNavigation();
   const { budget, expense } = useLoaderData<{
-    budget: number;
-    expense: number;
+    budget: string;
+    expense: string;
   }>();
   const context = useOutletContext<AppContext>();
   const categoryRemainingBudgetFetcher = useFetcher();
   const categoryRemainingBudgetMap = useRef<{
     [key: string]: number | null | undefined;
   }>({});
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState("0");
   const [showRemainingBudget, setShowRemainingBudget] = useState(true);
-  const [remainingBudget, setRemainingBudget] = useState(
-    Number((budget - expense).toFixed(2))
-  );
+  const [remainingBudget, setRemainingBudget] = useState(subtract(budget, expense));
   const [transactionType, setTransactionType] = useState<TransactionType>("expense");
   const [paymentMode, setPaymentMode] = useState(paymentModes[0].value);
   const [categories, setCategories] = useState(
@@ -175,7 +173,10 @@ export default function Create() {
   const [recurringSetupContainer] = useAutoAnimate<HTMLDivElement>();
 
   const calculateRemainingBudget = useCallback(
-    (transactionAmount: number) => {
+    (transactionAmount: string) => {
+      if (isNullOrEmpty(transactionAmount)) {
+        transactionAmount = "0";
+      }
       if (
         selectedCategories.length &&
         categoryRemainingBudgetMap &&
@@ -184,15 +185,15 @@ export default function Create() {
         const categoryRemainingBudget =
           categoryRemainingBudgetMap.current[selectedCategories[0]] ?? 0;
         if (categoryRemainingBudget == 0) {
-          setRemainingBudget(0);
+          setRemainingBudget("0");
         } else {
           setRemainingBudget(
-            Number(Math.max(categoryRemainingBudget - transactionAmount, 0).toFixed(2))
+            max(subtract(categoryRemainingBudget, transactionAmount), "0")
           );
         }
       } else {
         setRemainingBudget(
-          Number(Math.max(budget - expense - transactionAmount, 0).toFixed(2))
+          max(subtract(subtract(budget, expense), transactionAmount), "0")
         );
       }
     },
@@ -309,7 +310,7 @@ export default function Create() {
                 prefix={getCurrencySymbol("en-US", context.userPreferredCurrency)}
                 disabled={isSubmittingData}
                 onChangeHandler={(e) => {
-                  setAmount(Number(e.target.value));
+                  setAmount(e.target.value);
                 }}
               />
             </p>

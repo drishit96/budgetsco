@@ -21,8 +21,8 @@ export default function PieChartCard({
   colHeaders,
 }: {
   title: string;
-  data: { name: string; value: number }[];
-  total: number;
+  data: { name: string; value: string }[];
+  total: string;
   currency?: Currency;
   locale: string;
   colors?: ColorMap;
@@ -42,8 +42,8 @@ export default function PieChartCard({
       </div>
 
       <Spacer size={1} />
-      {total == 0 && <InfoText text={zeroTotalInfoMsg} />}
-      {total != 0 && data.length > 0 && (
+      {total === "0" && <InfoText text={zeroTotalInfoMsg} />}
+      {total !== "0" && data.length > 0 && (
         <>
           <Spacer />
 
@@ -53,7 +53,8 @@ export default function PieChartCard({
                 <PieChart width={100} height={100}>
                   <Pie
                     animationDuration={800}
-                    data={data}
+                    //need to convert back to number since recharts doesn't support numbers in strings
+                    data={data.map((d) => ({ ...d, value: Number(d.value) }))}
                     cx="50%"
                     innerRadius={83}
                     outerRadius={100}

@@ -1,15 +1,12 @@
 import { z } from "zod";
 import { formatErrors } from "../../utils/error.utils";
+import { decimal } from "../transaction/transaction.schema";
 
 const recurringTransactionInput = {
   occurrence: z.enum(["day", "month", "year"]),
-  interval: z
-    .number()
-    .int()
-    .min(1, "Number must be greater than zero")
-    .max(500),
+  interval: z.number().int().min(1, "Number must be greater than zero").max(500),
   description: z.string().nullish(),
-  amount: z.number().gt(0, "Amount must be greater than zero").step(0.01),
+  amount: decimal({ errorMsg: "Amount must be greater than zero", path: ["amount"] }),
   type: z.enum(["income", "expense", "investment"]),
   category: z.string().min(1, "Please select a category"),
   category2: z.string().nullish(),
@@ -47,14 +44,8 @@ export const RecurringTransactionResponseSchema = z.object({
 export const RecurringTransactionsResponseSchema = z.array(
   RecurringTransactionResponseSchema
 );
-export const MonthlyCategoryWiseTargetInputSchema = z.map(
-  z.string().min(1),
-  z.number().gte(0)
-);
 
-export type RecurringTransactionInput = z.infer<
-  typeof RecurringTransactionInputSchema
->;
+export type RecurringTransactionInput = z.infer<typeof RecurringTransactionInputSchema>;
 export type RecurringTransactionResponse = z.infer<
   typeof RecurringTransactionResponseSchema
 >;

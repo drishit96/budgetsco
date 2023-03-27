@@ -30,7 +30,7 @@ import FilterIcon from "~/components/icons/FilterIcon";
 import { InlineSpacer } from "~/components/InlineSpacer";
 import type { NewFilter } from "~/components/FilterBottomSheet";
 import FilterBottomSheet from "~/components/FilterBottomSheet";
-import { formatToCurrency } from "~/utils/number.utils";
+import { divide, formatToCurrency, sum } from "~/utils/number.utils";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.route.id === "root");
@@ -228,7 +228,7 @@ export default function TransactionHistory() {
               <span className="font-bold">Total:</span>
               <InlineSpacer size={1} />
               {formatToCurrency(
-                transactions.reduce((a, c) => a + c.amount, 0),
+                sum(transactions.map((t) => t.amount.toString())),
                 context.userPreferredLocale,
                 context.userPreferredCurrency
               )}
@@ -239,7 +239,10 @@ export default function TransactionHistory() {
               <span className="font-bold">Average:</span>
               <InlineSpacer size={1} />
               {formatToCurrency(
-                transactions.reduce((a, c) => a + c.amount, 0) / transactions.length,
+                divide(
+                  sum(transactions.map((t) => t.amount.toString())),
+                  transactions.length
+                ),
                 context.userPreferredLocale,
                 context.userPreferredCurrency
               )}

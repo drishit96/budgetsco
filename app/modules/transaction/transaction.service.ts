@@ -1,4 +1,5 @@
 import type {
+  Decimal,
   MonthlyCategoryWiseTargetInput,
   MonthlyTargetInput,
   TransactionInput,
@@ -189,14 +190,14 @@ export async function editTransaction(
         )
       );
     } else {
-      const amountDiff = newTransaction.amount - oldTransaction.amount;
-      Math.abs(amountDiff) > 0 &&
+      const amountDiff = newTransaction.amount.minus(oldTransaction.amount);
+      amountDiff.abs().gt(0) &&
         tasks.push(
           updateMonthlyTarget(
             userId,
             newTransaction.type as TransactionType,
-            amountDiff > 0 ? "add" : "subtract",
-            Math.abs(amountDiff),
+            amountDiff.gt(0) ? "add" : "subtract",
+            amountDiff.abs(),
             timezone,
             oldTransaction.createdAt
           )
@@ -227,14 +228,14 @@ export async function editTransaction(
           )
         );
       } else {
-        Math.abs(amountDiff) > 0 &&
+        amountDiff.abs().gt(0) &&
           tasks.push(
             updatePaymentModeAmount(
               userId,
               newTransaction.type as TransactionType,
               newTransaction.paymentMode,
-              amountDiff > 0 ? "add" : "subtract",
-              Math.abs(amountDiff),
+              amountDiff.gt(0) ? "add" : "subtract",
+              amountDiff.abs(),
               timezone,
               oldTransaction.createdAt
             )
@@ -300,14 +301,14 @@ export async function editTransaction(
     });
 
     categoriesToUpdate.forEach((category) => {
-      const amountDiff = newTransaction.amount - oldTransaction.amount;
+      const amountDiff = newTransaction.amount.minus(oldTransaction.amount);
       tasks.push(
         updateCategoryAmount(
           userId,
           category,
           newTransaction.type as TransactionType,
-          amountDiff > 0 ? "add" : "subtract",
-          Math.abs(amountDiff),
+          amountDiff.gt(0) ? "add" : "subtract",
+          amountDiff.abs(),
           timezone,
           oldTransaction.createdAt
         )
@@ -342,11 +343,11 @@ async function updateMonthlyTarget(
   userId: string,
   type: TransactionType,
   operationType: "add" | "subtract",
-  amount: number,
+  amount: Decimal,
   timezone: string,
   date?: Date
 ) {
-  amount = operationType === "add" ? amount : -amount;
+  amount = operationType === "add" ? amount : amount.negated();
   let data = {};
   switch (type) {
     case "expense":
@@ -367,11 +368,11 @@ async function updateMonthlyTarget(
       userId,
       date,
       budget: 0,
-      expense: type === "expense" && amount > 0 ? amount : 0,
+      expense: type === "expense" && amount.gt(0) ? amount : 0,
       income: 0,
-      incomeEarned: type === "income" && amount > 0 ? amount : 0,
+      incomeEarned: type === "income" && amount.gt(0) ? amount : 0,
       investment: 0,
-      investmentDone: type === "investment" && amount > 0 ? amount : 0,
+      investmentDone: type === "investment" && amount.gt(0) ? amount : 0,
     },
     update: data,
     where: {
@@ -389,7 +390,7 @@ async function updateCategoryAmount(
   category: string,
   type: TransactionType,
   operationType: "add" | "subtract",
-  amount: number,
+  amount: Decimal,
   timezone: string,
   date?: Date
 ) {
@@ -403,7 +404,7 @@ async function updateCategoryAmount(
     },
     update: {
       amount: {
-        increment: operationType === "add" ? amount : -amount,
+        increment: operationType === "add" ? amount : amount.negated(),
       },
     },
     where: {
@@ -424,7 +425,7 @@ async function updatePaymentModeAmount(
   transactionType: TransactionType,
   paymentMode: string,
   operationType: "add" | "subtract",
-  amount: number,
+  amount: Decimal,
   timezone: string,
   date?: Date
 ) {
@@ -438,7 +439,8 @@ async function updatePaymentModeAmount(
     },
     update: {
       amount: {
-        increment: operationType === "add" ? amount : -amount,
+        increment:
+          operationType === "add" ? amount : amount.negated(),
       },
     },
     where: {

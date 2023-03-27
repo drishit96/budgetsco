@@ -38,12 +38,12 @@ model NotificationToken {
 model MonthlyTarget {
   userId         String
   date           DateTime
-  budget         Float
-  expense        Float
-  income         Float
-  incomeEarned   Float
-  investment     Float
-  investmentDone Float
+  budget         Decimal  @db.Decimal(16, 4)
+  expense        Decimal  @db.Decimal(22, 4)
+  income         Decimal  @db.Decimal(22, 4)
+  incomeEarned   Decimal  @db.Decimal(16, 4)
+  investment     Decimal  @db.Decimal(22, 4)
+  investmentDone Decimal  @db.Decimal(16, 4)
   user           User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, date])
@@ -60,8 +60,8 @@ model CategoryAmount {
   date     DateTime
   category String
   type     TransactionType
-  amount   Float
-  budget   Float?
+  amount   Decimal          @db.Decimal(22, 4)
+  budget   Decimal?         @db.Decimal(16, 4)
   user     User             @relation(fields: [userId], references: [id])
 
   @@unique([userId, date, type, category])
@@ -73,8 +73,8 @@ model PaymentModeAmount {
   date            DateTime
   transactionType TransactionType
   paymentMode     String
-  amount          Float
-  budget          Float?
+  amount          Decimal  @db.Decimal(22, 4)
+  budget          Decimal? @db.Decimal(16, 4)
   user            User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, date, transactionType, paymentMode])
@@ -86,7 +86,7 @@ model Transaction {
   createdAt      DateTime         @default(now())
   createdAtLocal DateTime
   description    String?          @db.VarChar(250)
-  amount         Float
+  amount         Decimal          @db.Decimal(22, 4)
   type           TransactionType
   category       String
   category2      String?
@@ -120,8 +120,8 @@ model UserPreference {
 model RecurringTransaction {
   id            String            @id @default(nanoid(12))
   occurrence    String            @db.VarChar(5)
-  interval      Int
-  amount        Float
+  interval      Int               @db.UnsignedSmallInt
+  amount        Decimal           @db.Decimal(22, 4)
   type          TransactionType
   category      String
   category2     String?

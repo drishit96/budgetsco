@@ -48,7 +48,8 @@ import { getThisMonthTarget } from "~/modules/reports/reports.service";
 import { StatisticsCard } from "~/components/StatisticsCard";
 import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import { formatDate_MMMM_YYYY } from "~/utils/date.utils";
-import type { Currency } from "~/utils/number.utils";
+import type { Currency} from "~/utils/number.utils";
+import { abs, calculate, subtract } from "~/utils/number.utils";
 import SubscriptionRequiredBottomSheet from "~/components/SubscriptionRequiredBottomSheet";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
@@ -165,7 +166,7 @@ export let loader: LoaderFunction = async ({ request }) => {
       transactions: await transactions,
       targetDetails: await targetDetails,
       askUserForNewTarget: (await targetDetails) == null,
-      recommendToSetBudget: (await targetDetails)?.thisMonth?.budget == 0,
+      recommendToSetBudget: (await targetDetails)?.thisMonth?.budget?.isZero(),
       refreshSession,
     },
     {
@@ -250,8 +251,8 @@ export default function Index() {
     upcomingTransactions: RecurringTransactionsResponse;
     transactions: TransactionResponse[];
     targetDetails: {
-      thisMonth: { budget: number; expense: number; date: string };
-      prevMonth: { budget: number; expense: number };
+      thisMonth: { budget: string; expense: string; date: string };
+      prevMonth: { budget: string; expense: string };
     };
     askUserForNewTarget: boolean;
     recommendToSetBudget: boolean;
@@ -472,28 +473,36 @@ export default function Index() {
               name="Expense"
               num={targetDetails.thisMonth.expense}
               positiveIsBetter={false}
-              perc={
-                ((targetDetails.thisMonth.expense - targetDetails.prevMonth.expense) /
-                  Math.abs(targetDetails.prevMonth.expense)) *
-                100
-              }
+              perc={calculate(targetDetails.thisMonth.expense)
+                .minus(targetDetails.prevMonth.expense)
+                .dividedBy(abs(targetDetails.prevMonth.expense))
+                .mul(100)
+                .toNumber()}
               color="red"
               currency={context.userPreferredCurrency ?? (context.currency as Currency)}
               locale={context.userPreferredLocale ?? context.locale}
             />
             <StatisticsCard
               name="Savings"
-              num={targetDetails.thisMonth.budget - targetDetails.thisMonth.expense}
+              num={calculate(targetDetails.thisMonth.budget)
+                .minus(targetDetails.thisMonth.expense)
+                .toString()}
               positiveIsBetter={true}
-              perc={
-                ((targetDetails.thisMonth.budget -
-                  targetDetails.thisMonth.expense -
-                  (targetDetails.prevMonth.budget - targetDetails.prevMonth.expense)) /
-                  Math.abs(
-                    targetDetails.prevMonth.budget - targetDetails.prevMonth.expense
-                  )) *
-                100
-              }
+              perc={calculate(targetDetails.thisMonth.budget)
+                .minus(targetDetails.thisMonth.expense)
+                .minus(
+                  subtract(
+                    targetDetails.prevMonth.budget,
+                    targetDetails.prevMonth.expense
+                  )
+                )
+                .dividedBy(
+                  calculate(targetDetails.prevMonth.budget)
+                    .minus(targetDetails.prevMonth.expense)
+                    .abs()
+                )
+                .mul(100)
+                .toNumber()}
               color="blue"
               currency={context.userPreferredCurrency ?? (context.currency as Currency)}
               locale={context.userPreferredLocale ?? context.locale}

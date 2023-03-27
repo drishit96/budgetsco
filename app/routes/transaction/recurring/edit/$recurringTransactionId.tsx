@@ -75,7 +75,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     occurrence: form.get("occurrence"),
     interval: Number(form.get("interval")),
     description: form.get("description"),
-    amount: Number(form.get("amount")),
+    amount: form.get("amount")?.toString(),
     type: form.get("type"),
     category,
     category2,

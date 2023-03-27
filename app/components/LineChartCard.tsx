@@ -54,7 +54,19 @@ export default function LineChartCard({
               <LineChart
                 width={500}
                 height={300}
-                data={data}
+                data={data.map((item) => {
+                  //need to convert back to number since recharts doesn't support numbers in strings
+                  let numData: { [key: string]: string | number } = {};
+                  for (let key in item) {
+                    //excluding date column as it's not a number
+                    if (key === "date") {
+                      numData[key] = item[key];
+                    } else {
+                      numData[key] = Number(item[key]);
+                    }
+                  }
+                  return numData;
+                })}
                 margin={{
                   top: 5,
                   right: 30,

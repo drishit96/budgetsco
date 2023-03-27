@@ -38,7 +38,13 @@ import {
   getTransactionTypeCategoriesForSelection,
   isNewCustomCategory,
 } from "~/utils/category.utils";
-import { formatToCurrency, getCurrencySymbol } from "~/utils/number.utils";
+import {
+  calculate,
+  formatToCurrency,
+  getCurrencySymbol,
+  max,
+  subtract,
+} from "~/utils/number.utils";
 import { isNullOrEmpty } from "~/utils/text.utils";
 import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import { logError } from "~/utils/logger.utils.server";
@@ -137,8 +143,8 @@ export default function EditTransaction() {
   const navigation = useNavigation();
   const { monthData, transaction, isPastMonth } = useLoaderData<{
     monthData: {
-      budget: number;
-      expense: number;
+      budget: string;
+      expense: string;
     };
     transaction: Transaction;
     isPastMonth: boolean;
@@ -153,7 +159,7 @@ export default function EditTransaction() {
     transaction.type === "expense"
   );
   const [remainingBudget, setRemainingBudget] = useState(
-    Number((monthData.budget - monthData.expense).toFixed(2))
+    subtract(monthData.budget, monthData.expense)
   );
   const [transactionType, setTransactionType] = useState<TransactionType>(
     transaction.type as TransactionType
@@ -172,7 +178,10 @@ export default function EditTransaction() {
   const [paymentMode, setPaymentMode] = useState(transaction.paymentMode);
 
   const calculateRemainingBudget = useCallback(
-    (newTransactionAmount: number) => {
+    (newTransactionAmount: string) => {
+      if (isNullOrEmpty(newTransactionAmount)) {
+        newTransactionAmount = "0";
+      }
       const newCategory = selectedCategories[0];
       if (
         selectedCategories.length &&
@@ -182,31 +191,31 @@ export default function EditTransaction() {
         const categoryRemainingBudget =
           categoryRemainingBudgetMap.current[newCategory] ?? 0;
         if (categoryRemainingBudget == 0) {
-          setRemainingBudget(0);
+          setRemainingBudget("0");
         } else if (newCategory == transaction.category) {
           setRemainingBudget(
-            Number(
-              Math.max(
-                categoryRemainingBudget - newTransactionAmount + transaction.amount,
-                0
-              ).toFixed(2)
+            max(
+              calculate(categoryRemainingBudget)
+                .minus(newTransactionAmount)
+                .plus(transaction.amount)
+                .toString(),
+              "0"
             )
           );
         } else {
           setRemainingBudget(
-            Number(Math.max(categoryRemainingBudget - newTransactionAmount, 0).toFixed(2))
+            max(subtract(categoryRemainingBudget, newTransactionAmount), "0")
           );
         }
       } else {
         setRemainingBudget(
-          Number(
-            Math.max(
-              monthData.budget -
-                monthData.expense -
-                newTransactionAmount +
-                transaction.amount,
-              0
-            ).toFixed(2)
+          max(
+            calculate(monthData.budget)
+              .minus(monthData.expense)
+              .minus(newTransactionAmount)
+              .plus(transaction.amount)
+              .toString(),
+            "0"
           )
         );
       }
@@ -324,7 +333,7 @@ export default function EditTransaction() {
                   prefix={getCurrencySymbol("en-US", context.userPreferredCurrency)}
                   disabled={isSubmittingData}
                   onChangeHandler={(e) => {
-                    setAmount(Number(e.target.value));
+                    setAmount(e.target.value);
                   }}
                 />
               </p>
