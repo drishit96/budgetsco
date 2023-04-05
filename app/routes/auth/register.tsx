@@ -140,7 +140,8 @@ export default function Register() {
       return;
     }
 
-    const challengeResponse = (window.turnstile && window.turnstile.getResponse()) ?? "";
+    const challengeResponse =
+      (window.turnstile && window.turnstile.getResponse(window.turnstileWidgetId)) ?? "";
     if (!challengeResponse) {
       setErrors((prev) => ({
         ...prev,
