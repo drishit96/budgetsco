@@ -2,7 +2,14 @@ import { Ripple } from "@rmwc/ripple";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { Form, Link, useActionData, useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useActionData,
+  useNavigation,
+  useOutletContext,
+  useSubmit,
+} from "@remix-run/react";
 import { ErrorValidation } from "~/components/ErrorValidation";
 import { Input } from "~/components/Input";
 import { Spacer } from "~/components/Spacer";
@@ -174,7 +181,8 @@ export default function Login() {
   ) {
     e.preventDefault();
 
-    const challengeResponse = (window.turnstile && window.turnstile.getResponse()) ?? "";
+    const challengeResponse =
+      (window.turnstile && window.turnstile.getResponse(window.turnstileWidgetId)) ?? "";
     if (!challengeResponse) {
       setError("Invalid request");
       return;
