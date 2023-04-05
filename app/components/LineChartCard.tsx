@@ -77,6 +77,10 @@ export default function LineChartCard({
                 <XAxis type="category" dataKey={xAxis.dataKey} />
                 <YAxis />
                 <Tooltip
+                  contentStyle={{
+                    backgroundColor: "var(--bg-color)",
+                    borderColor: "var(--border-color)",
+                  }}
                   formatter={(value) =>
                     formatToCurrency(value as number, locale, currency)
                   }
@@ -105,7 +109,9 @@ export default function LineChartCard({
                 <tr>
                   {[xAxis.name, ...lines.map((l) => l.name)].map((header, index) => (
                     <th
-                      className={`p-1 border ${index == 0 ? "text-left" : "text-right"}`}
+                      className={`p-1 border border-primary ${
+                        index == 0 ? "text-left" : "text-right"
+                      }`}
                       key={header}
                     >
                       {header}
@@ -121,7 +127,7 @@ export default function LineChartCard({
                         (col, index) => {
                           return (
                             <td
-                              className={`p-1 border tabular-nums ${
+                              className={`p-1 border border-primary tabular-nums ${
                                 index == 0 ? "text-left" : "text-right"
                               }`}
                               key={row[col]}

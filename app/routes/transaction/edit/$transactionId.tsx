@@ -352,7 +352,7 @@ export default function EditTransaction() {
                   ) : null}
                   <Spacer size={3} />
 
-                  <label>
+                  <label className="text-primary">
                     <p>Type</p>
                     <select
                       name="type"

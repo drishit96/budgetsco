@@ -152,7 +152,7 @@ export default function TransactionHistory() {
       <h1 className="text-3xl text-center">Your transactions</h1>
       <div className="flex flex-col justify-center items-center">
         <div className="w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-3">
-          <div className="flex bg-white sticky top-0 z-10">
+          <div className="flex bg-base sticky top-0 z-10">
             <Form
               className="flex flex-col items-center md:items-start w-8/12 lg:w-10/12"
               method="get"
@@ -180,7 +180,9 @@ export default function TransactionHistory() {
                   </button>
                 </Ripple>
 
-                {formatDate_MMMM_YYYY(parseDate(currentMonth))}
+                <span className="text-primary">
+                  {formatDate_MMMM_YYYY(parseDate(currentMonth))}
+                </span>
 
                 <Ripple unbounded>
                   <button className="p-2" type="submit" name="month" value={nextMonth}>
@@ -211,7 +213,7 @@ export default function TransactionHistory() {
               >
                 <FilterIcon size={24} />
                 <InlineSpacer size={1} />
-                <span>Filter</span>
+                <span className="text-primary">Filter</span>
                 <InlineSpacer size={1} />
                 {(categories.length > 0 || types.length > 0) && (
                   <span className="w-min pl-1 pr-1 rounded-full bg-emerald-700 text-white">
@@ -223,7 +225,7 @@ export default function TransactionHistory() {
           </div>
           <Spacer />
 
-          <div className="flex flex-wrap md:justify-end gap-2 pl-2 pr-2 text-sm text-gray-700">
+          <div className="flex flex-wrap md:justify-end gap-2 pl-2 pr-2 text-sm">
             <div>
               <span className="font-bold">Total:</span>
               <InlineSpacer size={1} />

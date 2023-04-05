@@ -325,7 +325,7 @@ export default function EditRecurringTransaction() {
                   />
 
                   <Spacer />
-                  <div className="border p-4 rounded-md">
+                  <div className="border border-primary p-4 rounded-md">
                     <RecurringSetup
                       disableInput={isSubmittingData}
                       data={{

@@ -55,6 +55,7 @@ import {
   saveLastModifiedToLocalStorage,
 } from "./utils/category.utils";
 import { BottomSheet } from "./components/BottomSheet";
+import { getCurrentAppTheme, setAppTheme } from "./utils/setting.utils";
 
 export const links: LinksFunction = () => {
   return [
@@ -236,6 +237,10 @@ export default function App() {
   };
 
   useEffect(() => {
+    setAppTheme(getCurrentAppTheme());
+  }, []);
+
+  useEffect(() => {
     if (navigation.state === "loading") {
       loadingProgress.current?.classList.remove("w-0");
       loadingProgress.current?.classList.add("duration-1000", "w-full", "bg-yellow-500");
@@ -362,10 +367,10 @@ export default function App() {
         </div> */}
 
         {isBackButtonVisible ? (
-          <nav className="z-20 fixed bg-white rounded-full focus-border">
+          <nav className="z-20 fixed bg-base rounded-full focus-border">
             <Ripple unbounded>
               <button className="p-4" onClick={() => history.go(-1)}>
-                <Back size={24} color={"#000"} />
+                <Back size={24} color={"var(--text-color-primary)"} />
               </button>
             </Ripple>
           </nav>
@@ -374,7 +379,7 @@ export default function App() {
         {!isBackButtonVisible && !location.pathname.includes("/intro") && (
           <div className="z-20 flex items-center">
             <span className="flex justify-center w-full">
-              <p className="text-base font-bold p-3 border-b">budgetsco</p>
+              <p className="text-base text-primary font-bold p-3 border-b">budgetsco</p>
             </span>
           </div>
         )}
@@ -382,7 +387,7 @@ export default function App() {
         {(location.pathname.includes("/dashboard") ||
           location.pathname.includes("/reports") ||
           location.pathname.includes("/settings/list")) && (
-          <nav className="z-20 flex justify-evenly fixed bottom-0 left-1/2 -translate-x-1/2 w-full md:w-3/4 lg:w-2/3 xl:w-1/2 bg-white border rounded-t-md text-gray-700 font-bold shadow-2xl">
+          <nav className="z-20 flex justify-evenly fixed bottom-0 left-1/2 -translate-x-1/2 w-full md:w-3/4 lg:w-2/3 xl:w-1/2 bg-elevated-10 border border-primary text-primary rounded-t-md font-bold shadow-2xl">
             <Ripple accent>
               <Link
                 className="flex flex-col items-center w-full p-1 focus-border"
@@ -393,12 +398,18 @@ export default function App() {
                 <span>
                   <DashboardIcon
                     size={24}
-                    color={location.pathname.includes("/dashboard") ? "#047857" : "#000"}
+                    color={
+                      location.pathname.includes("/dashboard")
+                        ? "var(--text-color-accent)"
+                        : "var(--text-color-primary)"
+                    }
                   />
                 </span>
                 <p
                   className={`text-xs ${
-                    location.pathname.includes("/dashboard") ? "text-emerald-700" : "#000"
+                    location.pathname.includes("/dashboard")
+                      ? "text-accent"
+                      : "text-primary"
                   }`}
                 >
                   Dashboard
@@ -415,12 +426,18 @@ export default function App() {
                 <span>
                   <Report
                     size={24}
-                    color={location.pathname.includes("/reports") ? "#047857" : "#000"}
+                    color={
+                      location.pathname.includes("/reports")
+                        ? "var(--text-color-accent)"
+                        : "var(--text-color-primary)"
+                    }
                   />
                 </span>
                 <p
                   className={`text-xs ${
-                    location.pathname.includes("/reports") ? "text-emerald-700" : "#000"
+                    location.pathname.includes("/reports")
+                      ? "text-accent"
+                      : "text-primary"
                   }`}
                 >
                   Reports
@@ -438,15 +455,17 @@ export default function App() {
                   <SettingIcon
                     size={24}
                     color={
-                      location.pathname.includes("/settings/list") ? "#047857" : "#000"
+                      location.pathname.includes("/settings/list")
+                        ? "var(--text-color-accent)"
+                        : "var(--text-color-primary)"
                     }
                   />
                 </span>
                 <p
                   className={`text-xs ${
                     location.pathname.includes("/settings/list")
-                      ? "text-emerald-700"
-                      : "#000"
+                      ? "text-accent"
+                      : "text-primary"
                   }`}
                 >
                   Settings
@@ -509,7 +528,7 @@ export default function App() {
         </BottomSheet>
 
         <Spacer size={4} />
-        <div ref={pageParent}>
+        <div className="text-primary" ref={pageParent}>
           <Outlet context={context} />
         </div>
         <ScrollRestoration />

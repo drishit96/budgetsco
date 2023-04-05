@@ -19,7 +19,7 @@ export default function SubscriptionRequiredBottomSheet({
       <Spacer />
       <p>You need an active budgetsco subscription to create transactions.</p>
       <Spacer size={1} />
-      <p className="text-sm text-gray-700">
+      <p className="text-sm">
         (Already subscribed?{" "}
         <button className="underline" onClick={() => onRefresh()}>
           Refresh status

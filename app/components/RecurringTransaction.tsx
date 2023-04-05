@@ -48,7 +48,7 @@ export function RecurringTransaction({
     <div ref={listItemParent}>
       <Ripple>
         <button
-          className={`w-full bg-white focus-border p-2 rounded-md 
+          className={`w-full bg-base border-primary focus-border p-2 rounded-md 
           ${hideDivider ? "" : "border-b"} 
           ${expandedIndex === index ? "border-t border-l border-r rounded-b-none" : ""}`}
           onClick={() => {
@@ -57,7 +57,7 @@ export function RecurringTransaction({
         >
           <div className="flex flex-col">
             <div className="flex">
-              <span className="font-bold text-gray-700">{transaction.category}</span>
+              <span className="font-bold">{transaction.category}</span>
               <span className="flex-grow"></span>
               <span className={getTransactionColor(transaction.type) + " font-bold"}>
                 {transaction.type === "income" ? "+" : "-"}
@@ -68,9 +68,9 @@ export function RecurringTransaction({
             {transaction.description && (
               <div>
                 <Spacer size={1} />
-                <span className="flex gap-2 bg-white">
+                <span className="flex gap-2 bg-base">
                   <InfoIcon size={24} />
-                  <span>{transaction.description}</span>
+                  <span className="text-primary">{transaction.description}</span>
                 </span>
               </div>
             )}
@@ -86,12 +86,12 @@ export function RecurringTransaction({
       </Ripple>
 
       {expandedIndex === index && (
-        <div className="w-full flex border-b border-t rounded-b-md bg-white">
+        <div className="w-full flex border-b border-t border-primary rounded-b-md bg-base">
           {!manageView && (
             <Form
               replace
               method="post"
-              className="flex-1 cursor-pointer border-l border-r"
+              className="flex-1 cursor-pointer border-l border-r border-primary"
             >
               <input type="hidden" name="formName" value="MARK_AS_DONE_FORM" />
               <input type="hidden" name="transactionId" value={transaction.id} />
@@ -114,7 +114,7 @@ export function RecurringTransaction({
             <Ripple>
               <Link
                 to={`/transaction/recurring/edit/${transaction.id}`}
-                className="flex flex-col flex-1 items-center p-3 border-l focus-border"
+                className="flex flex-col flex-1 items-center p-3 border-l border-primary focus-border"
               >
                 <EditIcon size={24} />
                 <Spacer size={1} />
@@ -126,7 +126,7 @@ export function RecurringTransaction({
           <Form
             replace
             method="delete"
-            className="flex-1 cursor-pointer border-l border-r"
+            className="flex-1 cursor-pointer border-l border-r border-primary"
           >
             <input type="hidden" name="transactionId" value={transaction.id} />
             <input

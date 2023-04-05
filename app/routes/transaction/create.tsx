@@ -329,7 +329,7 @@ export default function Create() {
                 ) : null}
                 <Spacer size={3} />
 
-                <label>
+                <label className="text-primary">
                   <p>Type</p>
                   <select
                     name="type"
@@ -420,8 +420,11 @@ export default function Create() {
                 />
 
                 <Spacer size={3} />
-                <div className="border w-full p-3" ref={recurringSetupContainer}>
-                  <label>
+                <div
+                  className="border border-primary w-full p-3"
+                  ref={recurringSetupContainer}
+                >
+                  <label className="text-primary">
                     <input
                       className="form-checkbox checkbox"
                       type="checkbox"

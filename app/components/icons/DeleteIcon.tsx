@@ -1,4 +1,4 @@
-const DeleteIcon = ({ size = 100, color = "#000000" }) => (
+const DeleteIcon = ({ size = 100, color = "var(--text-color-primary)" }) => (
   <svg
     className="inline align-text-top"
     xmlns="http://www.w3.org/2000/svg"

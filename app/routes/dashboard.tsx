@@ -48,7 +48,7 @@ import { getThisMonthTarget } from "~/modules/reports/reports.service";
 import { StatisticsCard } from "~/components/StatisticsCard";
 import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import { formatDate_MMMM_YYYY } from "~/utils/date.utils";
-import type { Currency} from "~/utils/number.utils";
+import type { Currency } from "~/utils/number.utils";
 import { abs, calculate, subtract } from "~/utils/number.utils";
 import SubscriptionRequiredBottomSheet from "~/components/SubscriptionRequiredBottomSheet";
 
@@ -339,7 +339,7 @@ export default function Index() {
 
   return (
     <main className="pb-28 pl-3 pr-3">
-      <h1 className="text-3xl text-center pb-5">Dashboard</h1>
+      <h1 className="text-3xl text-center text-primary-dark pb-5">Dashboard</h1>
       <div className="flex flex-col items-center">
         <div
           ref={bannerParent}
@@ -441,8 +441,8 @@ export default function Index() {
         </div>
 
         {overDueTransactions && overDueTransactions.length > 0 && (
-          <div className="p-2 rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-3 bg-red-50">
-            <p className="text-lg text-center text-red-700 p-1 font-bold">Overdue</p>
+          <div className="p-2 rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-3 bg-urgent">
+            <p className="text-lg text-center text-urgent p-1 font-bold">Overdue</p>
             <Spacer size={1} />
             <ul ref={listParent}>
               {renderRecurringTransactions(
@@ -456,8 +456,8 @@ export default function Index() {
           </div>
         )}
 
-        <div className="w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-1 p-2 rounded-md bg-slate-50">
-          <p className="text-center text-gray-700 font-bold p-1">
+        <div className="w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-1 p-2 rounded-md bg-elevated-10">
+          <p className="text-center text-primary font-bold p-1">
             {formatDate_MMMM_YYYY(new Date(targetDetails.thisMonth.date))}
           </p>
           <Spacer size={0.5} />
@@ -526,8 +526,8 @@ export default function Index() {
         )}
 
         {transactions && (
-          <div className="p-2 rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-3 bg-slate-50">
-            <p className="text-lg text-center text-gray-700 p-1 font-bold">
+          <div className="p-2 rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-3 bg-elevated-10">
+            <p className="text-lg text-center text-primary p-1 font-bold">
               Recent transactions
             </p>
             <Spacer />

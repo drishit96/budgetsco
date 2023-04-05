@@ -18,35 +18,35 @@
   }
 
   .btn-primary {
-    @apply bg-emerald-700 text-white rounded-lg p-3 pl-4 pr-4 select-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-700;
+    @apply bg-emerald-700 text-white rounded-lg p-3 pl-4 pr-4 select-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-700;
   }
 
   .btn-primary-sm {
-    @apply bg-emerald-700 text-white rounded-lg p-1 pl-2 pr-2 select-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-700;
+    @apply bg-emerald-700 text-white rounded-lg p-1 pl-2 pr-2 select-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-700;
   }
 
   .btn-secondary {
-    @apply bg-transparent text-emerald-700 border border-emerald-700 rounded-lg p-2 pl-4 pr-4 select-none focus:ring-1 focus:ring-offset-2 focus:ring-emerald-700;
+    @apply bg-transparent text-accent border border-accent rounded-lg p-2 pl-4 pr-4 select-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-700;
   }
 
   .btn-secondary-sm {
-    @apply bg-transparent text-emerald-700 border border-emerald-700 rounded-lg p-1 pl-2 pr-2 select-none focus:ring-1 focus:ring-offset-2 focus:ring-emerald-700;
+    @apply bg-transparent text-accent border border-accent rounded-lg p-1 pl-2 pr-2 select-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-700;
   }
 
   .input {
-    @apply border border-gray-300 rounded-md p-2 text-lg focus:border-emerald-700 focus:ring-1 focus:ring-emerald-700 focus:outline-none;
+    @apply border border-primary bg-base text-primary rounded-md p-2 text-lg focus:border-emerald-700 focus:ring-1 focus:ring-emerald-700 focus:outline-none;
   }
 
   .radio {
-    @apply focus:ring-emerald-600 h-4 w-4 text-emerald-700;
+    @apply bg-base focus:ring-emerald-600 h-4 w-4 text-emerald-700;
   }
 
   .checkbox {
-    @apply focus:ring-emerald-600 h-4 w-4 text-emerald-700 rounded-sm;
+    @apply bg-base focus:ring-emerald-600 h-4 w-4 text-emerald-700 rounded-sm;
   }
 
   .select {
-    @apply border-gray-300 focus:border-emerald-700 focus:ring-emerald-700 focus:outline-none rounded-lg;
+    @apply border-primary bg-base text-primary focus:border-emerald-700 focus:ring-emerald-700 focus:outline-none rounded-lg;
   }
 
   .focus-border {
@@ -54,11 +54,103 @@
   }
 
   .focus-ring {
-    @apply focus:ring-1 focus:ring-offset-2 focus:ring-emerald-700;
+    @apply focus:rounded-md focus:ring-1 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-700;
   }
 
   .link-green {
-    @apply text-emerald-700 underline underline-offset-2;
+    @apply text-accent underline underline-offset-2;
+  }
+}
+
+:root {
+  --primary-color: #047857;
+  --primary-dark-color: #064e3b;
+  --text-color-primary: #374151;
+  --text-color-primary-dark: #111827;
+  --text-color-secondary: #656565;
+  --text-color-info: rgb(12, 74, 110);
+  --text-color-important: rgb(120, 53, 15);
+  --text-color-urgent: #7f1d1d;
+  --text-color-accent: #047857;
+  --border-color: #e5e7eb;
+  --border-color-important: rgb(120, 53, 15);
+  --border-color-accent: #047857;
+  --bg-color: #fff;
+  --bg-color-elevated-10: #f8fafc;
+  --bg-color-urgent: #fef2f2;
+  --bg-color-info: rgb(240, 249, 255);
+  --bg-color-important: rgb(255, 251, 235);
+  --focus-color: #dfe1e2;
+  --ripple-color: #000;
+}
+
+[data-theme="dark"] {
+  --primary-color: #047857;
+  --primary-dark-color: #064e3b;
+  --text-color-primary: #cdcdcd;
+  --text-color-primary-dark: #cdcdcd;
+  --text-color-secondary: #c1c1c1;
+  --text-color-info: #7dd3fc;
+  --text-color-important: rgb(217, 119, 6);
+  --text-color-urgent: #dc2626;
+  --text-color-accent: #059669;
+  --border-color: #383838;
+  --border-color-important: rgb(217, 119, 6);
+  --border-color-accent: #059669;
+  --bg-color: #222222;
+  --bg-color-elevated-10: #383838;
+  --bg-color-urgent: rgb(127, 29, 29, 0.2);
+  --bg-color-info: rgb(12, 74, 110, 0.3);
+  --bg-color-important: rgb(120, 53, 15, 0.3);
+  --focus-color: #383838;
+  --ripple-color: #fff;
+  background-color: var(--bg-color);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-color: #047857;
+    --primary-dark-color: #064e3b;
+    --text-color-primary: #cdcdcd;
+    --text-color-primary-dark: #cdcdcd;
+    --text-color-secondary: #c1c1c1;
+    --text-color-info: #7dd3fc;
+    --text-color-important: rgb(217, 119, 6);
+    --text-color-urgent: #dc2626;
+    --text-color-accent: #059669;
+    --border-color: #383838;
+    --border-color-important: rgb(217, 119, 6);
+    --border-color-accent: #059669;
+    --bg-color: #222222;
+    --bg-color-elevated-10: #383838;
+    --bg-color-urgent: rgb(127, 29, 29, 0.2);
+    --bg-color-info: rgb(12, 74, 110, 0.3);
+    --bg-color-important: rgb(120, 53, 15, 0.3);
+    --focus-color: #383838;
+    --ripple-color: #fff;
+    background-color: var(--bg-color);
+  }
+
+  [data-theme="light"] {
+    --primary-color: #047857;
+    --primary-dark-color: #064e3b;
+    --text-color-primary: #374151;
+    --text-color-primary-dark: #111827;
+    --text-color-secondary: #656565;
+    --text-color-info: rgb(12, 74, 110);
+    --text-color-important: rgb(120, 53, 15);
+    --text-color-urgent: #7f1d1d;
+    --text-color-accent: #047857;
+    --border-color: #e5e7eb;
+    --border-color-important: rgb(120, 53, 15);
+    --border-color-accent: #047857;
+    --bg-color: #fff;
+    --bg-color-elevated-10: #f8fafc;
+    --bg-color-urgent: #fef2f2;
+    --bg-color-info: rgb(240, 249, 255);
+    --bg-color-important: rgb(255, 251, 235);
+    --focus-color: #dfe1e2;
+    --ripple-color: #000;
   }
 }
 
@@ -198,7 +290,7 @@ dialog::backdrop {
 }
 .mdc-ripple-surface::before,
 .mdc-ripple-surface::after {
-  background-color: #000;
+  background-color: var(--ripple-color);
 }
 .mdc-ripple-surface:hover::before {
   opacity: 0.04;
@@ -328,18 +420,18 @@ dialog::backdrop {
   z-index: 100;
 }
 .mdc-dialog .mdc-dialog__surface {
-  background-color: #fff;
+  background-color: var(--bg-color-elevated-10);
   /* @alternate */
-  background-color: var(--mdc-theme-surface, #fff);
+  background-color: var(--mdc-theme-surface, var(--bg-color-elevated-10));
 }
 .mdc-dialog .mdc-dialog__scrim {
   background-color: rgba(0, 0, 0, 0.6);
 }
 .mdc-dialog .mdc-dialog__title {
-  color: rgba(0, 0, 0, 0.87);
+  color: var(--text-primary-dark);
 }
 .mdc-dialog .mdc-dialog__content {
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--text-primary);
 }
 .mdc-dialog.mdc-dialog--scrollable .mdc-dialog__title,
 .mdc-dialog.mdc-dialog--scrollable .mdc-dialog__actions {

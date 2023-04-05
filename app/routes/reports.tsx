@@ -34,7 +34,7 @@ export default function Reports() {
                 className={`p-2 text-sm font-bold sm:text-base sm:font-normal text-center border-l-2 border-t-2 border-b-2 border-emerald-700 rounded-l-lg focus-ring ${
                   activeTab === "thisMonth"
                     ? "bg-emerald-700 text-white"
-                    : "text-emerald-700"
+                    : "text-accent"
                 }`}
               >
                 This Month
@@ -47,7 +47,7 @@ export default function Reports() {
                 className={`p-2 text-sm font-bold sm:text-base sm:font-normal text-center border-2 border-emerald-700 ${
                   activeTab === "compare"
                     ? "bg-emerald-700 text-white"
-                    : "text-emerald-700"
+                    : "text-accent"
                 }`}
               >
                 Compare
@@ -58,7 +58,9 @@ export default function Reports() {
             <Ripple>
               <p
                 className={`p-2 text-sm font-bold sm:text-base sm:font-normal text-center border-r-2 border-t-2 border-b-2 border-emerald-700 rounded-r-lg ${
-                  activeTab === "trend" ? "bg-emerald-700 text-white" : "text-emerald-700"
+                  activeTab === "trend"
+                    ? "bg-emerald-700 text-white"
+                    : "text-accent"
                 }`}
               >
                 Trend

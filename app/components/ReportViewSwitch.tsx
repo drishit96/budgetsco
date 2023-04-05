@@ -10,15 +10,18 @@ export default function ReportViewSwitch({
   onChange: React.MouseEventHandler<HTMLButtonElement>;
 }) {
   return (
-    <div className="flex border rounded-md">
+    <div className="flex border border-primary rounded-md">
       <Ripple>
         <button
-          className={`p-2 border-r rounded-tl-md rounded-bl-md ${
+          className={`p-2 border-r border-primary rounded-tl-md rounded-bl-md ${
             chartView ? "bg-emerald-700" : ""
           }`}
           onClick={onChange}
         >
-          <Report size={24} color={`${chartView ? "#FFF" : "#000"}`}></Report>
+          <Report
+            size={24}
+            color={`${chartView ? "#FFF" : "var(--text-color-primary)"}`}
+          ></Report>
         </button>
       </Ripple>
       <Ripple>
@@ -28,7 +31,10 @@ export default function ReportViewSwitch({
           }`}
           onClick={onChange}
         >
-          <TableIcon size={24} color={`${!chartView ? "#FFF" : "#000"}`}></TableIcon>
+          <TableIcon
+            size={24}
+            color={`${!chartView ? "#FFF" : "var(--text-color-primary)"}`}
+          ></TableIcon>
         </button>
       </Ripple>
     </div>

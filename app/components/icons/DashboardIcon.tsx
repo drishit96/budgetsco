@@ -1,4 +1,7 @@
-export default function DashboardIcon({ size = 24, color = "#000000" }) {
+export default function DashboardIcon({
+  size = 24,
+  color = "var(--text-color-primary)",
+}) {
   return (
     <svg
       className="inline align-text-top"

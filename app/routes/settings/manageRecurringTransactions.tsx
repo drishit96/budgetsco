@@ -95,7 +95,7 @@ export default function ManageRecurringTransactions() {
       <main className="pt-7 pb-12 pl-3 pr-3">
         <p className="text-3xl text-center pb-7">Your Recurring Transactions</p>
         <div className="flex flex-col justify-center items-center">
-          <div className="border rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-3">
+          <div className="border border-primary rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-3">
             <ul ref={listParent}>
               {renderRecurringTransactions(
                 recurringTransactions as unknown as RecurringTransactionsResponse,

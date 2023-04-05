@@ -14,19 +14,19 @@ import { Spacer } from "./Spacer";
 type BannerType = "tip" | "important" | "urgent";
 
 function getTextColorFromBannerType(bannerType: BannerType) {
-  if (bannerType === "important") return "text-amber-900";
-  else if (bannerType === "urgent") return "text-red-900";
-  else return "text-sky-900";
+  if (bannerType === "important") return "text-important";
+  else if (bannerType === "urgent") return "text-urgent";
+  else return "text-info";
 }
 
 function getBackgroundColorFromBannerType(bannerType: BannerType) {
-  if (bannerType === "important") return "bg-amber-50";
-  else if (bannerType === "urgent") return "bg-red-50";
-  else return "bg-sky-50";
+  if (bannerType === "important") return "bg-important";
+  else if (bannerType === "urgent") return "bg-urgent";
+  else return "bg-info";
 }
 
 function getBorderColorFromBannerType(bannerType: BannerType) {
-  if (bannerType === "important") return "border-amber-900";
+  if (bannerType === "important") return "border-important";
   else if (bannerType === "urgent") return "border-red-900";
   else return "border-sky-900";
 }
@@ -100,9 +100,13 @@ export default function Banner({
         >
           <div className="flex">
             <div>
-              {type === "urgent" && <ErrorIcon size={28} color="#7F1D1D" />}
-              {type === "important" && <InfoIcon size={28} color="#78350F" />}
-              {type === "tip" && <BulbIcon size={28} color="#0C4A6E" />}
+              {type === "urgent" && (
+                <ErrorIcon size={28} color="var(--text-color-urgent)" />
+              )}
+              {type === "important" && (
+                <InfoIcon size={28} color="var(--text-color-important)" />
+              )}
+              {type === "tip" && <BulbIcon size={28} color="var(--text-color-info)" />}
             </div>
             <div>
               <InlineSpacer size={1} />

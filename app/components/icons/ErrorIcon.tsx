@@ -1,4 +1,4 @@
-const ErrorIcon = ({ size = 100, color = "#000000" }) => (
+const ErrorIcon = ({ size = 100, color = "var(--text-color-primary)" }) => (
   <svg
     className="inline"
     xmlns="http://www.w3.org/2000/svg"
