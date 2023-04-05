@@ -138,18 +138,18 @@ export default function CompareReport() {
 
       <div className="flex flex-wrap gap-2 justify-center">
         {categoryExpenses?.length && (
-          <div className="p-3 border border-gray-200 rounded-md w-full">
-            <p className="text-xl font-bold text-gray-700">Expense per category</p>
+          <div className="p-3 border border-primary rounded-md w-full">
+            <p className="text-xl font-bold">Expense per category</p>
             <Spacer />
             {categoryExpenses.map((categoryExpense) => {
               return (
                 <div key={categoryExpense.category}>
-                  <p className="font-bold text-gray-700">{categoryExpense.category}</p>
+                  <p className="font-bold">{categoryExpense.category}</p>
 
                   <div className="flex">
-                    <p className="text-gray-700">{format_MMM_YYYY(month - 1, year)}</p>
+                    <p className="text-primary">{format_MMM_YYYY(month - 1, year)}</p>
                     <span className="flex-grow"></span>
-                    <p className="text-gray-700">
+                    <p className="text-primary">
                       {formatToCurrency(
                         categoryExpense.amount,
                         "en-US",
@@ -175,11 +175,11 @@ export default function CompareReport() {
                   />
                   <Spacer size={0.5} />
                   <div className="flex">
-                    <p className="text-gray-700">
+                    <p className="text-primary">
                       {format_MMMM_YYYY(compareToMonth - 1, compareToYear)}
                     </p>
                     <span className="flex-grow"></span>
-                    <p className="text-gray-700">
+                    <p className="text-primary">
                       {formatToCurrency(
                         categoryExpense.amountForCompareToMonth,
                         "en-US",

@@ -105,7 +105,7 @@ export default function MFA() {
 
         <div className="flex justify-center">
           <div className="flex flex-col w-full lg:w-1/2">
-            <h2 className="text-center text-gray-700 text-base">
+            <h2 className="text-center text-base">
               Two-factor authentication adds an additional layer of security to your
               account by requiring more than just a password to sign in.
             </h2>

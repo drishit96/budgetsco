@@ -22,9 +22,7 @@ export default function NumberInputLarge({
   onChangeHandler?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   const amountRef = useRef<HTMLInputElement>(null);
-  const [hiddenAmount, setHiddenAmount] = useState(
-    defaultValue?.toString() ?? "0"
-  );
+  const [hiddenAmount, setHiddenAmount] = useState(defaultValue?.toString() ?? "0");
 
   useEffect(() => {
     if (selectOnAutoFocus) {
@@ -45,7 +43,7 @@ export default function NumberInputLarge({
         <input
           name={name}
           ref={amountRef}
-          className="absolute w-full left-0 text-5xl selection:bg-slate-200 disabled:bg-transparent"
+          className="absolute w-full bg-base left-0 text-5xl selection:bg-focus disabled:bg-transparent"
           type="number"
           autoFocus={autoFocus}
           defaultValue={defaultValue}

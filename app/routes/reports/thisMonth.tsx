@@ -170,7 +170,7 @@ export default function ThisMonthReport() {
 
       <div className="flex flex-wrap gap-3 justify-center">
         {categoryWiseTargetExpense?.length > 0 && (
-          <div className="p-3 border border-gray-200 rounded-md w-full lg:w-6/12">
+          <div className="p-3 border border-primary rounded-md w-full lg:w-6/12">
             <p className="text-xl font-bold">Budget vs Expense</p>
             <Spacer />
             {categoryWiseTargetExpense.map((categoryExpense) => {
@@ -187,7 +187,7 @@ export default function ThisMonthReport() {
                 >
                   <Ripple>
                     <div className="p-1 rounded-md">
-                      <label className="font-bold text-gray-700">
+                      <label className="font-bold">
                         {categoryExpense.category}
                         <meter
                           className="h-4 w-full rounded-full print-color-adjust"
@@ -202,14 +202,14 @@ export default function ThisMonthReport() {
                       </label>
 
                       <div className="flex">
-                        <p className="text-gray-700">
+                        <p className="text-primary">
                           {getBudgetText(
                             categoryExpense.budget,
                             reportsPageContext.userPreferredCurrency
                           )}
                         </p>
                         <span className="flex-grow"></span>
-                        <p className="text-gray-700">
+                        <p className="text-primary">
                           {getBudgetLeftText(
                             categoryExpense.budget,
                             categoryExpense.expense,
@@ -226,7 +226,7 @@ export default function ThisMonthReport() {
           </div>
         )}
 
-        <div className="p-3 border border-gray-200 rounded-md w-full lg:w-5/12">
+        <div className="p-3 border border-primary rounded-md w-full lg:w-5/12">
           <PieChartCard
             title="Expense breakdown"
             data={expenseDistribution}
@@ -238,7 +238,7 @@ export default function ThisMonthReport() {
           />
         </div>
 
-        <div className="p-3 border border-gray-200 rounded-md w-full lg:w-6/12">
+        <div className="p-3 border border-primary rounded-md w-full lg:w-6/12">
           <PieChartCard
             title="How did you use your money?"
             data={moneyDistribution}
@@ -251,7 +251,7 @@ export default function ThisMonthReport() {
           />
         </div>
 
-        <div className="p-3 border border-gray-200 rounded-md w-full lg:w-5/12">
+        <div className="p-3 border border-primary rounded-md w-full lg:w-5/12">
           <PieChartCard
             title="What did you use to pay?"
             data={paymentModeExpense}
@@ -264,7 +264,7 @@ export default function ThisMonthReport() {
         </div>
 
         {calculate(investmentDone).gt(0) && (
-          <div className="p-3 border border-gray-200 rounded-md w-full lg:w-5/12">
+          <div className="p-3 border border-primary rounded-md w-full lg:w-5/12">
             <PieChartCard
               title="Investment breakdown"
               data={investmentDistribution}

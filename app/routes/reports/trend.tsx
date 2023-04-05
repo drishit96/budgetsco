@@ -140,7 +140,7 @@ export default function TrendReport() {
 
       <div className="flex flex-wrap gap-2 justify-center">
         {targets?.length ? (
-          <div className="p-3 border border-gray-200 rounded-md w-full lg:w-6/12">
+          <div className="p-3 border border-primary rounded-md w-full lg:w-6/12">
             <LineChartCard
               title="Budget vs Expense"
               locale={reportsPageContext.userPreferredLocale}
@@ -163,7 +163,7 @@ export default function TrendReport() {
           </div>
         ) : null}
 
-        <div className="p-3 border border-gray-200 rounded-md w-full lg:w-5/12">
+        <div className="p-3 border border-primary rounded-md w-full lg:w-5/12">
           <PieChartCard
             title="Expense breakdown"
             data={expenseDistribution}
@@ -176,7 +176,7 @@ export default function TrendReport() {
         </div>
 
         {categoryExpensesByCategory != null && categoryForCategoryExpenseTrend != null ? (
-          <div className="p-3 border border-gray-200 rounded-md w-full lg:w-11/12">
+          <div className="p-3 border border-primary rounded-md w-full lg:w-11/12">
             <LineChartCard
               title="Expense trend for"
               locale={reportsPageContext.userPreferredLocale}
@@ -231,7 +231,7 @@ export default function TrendReport() {
         ) : null}
 
         {targets?.length ? (
-          <div className="p-3 border border-gray-200 rounded-md w-full lg:w-6/12">
+          <div className="p-3 border border-primary rounded-md w-full lg:w-6/12">
             <LineChartCard
               title="Income vs Expense vs Investment"
               locale={reportsPageContext.userPreferredLocale}
@@ -259,7 +259,7 @@ export default function TrendReport() {
           </div>
         ) : null}
 
-        <div className="p-3 border border-gray-200 rounded-md w-full lg:w-5/12">
+        <div className="p-3 border border-primary rounded-md w-full lg:w-5/12">
           <PieChartCard
             title="How did you use your money?"
             data={moneyDistribution}

@@ -150,7 +150,7 @@ export default function NewRecurringTransaction() {
       <div className="flex justify-center">
         <div className="flex flex-col w-full max-w-sm">
           <Form replace method="post">
-            <fieldset className="border p-4 rounded-md">
+            <fieldset className="border border-primary p-4 rounded-md">
               <Spacer size={1} />
               <Badge
                 value={transactionTypes.find((t) => t.value === type)?.label ?? "Expense"}
@@ -168,7 +168,7 @@ export default function NewRecurringTransaction() {
               </p>
               <Spacer />
 
-              <p className="font-semibold">{category}</p>
+              <p className="text-primary font-semibold">{category}</p>
               <input type="hidden" name="amount" value={amount} />
               <input type="hidden" name="category" value={category} />
               <input type="hidden" name="paymentMode" value={paymentMode} />
@@ -187,7 +187,7 @@ export default function NewRecurringTransaction() {
 
             <Spacer size={1} />
 
-            <div className="border p-4 rounded-md">
+            <div className="border border-primary p-4 rounded-md">
               <RecurringSetup
                 disableInput={isSubmittingData}
                 startDate={startDate}

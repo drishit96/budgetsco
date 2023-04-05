@@ -1,5 +1,5 @@
 import { Ripple } from "@rmwc/ripple";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, Link, useLoaderData, useOutletContext, useSubmit } from "@remix-run/react";
@@ -11,6 +11,7 @@ import {
 } from "~/utils/auth.utils.server";
 import { Spacer } from "~/components/Spacer";
 import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import { getCurrentAppTheme } from "~/utils/setting.utils";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.route.id === "root");
@@ -49,9 +50,11 @@ export default function Settings() {
   const submit = useSubmit();
   const context = useOutletContext<AppContext>();
   const { emailId } = useLoaderData<{ emailId?: string }>();
+  const [theme, setTheme] = useState("system");
 
   useEffect(() => {
     context.setShowLoader(false);
+    setTheme(getCurrentAppTheme());
   }, []);
 
   useEffect(() => {
@@ -77,17 +80,17 @@ export default function Settings() {
 
         <div className="flex justify-center">
           <div className="flex flex-col w-full lg:w-1/2">
-            <p className="text-center text-sm text-gray-700">
+            <p className="text-center text-sm">
               Signed in using <strong>{emailId}</strong>
             </p>
             <Spacer />
             <Ripple>
               <Link
                 to={`/subscriptions/gpb`}
-                className="flex p-4 border rounded-lg focus-border"
+                className="flex p-4 border border-primary rounded-lg focus-border"
                 onClick={() => context.setShowLoader(true)}
               >
-                <span>Subscription</span>
+                <span className="text-base">Subscription</span>
                 <span className="flex flex-grow"></span>
                 <span
                   className={`w-min p-1 rounded-md text-sm ${
@@ -107,16 +110,16 @@ export default function Settings() {
             <Ripple>
               <Link
                 to="/settings/editBudget"
-                className="p-4 border rounded-t-lg focus-border"
+                className="p-4 border border-primary rounded-t-lg focus-border"
               >
-                <span className="text-base">Edit Budget</span>
+                <span>Edit Budget</span>
               </Link>
             </Ripple>
 
             <Ripple>
               <Link
                 to="/settings/manageRecurringTransactions"
-                className="p-4 border-l border-r border-b focus-border"
+                className="p-4 border-l border-r border-b border-primary focus-border"
               >
                 <span>Manage Recurring Transactions</span>
               </Link>
@@ -125,7 +128,7 @@ export default function Settings() {
             <Ripple>
               <Link
                 to={`/settings/changeCurrency?value=${context.currency}`}
-                className="p-4 border-l border-r focus-border"
+                className="p-4 border-l border-r border-b border-primary focus-border"
                 replace
               >
                 <span>Change currency</span>
@@ -135,9 +138,25 @@ export default function Settings() {
             <Ripple>
               <Link
                 to={`/settings/security/list`}
-                className="p-4 border rounded-b-lg focus-border"
+                className="p-4 border-l border-r border-primary focus-border"
               >
                 <span>Security</span>
+              </Link>
+            </Ripple>
+
+            <Ripple>
+              <Link
+                to={`/settings/theme`}
+                className="p-4 border border-primary rounded-b-lg focus-border"
+              >
+                <p>Theme</p>
+                <p className="text-sm text-secondary">
+                  {theme === "system"
+                    ? "Use my system theme"
+                    : theme === "dark"
+                    ? "Dark theme"
+                    : "Light theme"}
+                </p>
               </Link>
             </Ripple>
 
@@ -147,7 +166,7 @@ export default function Settings() {
             <Ripple>
               <a
                 href={`mailto:support@budgetsco.online`}
-                className="p-4 border rounded-t-lg focus-border"
+                className="p-4 border border-primary rounded-t-lg focus-border"
               >
                 Get suppport
               </a>
@@ -155,7 +174,7 @@ export default function Settings() {
             <Ripple>
               <a
                 href="https://play.google.com/store/apps/details?id=com.app.budgetsco"
-                className="p-4 border-b border-l border-r rounded-b-lg focus-border"
+                className="p-4 border-b border-l border-r border-primary rounded-b-lg focus-border"
               >
                 Rate us
               </a>
@@ -167,7 +186,7 @@ export default function Settings() {
             <Ripple>
               <Link
                 to={`/privacy-policy`}
-                className="p-4 border rounded-t-lg focus-border"
+                className="p-4 border border-primary rounded-t-lg focus-border"
               >
                 <span>Privacy policy</span>
               </Link>
@@ -175,7 +194,7 @@ export default function Settings() {
             <Ripple>
               <Link
                 to={`/terms-of-service`}
-                className="p-4 border-b border-l border-r focus-border"
+                className="p-4 border-b border-l border-r border-primary focus-border"
               >
                 <span>Terms of service</span>
               </Link>
@@ -183,7 +202,7 @@ export default function Settings() {
             <Ripple>
               <Link
                 to={`/cancel-and-refund-policy`}
-                className="p-4 border-b border-l border-r rounded-b-lg focus-border"
+                className="p-4 border-b border-l border-r border-primary rounded-b-lg focus-border"
               >
                 <span>Cancellation & Refund policy</span>
               </Link>
@@ -195,7 +214,7 @@ export default function Settings() {
                 <input type="hidden" name="formName" value="LOGOUT_FORM" />
                 <button
                   type="submit"
-                  className="p-4 border rounded-lg text-start w-full focus-border"
+                  className="p-4 border border-primary rounded-lg text-start text-base w-full focus-border"
                 >
                   Log out
                 </button>

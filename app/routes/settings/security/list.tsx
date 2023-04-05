@@ -26,7 +26,7 @@ export default function Security() {
             <Ripple>
               <Link
                 to={`/settings/security/mfa`}
-                className="p-4 border focus-border rounded-md"
+                className="p-4 border border-primary focus-border rounded-md"
               >
                 <p>Two factor authentication (2FA)</p>
                 <p className="text-gray-500">

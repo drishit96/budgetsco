@@ -18,9 +18,9 @@ export default function CustomLegendRow({
         className={`inline-block w-3 h-3 rounded-full 
         ${getBackgroundDarkColor(color)}`}
       ></div>
-      <span>{name}</span>
+      <span className="text-primary-dark">{name}</span>
       <span className="flex-grow"></span>
-      <span className="whitespace-nowrap tabular-nums">
+      <span className="text-primary whitespace-nowrap tabular-nums">
         {value} {percentage != null ? `(${percentage}%)` : ""}
       </span>
     </div>

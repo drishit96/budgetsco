@@ -73,11 +73,11 @@ export const ComboBox = <
 
   return (
     <div className="w-full">
-      <label {...getLabelProps()}>
+      <label className="text-primary" {...getLabelProps()}>
         {downshiftProps.labelId}
         <div className="rounded-md flex relative">
           <input
-            className="w-full p-2 text-base rounded-l-md border-t border-b border-l border-gray-300 focus:border-2 focus:border-emerald-700"
+            className="w-full p-2 text-base bg-base rounded-l-md border-t border-b border-l border-primary focus:border-2 focus:border-emerald-700"
             placeholder={placeholder}
             name={name}
             autoFocus={autoFocus}
@@ -89,7 +89,7 @@ export const ComboBox = <
           <Ripple>
             <button
               type="button"
-              className="px-3 border-t border-r border-b border-gray-300 rounded-r-md"
+              className="px-3 border-t border-r border-b border-primary rounded-r-md"
               {...getToggleButtonProps()}
               aria-label="toggle menu"
             >
@@ -101,7 +101,7 @@ export const ComboBox = <
 
           <ul
             style={isMobileDevice() ? { bottom: "100%" } : { top: "100%" }}
-            className={`absolute left-0 right-0 bg-white rounded shadow-xl cursor-pointer z-30 ${
+            className={`absolute left-0 right-0 bg-base rounded shadow-xl cursor-pointer z-30 ${
               isOpen ? "max-h-36" : ""
             } overflow-y-auto`}
             {...getMenuProps()}
@@ -109,8 +109,12 @@ export const ComboBox = <
             {isOpen &&
               inputItems.map((item, index) => (
                 <li
-                  style={highlightedIndex === index ? { backgroundColor: "#E5E7EB" } : {}}
-                  className="p-2 pt-3 pb-3 text-base border-l border-r"
+                  style={
+                    highlightedIndex === index
+                      ? { backgroundColor: "var(--focus-color)" }
+                      : {}
+                  }
+                  className="p-2 pt-3 pb-3 text-base border-l border-r border-primary"
                   key={`${item}${index}`}
                   {...getItemProps({ item, index })}
                 >

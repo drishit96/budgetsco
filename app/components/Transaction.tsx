@@ -47,7 +47,7 @@ export function Transaction({
           data-test-id={`more-${transaction.category.split(" ").join("")}-${
             transaction.amount
           }`}
-          className={`w-full bg-white focus-border p-2 
+          className={`w-full bg-base focus-border border-primary p-2 
           ${hideDivider ? "" : "border-b"} 
           ${expandedIndex === index ? "border-t border-l border-r rounded-t-md" : ""}`}
           onClick={(e) => {
@@ -57,7 +57,7 @@ export function Transaction({
         >
           <div className="flex flex-col">
             <div className="flex">
-              <span className="font-bold text-gray-700">{transaction.category}</span>
+              <span className="font-bold">{transaction.category}</span>
               <span className="flex-grow"></span>
               <span
                 className={
@@ -86,19 +86,19 @@ export function Transaction({
       {expandedIndex === index && (
         <div>
           {transaction.description && (
-            <div className="border-l border-r bg-white">
+            <div className="text-primary border-l border-r border-primary bg-base">
               <span className="flex gap-2 pl-4 pr-4 pt-2 pb-2 items-center">
                 <InfoIcon size={24} />
-                <span>{transaction.description}</span>
+                <span className="text-primary">{transaction.description}</span>
               </span>
             </div>
           )}
-          <div className="w-full flex border-b border-t rounded-b-md bg-white">
+          <div className="w-full flex border-b border-t border-primary rounded-b-md bg-base">
             <Ripple>
               <Link
                 data-test-id={"btn-edit"}
                 to={`/transaction/edit/${transaction.id}`}
-                className="flex flex-col flex-1 items-center p-3 border-l focus-border"
+                className="flex flex-col flex-1 items-center p-3 border-l border-primary focus-border"
               >
                 <EditIcon size={24} />
                 <Spacer size={1} />
@@ -117,7 +117,7 @@ export function Transaction({
                   }&paymentMode=${transaction.paymentMode}&description=${
                     transaction.description
                   }`}
-                  className="flex flex-col flex-1 items-center p-3 border-l focus-border"
+                  className="flex flex-col flex-1 items-center p-3 border-l border-primary focus-border"
                 >
                   <RepeatIcon size={24} />
                   <Spacer size={1} />
@@ -129,7 +129,7 @@ export function Transaction({
             {!context.isActiveSubscription && (
               <Ripple>
                 <button
-                  className="flex flex-col flex-1 items-center p-3 border-l focus-border"
+                  className="flex flex-col flex-1 items-center p-3 border-l border-primary focus-border"
                   onClick={() => {
                     context.setBottomSheetProps({
                       show: true,
@@ -154,7 +154,7 @@ export function Transaction({
             <Form
               replace
               method="delete"
-              className="flex-1 cursor-pointer border-l border-r"
+              className="flex-1 cursor-pointer border-l border-r border-primary"
             >
               <input type="hidden" name="transactionId" value={transaction.id} />
               <Ripple>

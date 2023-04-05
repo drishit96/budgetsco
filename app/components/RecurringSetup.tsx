@@ -58,7 +58,7 @@ export default function RecurringSetup({
   }, [date, hour, minute, meridiem]);
 
   return (
-    <fieldset disabled={disableInput}>
+    <fieldset className="text-primary" disabled={disableInput}>
       <p className="font-semibold">How often does this happen?</p>
       <Spacer size={1} />
       <div className="flex flex-wrap items-center gap-1">
@@ -109,9 +109,7 @@ export default function RecurringSetup({
               onChange={(e) => setMinute(Number(e.target.value))}
             >
               {minutes.map((minute) => (
-                <option key={minute}>
-                  {minute.toString().padStart(2, "0")}
-                </option>
+                <option key={minute}>{minute.toString().padStart(2, "0")}</option>
               ))}
             </select>
             <select

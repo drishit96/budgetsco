@@ -58,7 +58,7 @@ export default function PieChartCard({
                     cx="50%"
                     innerRadius={83}
                     outerRadius={100}
-                    fill="#8884d8"
+                    stroke="var(--bg-color)"
                     dataKey="value"
                     legendType="circle"
                   >
@@ -72,11 +72,21 @@ export default function PieChartCard({
                         }
                       />
                     ))}
-                    <Label width={30} position="center" fontSize={28} fill="#000">
+                    <Label
+                      width={30}
+                      position="center"
+                      fontSize={28}
+                      fill="var(--text-color-primary-dark)"
+                    >
                       {formatToCurrencyCompact(total, locale, currency)}
                     </Label>
                   </Pie>
                   <Tooltip
+                    contentStyle={{
+                      backgroundColor: "var(--bg-color)",
+                      borderColor: "var(--border-color)",
+                    }}
+                    itemStyle={{ color: "var(--text-color-primary)" }}
                     formatter={(value) =>
                       formatToCurrency(value as number, locale, currency)
                     }
@@ -100,7 +110,9 @@ export default function PieChartCard({
                 <tr>
                   {colHeaders.map((header, index) => (
                     <th
-                      className={`p-1 border ${index == 0 ? "text-left" : "text-right"}`}
+                      className={`p-1 border border-primary ${
+                        index == 0 ? "text-left" : "text-right"
+                      }`}
                       key={header}
                     >
                       {header}
@@ -112,8 +124,8 @@ export default function PieChartCard({
                 {data.map((item) => {
                   return (
                     <tr key={item.name}>
-                      <td className="p-1 border">{item.name}</td>
-                      <td className="p-1 border text-right">
+                      <td className="p-1 border border-primary">{item.name}</td>
+                      <td className="p-1 border border-primary text-right">
                         {formatNumber(item.value, locale)}
                       </td>
                     </tr>

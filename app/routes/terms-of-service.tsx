@@ -10,9 +10,7 @@ export default function PrivacyPolicy() {
     <>
       <main className="pb-28">
         <h1 className="text-3xl text-center pb-5">Terms of service</h1>
-        <h3 className="text-sm text-gray-700 text-center">
-          Last updated: January 7, 2022
-        </h3>
+        <h3 className="text-sm text-center">Last updated: January 7, 2022</h3>
         <div className="flex flex-col items-center p-4">
           <div className="flex justify-center w-full md:w-3/4">
             <div className="space-y-4">

@@ -30,7 +30,9 @@ function FilterTab({
 }) {
   return (
     <button
-      className={`flex p-1 border-b w-full ${isCurrentTab ? "bg-gray-200" : ""}`}
+      className={`flex p-1 border-primary border-b w-full ${
+        isCurrentTab ? "bg-focus" : "bg-base"
+      }`}
       onClick={onClick}
     >
       <span>{name}</span>
@@ -70,7 +72,7 @@ export default function FilterBottomSheet({
     setSelectedCategories(new Set(defaultSelectedCategories));
   }, [defaultTypes, defaultSelectedCategories]);
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col text-primary">
       <p className="text-2xl font-semibold">Filter</p>
       <Spacer size={1} />
 
@@ -92,8 +94,8 @@ export default function FilterBottomSheet({
           />
         </div>
         {currentTab === "category" && (
-          <div className="flex flex-col grow pl-2 pr-1 h-96 overflow-y-scroll bg-white">
-            <div className="sticky top-0 bg-white">
+          <div className="flex flex-col grow pl-2 pr-1 h-96 overflow-y-scroll bg-base">
+            <div className="sticky top-0 bg-base">
               <Input
                 type="search"
                 name="categorySearch"
@@ -130,7 +132,9 @@ export default function FilterBottomSheet({
                     }}
                   />
                   <InlineSpacer />
-                  <span className="text-lg lg:text-base">{category.label}</span>
+                  <span className="text-primary text-lg lg:text-base">
+                    {category.label}
+                  </span>
                 </label>
               ))}
           </div>

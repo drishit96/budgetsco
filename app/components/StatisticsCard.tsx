@@ -24,11 +24,13 @@ export function StatisticsCard({
 }) {
   return (
     <div
-      className={`flex-1 p-2 border rounded-md ${getTextColor(color)} bg-white shadow-sm`}
+      className={`flex-1 p-2 border border-primary rounded-md ${getTextColor(
+        color
+      )} bg-base shadow-sm`}
     >
       <p className="font-bold">{name}</p>
       <Spacer size={0.5} />
-      <p className="text-2xl text-gray-700">
+      <p className="text-2xl text-primary">
         {formatToCurrencyCompact(round(num), locale, currency)}
       </p>
       {perc != null && (

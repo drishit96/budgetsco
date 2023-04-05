@@ -50,7 +50,7 @@ export const BottomSheet = ({
       {/* Bottom Sheet */}
       <div
         className={clsx(
-          "flex flex-col items-center bg-white p-5 w-full h-fit md:w-3/4 lg:w-2/3 left-1/2 -translate-x-1/2 fixed bottom-0 transition-all duration-300 rounded-lg z-50 shadow-2xl",
+          "flex flex-col items-center bg-base p-5 w-full h-fit md:w-3/4 lg:w-2/3 left-1/2 -translate-x-1/2 fixed bottom-0 transition-all duration-300 rounded-lg z-50 shadow-2xl",
           {
             "translate-y-full": !show,
             "translate-y-0": show,
