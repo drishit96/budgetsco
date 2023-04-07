@@ -210,7 +210,7 @@ export default function Settings() {
 
             <Spacer size={3} />
             <Ripple>
-              <Form method="post" onSubmit={handleLogoutFormSubmit}>
+              <Form method="post" onSubmit={handleLogoutFormSubmit} replace>
                 <input type="hidden" name="formName" value="LOGOUT_FORM" />
                 <button
                   type="submit"

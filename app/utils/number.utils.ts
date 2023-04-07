@@ -58,9 +58,9 @@ export function calculate(startWith: string | number) {
 export function add(num1: string | number, num2: string | number) {
   if (isNullOrEmpty(num1)) {
     if (isNullOrEmpty(num2)) return "0";
-    return num2;
+    return num2.toString();
   } else if (isNullOrEmpty(num2)) {
-    return num1;
+    return num1.toString();
   }
   return new Decimal(num1).add(num2).toString();
 }
@@ -70,7 +70,7 @@ export function subtract(from: string | number, amt: string | number) {
     from = "0";
   }
   if (isNullOrEmpty(amt)) {
-    return from;
+    return from.toString();
   }
   return new Decimal(from).minus(amt).toString();
 }
