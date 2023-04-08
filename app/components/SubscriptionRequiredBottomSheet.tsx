@@ -10,7 +10,7 @@ export default function SubscriptionRequiredBottomSheet({
   onRefresh: () => void;
 }) {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col text-primary">
       <p className="text-2xl font-semibold">
         {context.paymentGateway == null
           ? "Start your 45-day free trial"
