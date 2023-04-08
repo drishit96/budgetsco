@@ -16,7 +16,7 @@ import { formatDate_DD_MMMM_YYYY_hh_mm_aa } from "~/utils/date.utils";
 import { logError } from "~/utils/logger.utils.server";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Subscriptions - Budgetsco" }];
 };
 

@@ -73,7 +73,7 @@ export default function TargetSetter({
       );
       const form = new FormData(event.currentTarget);
       form.set("customCategories", JSON.stringify(customCategories));
-      submit(event.currentTarget, { method: "post", replace: true });
+      submit(event.currentTarget, { method: "POST", replace: true });
       return;
     }
     const form = new FormData();
@@ -112,7 +112,7 @@ export default function TargetSetter({
       Array.from(newCategoryBudgetMap.keys())
     );
     form.set("customCategories", JSON.stringify(customCategories));
-    submit(form, { method: "post", replace: true });
+    submit(form, { method: "POST", replace: true });
   }
 
   useEffect(() => {
@@ -185,7 +185,7 @@ export default function TargetSetter({
 
           <Form
             replace
-            method="post"
+            method="POST"
             onSubmit={(e) => {
               e.preventDefault();
               handleFormSubmit(e);

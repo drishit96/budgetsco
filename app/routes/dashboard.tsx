@@ -53,7 +53,7 @@ import { abs, calculate, subtract } from "~/utils/number.utils";
 import SubscriptionRequiredBottomSheet from "~/components/SubscriptionRequiredBottomSheet";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Dashboard - Budgetsco" }];
 };
 
@@ -268,7 +268,7 @@ export default function Index() {
       const form = new FormData();
       form.set("formName", "REFRESH_SESSION_FORM");
       form.set("idToken", idToken);
-      submit(form, { method: "post" });
+      submit(form, { method: "POST" });
 
       setIsRefreshCallSent(true);
     });
@@ -290,7 +290,7 @@ export default function Index() {
     const form = new FormData();
     form.set("formName", "SAVE_REGISTRATION_TOKEN");
     form.set("token", token);
-    submit(form, { method: "post", replace: true });
+    submit(form, { method: "POST", replace: true });
   }
 
   async function checkForUnAcknowledgedPurchases() {

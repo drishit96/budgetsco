@@ -3,7 +3,7 @@ import { Link } from "@remix-run/react";
 import { Spacer } from "~/components/Spacer";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "404 - Budgetsco" }];
 };
 

@@ -19,7 +19,7 @@ import {
 import { logError } from "~/utils/logger.utils.server";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "2FA - Budgetsco" }];
 };
 
@@ -54,7 +54,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
   defaultShouldRevalidate,
 }) => {
   const result = actionResult as { error?: string; data: string };
-  if (formMethod === "post" && result != null && result.error) {
+  if (formMethod === "POST" && result != null && result.error) {
     return false;
   }
 
@@ -118,7 +118,7 @@ export default function MFA() {
                   Enabled
                 </span>
                 <span className="flex-grow"></span>
-                <Form method="delete">
+                <Form method="DELETE">
                   <button className="btn-secondary-sm border-red-900 text-red-900 focus:ring-red-900">
                     Disable 2FA
                   </button>
@@ -200,7 +200,7 @@ export default function MFA() {
                   won't be able to recover your account.
                 </p>
                 <Spacer />
-                <Form method="post">
+                <Form method="POST">
                   <Input
                     label="Token from authenticator app"
                     name="token"
