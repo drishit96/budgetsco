@@ -24,7 +24,7 @@ type GPBPlan = {
 };
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Subscriptions - Budgetsco" }];
 };
 

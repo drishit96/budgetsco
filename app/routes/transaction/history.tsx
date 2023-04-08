@@ -33,7 +33,7 @@ import FilterBottomSheet from "~/components/FilterBottomSheet";
 import { divide, formatToCurrency, sum } from "~/utils/number.utils";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Transaction history - Budgetsco" }];
 };
 
@@ -92,7 +92,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
   formMethod,
   defaultShouldRevalidate,
 }) => {
-  if (formMethod && formMethod !== "get" && formMethod !== "delete") return false;
+  if (formMethod && formMethod !== "GET" && formMethod !== "DELETE") return false;
   return defaultShouldRevalidate;
 };
 
@@ -141,7 +141,7 @@ export default function TransactionHistory() {
     window.addEventListener(
       "popstate",
       function () {
-        setTimeout(() => submit(form, { method: "get", replace: true }), 200);
+        setTimeout(() => submit(form, { method: "GET", replace: true }), 200);
       },
       { once: true }
     );
@@ -155,7 +155,7 @@ export default function TransactionHistory() {
           <div className="flex bg-base sticky top-0 z-10">
             <Form
               className="flex flex-col items-center md:items-start w-8/12 lg:w-10/12"
-              method="get"
+              method="GET"
               action="/transaction/history"
               replace
             >

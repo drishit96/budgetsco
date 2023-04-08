@@ -48,7 +48,7 @@ import { isMobileDevice } from "~/utils/browser.utils";
 import Turnstile from "~/components/Turnstile";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Login - Budgetsco" }];
 };
 
@@ -204,7 +204,7 @@ export default function Login() {
         }
       }
 
-      submit(form, { method: "post", replace: true });
+      submit(form, { method: "POST", replace: true });
     }
 
     error && setError("Invalid e-mail / password");
@@ -223,7 +223,7 @@ export default function Login() {
           </div>
           <Spacer />
 
-          <Form replace method="post" onSubmit={(e) => handleLogin(e, emailId, password)}>
+          <Form replace method="POST" onSubmit={(e) => handleLogin(e, emailId, password)}>
             <Input
               name="emailId"
               type="email"

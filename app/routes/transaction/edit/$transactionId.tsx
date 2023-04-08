@@ -56,7 +56,7 @@ import {
 import { ComboBox } from "~/components/ComboBox";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Edit transaction - Budgetsco" }];
 };
 
@@ -312,7 +312,7 @@ export default function EditTransaction() {
       }
     }
 
-    submit(formData, { method: "post", replace: true });
+    submit(formData, { method: "POST", replace: true });
   }
 
   return (
@@ -320,7 +320,7 @@ export default function EditTransaction() {
       {transaction != null ? (
         <main className="p-7 pb-28">
           <h1 className="text-3xl text-center pb-7">Edit transaction</h1>
-          <Form replace method="post" onSubmit={(e) => handleFormSubmit(e)}>
+          <Form replace method="POST" onSubmit={(e) => handleFormSubmit(e)}>
             <fieldset disabled={isSubmittingData}>
               <p className="text-center">Amount:</p>
               <p className="text-center">

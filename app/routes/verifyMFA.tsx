@@ -24,7 +24,7 @@ import { logError } from "~/utils/logger.utils.server";
 import type { Currency } from "~/utils/number.utils";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "2FA - Budgetsco" }];
 };
 
@@ -123,7 +123,7 @@ export default function VerifyMFA() {
         <div className="flex flex-col items-center">
           {showSuccessText && <SuccessText text="Log in successfull, redirecting..." />}
           <div className="flex justify-center w-full md:w-3/4 lg:w-2/3 xl:w-1/2">
-            <Form method="post">
+            <Form method="POST">
               <fieldset disabled={navigation.state === "submitting"}>
                 <Input
                   name="otp"

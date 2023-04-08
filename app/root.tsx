@@ -1,13 +1,7 @@
-import type {
-  DataFunctionArgs,
-  ErrorBoundaryComponent,
-  LinksFunction,
-  TypedResponse,
-} from "@remix-run/node";
+import type { DataFunctionArgs, LinksFunction, TypedResponse } from "@remix-run/node";
 import { json } from "@remix-run/node";
-
 import type { ShouldRevalidateFunction } from "@remix-run/react";
-import { useNavigation } from "@remix-run/react";
+import { useNavigation, useRouteError } from "@remix-run/react";
 import {
   Link,
   Links,
@@ -43,7 +37,10 @@ import {
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import clsx from "clsx";
 import DashboardIcon from "./components/icons/DashboardIcon";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type {
+  V2_ErrorBoundaryComponent,
+  V2_MetaFunction,
+} from "@remix-run/react/dist/routeModules";
 import usePreferredLocale from "./lib/usePreferredLocale.hook";
 import type { UserSessionData } from "./utils/auth.utils.server";
 import { getSessionCookieWithUpdatedPreferences } from "./utils/auth.utils.server";
@@ -87,8 +84,9 @@ export const meta: V2_MetaFunction = () => {
   ];
 };
 
-export const ErrorBoundary: ErrorBoundaryComponent = ({ error }: { error: any }) => {
-  console.error(error);
+export const ErrorBoundary: V2_ErrorBoundaryComponent = () => {
+  let error = useRouteError();
+  console.log(error);
   return <GenericError />;
 };
 
@@ -138,7 +136,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
     return true;
   }
 
-  if (currentUrl.pathname.includes("/changeCurrency") && formMethod === "post") {
+  if (currentUrl.pathname.includes("/changeCurrency") && formMethod === "POST") {
     return true;
   }
 

@@ -32,7 +32,7 @@ enum AuthActionType {
 }
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Budgetsco" }];
 };
 
@@ -117,7 +117,7 @@ export default function AuthAction() {
       const form = new FormData();
       form.set("mode", "verifyEmail");
       form.set("idToken", idToken);
-      submit(form, { method: "post", replace: true });
+      submit(form, { method: "POST", replace: true });
     }
   }
 
@@ -165,7 +165,7 @@ export default function AuthAction() {
             <div className="flex flex-col items-center justify-center">
               <Form
                 replace
-                method="post"
+                method="POST"
                 onSubmit={(e) => handleSetNewPassword(e, newPassword, oobCode)}
               >
                 <Input

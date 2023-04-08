@@ -15,7 +15,7 @@ import Bar from "~/components/Bar";
 import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Compare reports - Budgetsco" }];
 };
 

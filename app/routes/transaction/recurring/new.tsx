@@ -25,7 +25,7 @@ import { isNotNullAndEmpty, isNullOrEmpty } from "~/utils/text.utils";
 import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [
     ...(rootModule?.meta ?? []),
     { title: "New recurring transaction - Budgetsco" },
@@ -149,7 +149,7 @@ export default function NewRecurringTransaction() {
       <h1 className="text-3xl text-center pb-7">Recurring Transaction</h1>
       <div className="flex justify-center">
         <div className="flex flex-col w-full max-w-sm">
-          <Form replace method="post">
+          <Form replace method="POST">
             <fieldset className="border border-primary p-4 rounded-md">
               <Spacer size={1} />
               <Badge

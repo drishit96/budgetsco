@@ -22,7 +22,7 @@ import LineChartCard from "~/components/LineChartCard";
 import { add, calculate, max, sum } from "~/utils/number.utils";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Trending report - Budgetsco" }];
 };
 

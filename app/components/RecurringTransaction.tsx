@@ -41,7 +41,7 @@ export function RecurringTransaction({
     navigation.formData.get("formName") === "MARK_AS_DONE_FORM";
   const isTransactionDeleteInProgress =
     isTransactionUpdateInProgress &&
-    navigation.formMethod === "delete" &&
+    navigation.formMethod === "DELETE" &&
     navigation.formData.get("formName") === "DELETE_RECURRING_TRANSACTION_FORM";
 
   return (
@@ -90,7 +90,7 @@ export function RecurringTransaction({
           {!manageView && (
             <Form
               replace
-              method="post"
+              method="POST"
               className="flex-1 cursor-pointer border-l border-r border-primary"
             >
               <input type="hidden" name="formName" value="MARK_AS_DONE_FORM" />
@@ -125,7 +125,7 @@ export function RecurringTransaction({
 
           <Form
             replace
-            method="delete"
+            method="DELETE"
             className="flex-1 cursor-pointer border-l border-r border-primary"
           >
             <input type="hidden" name="transactionId" value={transaction.id} />
@@ -153,7 +153,7 @@ export function RecurringTransaction({
                       form.set("formName", "DELETE_RECURRING_TRANSACTION_FORM");
                       form.set("transactionId", transaction.id);
                       submit(form, {
-                        method: "delete",
+                        method: "DELETE",
                         replace: true,
                       });
                     },

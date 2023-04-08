@@ -3,7 +3,7 @@ import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import { Spacer } from "~/components/Spacer";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Budgetsco" }];
 };
 
