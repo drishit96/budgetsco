@@ -259,14 +259,14 @@ export default function Register() {
                 By clicking 'Log in', you agree to our{" "}
                 <Link
                   to="/terms-of-service"
-                  className="text-emerald-900 underline underline-offset-2"
+                  className="text-accent underline underline-offset-2"
                 >
                   terms of service
                 </Link>{" "}
                 and{" "}
                 <Link
                   to="/privacy-policy"
-                  className="text-emerald-900 underline underline-offset-2"
+                  className="text-accent underline underline-offset-2"
                 >
                   privacy policy
                 </Link>
@@ -276,7 +276,7 @@ export default function Register() {
               <span>
                 Have an account?{" "}
                 <Link
-                  className="text-emerald-900 underline underline-offset-2"
+                  className="text-accent underline underline-offset-2"
                   to="/auth/login"
                 >
                   Log in

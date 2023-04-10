@@ -114,12 +114,12 @@ export default function MFA() {
               <div className="flex items-center p-4 border rounded-md">
                 <p>Status:</p>
                 <InlineSpacer size={1} />
-                <span className="pl-2 pr-2 pt-1 pb-1 rounded-md border border-green-900 bg-green-50 text-green-900 text-sm font-bold">
+                <span className="pl-2 pr-2 pt-1 pb-1 rounded-md border border-accent bg-accent text-accent text-sm font-bold">
                   Enabled
                 </span>
                 <span className="flex-grow"></span>
                 <Form method="DELETE">
-                  <button className="btn-secondary-sm border-red-900 text-red-900 focus:ring-red-900">
+                  <button className="btn-secondary-sm border-red-900 text-urgent focus:ring-red-900">
                     Disable 2FA
                   </button>
                 </Form>
@@ -176,7 +176,7 @@ export default function MFA() {
                   If you are unable to scan, enter this code: {secret}
                   <InlineSpacer size={1} />
                   <button
-                    className="pl-1 pr-1 border border-emerald-700 text-emerald-700 focus-ring rounded-lg"
+                    className="pl-1 pr-1 border border-accent text-accent focus-ring rounded-lg"
                     onClick={() => {
                       if (
                         navigator &&
@@ -195,7 +195,7 @@ export default function MFA() {
                   </button>
                 </span>
                 <Spacer size={1} />
-                <p className="text-red-900">
+                <p className="text-urgent">
                   <strong>Note:</strong> Keep this code somewhere safe. If you lose it, we
                   won't be able to recover your account.
                 </p>

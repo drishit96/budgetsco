@@ -148,8 +148,8 @@ export default function STR() {
               <span
                 className={`pl-2 pr-2 pt-1 pb-1 rounded-md border ${
                   subscription.status === "active" || subscription.status === "trialing"
-                    ? "border-green-900 bg-green-50 text-green-900"
-                    : "border-red-900 bg-red-50 text-red-900"
+                    ? "border-accent bg-accent text-accent"
+                    : "border-red-900 bg-urgent text-urgent"
                 }  text-sm font-bold`}
               >
                 {subscription.status === "active" || subscription.status === "trialing"

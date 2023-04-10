@@ -95,8 +95,8 @@ export default function Settings() {
                 <span
                   className={`w-min p-1 rounded-md text-sm ${
                     context.isActiveSubscription
-                      ? "text-green-900 bg-green-50"
-                      : "text-red-900 bg-red-50"
+                      ? "text-accent bg-accent"
+                      : "text-urgent bg-urgent"
                   }`}
                 >
                   {context.isActiveSubscription ? "ACTIVE" : "INACTIVE"}
