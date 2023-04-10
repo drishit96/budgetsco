@@ -511,8 +511,8 @@ export default function Index() {
         </div>
 
         {upcomingTransactions && upcomingTransactions.length > 0 && (
-          <div className="bg-amber-50 p-2 rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-2">
-            <p className="text-lg text-center text-amber-700 p-1 font-bold">Upcoming</p>
+          <div className="bg-important p-2 rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-2">
+            <p className="text-lg text-center text-important p-1 font-bold">Upcoming</p>
             <Spacer size={1} />
             <ul ref={listParent}>
               {renderRecurringTransactions(
