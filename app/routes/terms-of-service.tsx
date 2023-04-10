@@ -137,7 +137,7 @@ export default function PrivacyPolicy() {
               <h3 className="text-xl font-semibold">Section 5 - Personal information</h3>
               <p>
                 Your submission of personal information through our app is governed by our{" "}
-                <a className="underline hover:text-emerald-700" href="/privacyPolicy">
+                <a className="underline hover:text-accent" href="/privacyPolicy">
                   privacy policy
                 </a>
                 .
@@ -331,7 +331,7 @@ export default function PrivacyPolicy() {
               <p>
                 Questions about the Terms of Service should be sent to us at{" "}
                 <a
-                  className="underline hover:text-emerald-700"
+                  className="underline hover:text-accent"
                   href="mailto:support@budgetsco.online"
                 >
                   support@budgetsco.online

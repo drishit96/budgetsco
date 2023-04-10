@@ -80,6 +80,7 @@
   --bg-color-urgent: #fef2f2;
   --bg-color-info: rgb(240, 249, 255);
   --bg-color-important: rgb(255, 251, 235);
+  --bg-color-accent: rgb(236, 253, 245);
   --focus-color: #dfe1e2;
   --ripple-color: #000;
 }
@@ -102,6 +103,7 @@
   --bg-color-urgent: rgb(127, 29, 29, 0.2);
   --bg-color-info: rgb(12, 74, 110, 0.3);
   --bg-color-important: rgb(120, 53, 15, 0.3);
+  --bg-color-accent: rgb(236, 253, 245, 0.05);
   --focus-color: #383838;
   --ripple-color: #fff;
   background-color: var(--bg-color);
@@ -126,6 +128,7 @@
     --bg-color-urgent: rgb(127, 29, 29, 0.2);
     --bg-color-info: rgb(12, 74, 110, 0.3);
     --bg-color-important: rgb(120, 53, 15, 0.3);
+    --bg-color-accent: rgb(236, 253, 245, 0.05);
     --focus-color: #383838;
     --ripple-color: #fff;
     background-color: var(--bg-color);
@@ -149,6 +152,7 @@
     --bg-color-urgent: #fef2f2;
     --bg-color-info: rgb(240, 249, 255);
     --bg-color-important: rgb(255, 251, 235);
+    --bg-color-accent: rgb(236, 253, 245);
     --focus-color: #dfe1e2;
     --ripple-color: #000;
   }

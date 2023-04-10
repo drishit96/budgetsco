@@ -38,7 +38,7 @@ export function Input({
     <div className="flex flex-col w-full">
       <label className="text-primary">
         {label}
-        <span className="text-red-900">{required ? "*" : ""}</span>
+        <span className="text-urgent">{required ? "*" : ""}</span>
         <br />
         {!suggestions ? (
           <input
