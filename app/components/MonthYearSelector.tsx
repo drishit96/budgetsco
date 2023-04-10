@@ -39,12 +39,12 @@ export default function MonthYearSelector({
     }
   }, []);
   return (
-    <Form replace method="get" className="lg:flex lg:justify-center flex-grow">
+    <Form replace method="GET" className="lg:flex lg:justify-center flex-grow">
       {showCompareSettingButton && (
         <div className="flex w-full">
           <Ripple>
             <button
-              className="flex p-3 border rounded-md mb-2 w-full"
+              className="flex p-3 border border-primary rounded-md mb-2 w-full"
               onClick={(e) => {
                 e.preventDefault();
                 setShowCompareSetting((prev) => !prev);
@@ -128,7 +128,7 @@ export default function MonthYearSelector({
                     e.preventDefault();
                     isMobileDevice() && setShowCompareSetting(false);
                     submit(e.currentTarget, {
-                      method: "get",
+                      method: "GET",
                       replace: true,
                       action: submitAction,
                     });

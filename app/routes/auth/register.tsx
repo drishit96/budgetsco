@@ -40,7 +40,7 @@ import { saveBoolSettingToLocalStorage } from "~/utils/setting.utils";
 import Turnstile from "~/components/Turnstile";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Register - Budgetsco" }];
 };
 
@@ -166,7 +166,7 @@ export default function Register() {
         }
       }
 
-      submit(form, { method: "post", replace: true });
+      submit(form, { method: "POST", replace: true });
     }
 
     if (error) {
@@ -194,7 +194,7 @@ export default function Register() {
         <div className="flex flex-col items-center justify-center">
           <Form
             replace
-            method="post"
+            method="POST"
             onSubmit={(e) => handleRegister(e, emailId, password)}
           >
             <Input
@@ -259,14 +259,14 @@ export default function Register() {
                 By clicking 'Log in', you agree to our{" "}
                 <Link
                   to="/terms-of-service"
-                  className="text-emerald-900 underline underline-offset-2"
+                  className="text-accent underline underline-offset-2"
                 >
                   terms of service
                 </Link>{" "}
                 and{" "}
                 <Link
                   to="/privacy-policy"
-                  className="text-emerald-900 underline underline-offset-2"
+                  className="text-accent underline underline-offset-2"
                 >
                   privacy policy
                 </Link>
@@ -276,7 +276,7 @@ export default function Register() {
               <span>
                 Have an account?{" "}
                 <Link
-                  className="text-emerald-900 underline underline-offset-2"
+                  className="text-accent underline underline-offset-2"
                   to="/auth/login"
                 >
                   Log in

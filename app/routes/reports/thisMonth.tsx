@@ -1,6 +1,6 @@
-import type { ErrorBoundaryComponent, LoaderFunction } from "@remix-run/node";
+import type { LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Link, useLoaderData, useOutletContext } from "@remix-run/react";
+import { Link, useLoaderData, useOutletContext, useRouteError } from "@remix-run/react";
 import { getSessionData } from "~/utils/auth.utils.server";
 import { Spacer } from "~/components/Spacer";
 import type { ThisMonthReportResponse } from "~/modules/reports/reports.service";
@@ -16,20 +16,24 @@ import {
   INVESTMENT_CHART_COLORS_MAP,
 } from "~/utils/colors.utils";
 import type { Currency } from "~/utils/number.utils";
-import { add, calculate, max, subtract } from "~/utils/number.utils";
+import { calculate, max, subtract } from "~/utils/number.utils";
 import { formatToCurrency } from "~/utils/number.utils";
 import { ErrorText } from "~/components/ErrorText";
 import { SuccessText } from "~/components/SuccessText";
 import { Ripple } from "@rmwc/ripple";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type {
+  V2_ErrorBoundaryComponent,
+  V2_MetaFunction,
+} from "@remix-run/react/dist/routeModules";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "This month's report - Budgetsco" }];
 };
 
-export const ErrorBoundary: ErrorBoundaryComponent = ({ error }) => {
-  console.error(error);
+export const ErrorBoundary: V2_ErrorBoundaryComponent = () => {
+  let error = useRouteError();
+  console.log(error);
   return <GenericError />;
 };
 

@@ -32,7 +32,7 @@ import { ComboBox } from "~/components/ComboBox";
 const currencyOptions = getAllCurrencyOptions();
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Change currency - Budgetsco" }];
 };
 
@@ -125,7 +125,7 @@ export default function ChangeCurrency() {
       <main className="pt-7 pb-12 pl-3 pr-3">
         <p className="text-3xl text-center pb-7">Change currency</p>
         <div className="flex flex-col justify-center items-center">
-          <Form className="w-full md:w-1/3" method="post" replace>
+          <Form className="w-full md:w-1/3" method="POST" replace>
             <ComboBox
               name="currencyToShow"
               labelId="New Currency"

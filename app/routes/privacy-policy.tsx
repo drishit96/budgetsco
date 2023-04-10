@@ -2,7 +2,7 @@ import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import { Spacer } from "~/components/Spacer";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Privacy policy - Budgetsco" }];
 };
 
@@ -140,7 +140,7 @@ export default function PrivacyPolicy() {
                 If you're already a Budgetsco user, you may access, update, alter, or
                 delete your data from our website/app or by contacting{" "}
                 <a
-                  className="underline hover:text-emerald-700"
+                  className="underline hover:text-accent"
                   href="mailto:support@budgetsco.online"
                 >
                   support@budgetsco.online
@@ -159,7 +159,7 @@ export default function PrivacyPolicy() {
                 If you would like to cancel your account or delete your data, you may do
                 so by emailing{" "}
                 <a
-                  className="underline hover:text-emerald-700"
+                  className="underline hover:text-accent"
                   href="mailto:support@budgetsco.online"
                 >
                   support@budgetsco.online
@@ -188,7 +188,7 @@ export default function PrivacyPolicy() {
                 Questions regarding our Privacy policy or information practices should be
                 directed to{" "}
                 <a
-                  className="underline hover:text-emerald-700"
+                  className="underline hover:text-accent"
                   href="mailto:support@budgetsco.online"
                 >
                   support@budgetsco.online

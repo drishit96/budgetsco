@@ -38,11 +38,11 @@ export function StatisticsCard({
           className={`text-xs font-bold ${
             positiveIsBetter
               ? perc >= 0
-                ? "text-green-900"
-                : "text-red-900"
+                ? "text-accent"
+                : "text-urgent"
               : perc < 0
-              ? "text-green-900"
-              : "text-red-900"
+              ? "text-accent"
+              : "text-urgent"
           }`}
         >
           {perc >= 0 ? "▲" : "▼"} {Math.round(perc)}%

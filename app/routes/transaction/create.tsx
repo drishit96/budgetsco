@@ -47,7 +47,7 @@ import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import { ComboBox } from "~/components/ComboBox";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Create transaction - Budgetsco" }];
 };
 
@@ -289,14 +289,14 @@ export default function Create() {
       }
     }
 
-    submit(formData, { method: "post", replace: true });
+    submit(formData, { method: "POST", replace: true });
   }
 
   return (
     <>
       <main className="p-5 pb-28">
         <h1 className="text-3xl text-center pb-7">New transaction</h1>
-        <Form replace method="post" onSubmit={(e) => handleFormSubmit(e)}>
+        <Form replace method="POST" onSubmit={(e) => handleFormSubmit(e)}>
           <fieldset disabled={isSubmittingData}>
             <p className="text-center">Amount</p>
             <p className="text-center">

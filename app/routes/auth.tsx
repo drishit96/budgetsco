@@ -21,8 +21,8 @@ export default function Auth() {
           <Link className="w-1/2" to="/auth/login" onClick={() => setActiveTab("login")}>
             <Ripple>
               <p
-                className={`p-2 text-sm font-bold sm:text-base sm:font-normal text-center border-l-2 border-t-2 border-b-2 border-emerald-700 rounded-l-md ${
-                  activeTab === "login" ? "bg-emerald-700 text-white" : "text-emerald-700"
+                className={`p-2 text-sm font-bold sm:text-base sm:font-normal text-center border-l-2 border-t-2 border-b-2 border-accent rounded-l-md ${
+                  activeTab === "login" ? "bg-emerald-700 text-white" : "text-accent"
                 }`}
               >
                 Login

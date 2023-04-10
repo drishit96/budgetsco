@@ -14,7 +14,7 @@ import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import { getCurrentAppTheme } from "~/utils/setting.utils";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Settings - Budgetsco" }];
 };
 
@@ -70,7 +70,7 @@ export default function Settings() {
     if ("localStorage" in window) {
       localStorage.clear();
     }
-    submit(e.currentTarget, { method: "post", replace: true });
+    submit(e.currentTarget, { method: "POST", replace: true });
   }
 
   return (
@@ -95,8 +95,8 @@ export default function Settings() {
                 <span
                   className={`w-min p-1 rounded-md text-sm ${
                     context.isActiveSubscription
-                      ? "text-green-900 bg-green-50"
-                      : "text-red-900 bg-red-50"
+                      ? "text-accent bg-accent"
+                      : "text-urgent bg-urgent"
                   }`}
                 >
                   {context.isActiveSubscription ? "ACTIVE" : "INACTIVE"}
@@ -210,7 +210,7 @@ export default function Settings() {
 
             <Spacer size={3} />
             <Ripple>
-              <Form method="post" onSubmit={handleLogoutFormSubmit} replace>
+              <Form method="POST" onSubmit={handleLogoutFormSubmit} replace>
                 <input type="hidden" name="formName" value="LOGOUT_FORM" />
                 <button
                   type="submit"

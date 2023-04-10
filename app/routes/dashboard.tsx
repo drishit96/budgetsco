@@ -53,7 +53,7 @@ import { abs, calculate, subtract } from "~/utils/number.utils";
 import SubscriptionRequiredBottomSheet from "~/components/SubscriptionRequiredBottomSheet";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Dashboard - Budgetsco" }];
 };
 
@@ -268,7 +268,7 @@ export default function Index() {
       const form = new FormData();
       form.set("formName", "REFRESH_SESSION_FORM");
       form.set("idToken", idToken);
-      submit(form, { method: "post" });
+      submit(form, { method: "POST" });
 
       setIsRefreshCallSent(true);
     });
@@ -290,7 +290,7 @@ export default function Index() {
     const form = new FormData();
     form.set("formName", "SAVE_REGISTRATION_TOKEN");
     form.set("token", token);
-    submit(form, { method: "post", replace: true });
+    submit(form, { method: "POST", replace: true });
   }
 
   async function checkForUnAcknowledgedPurchases() {
@@ -511,8 +511,8 @@ export default function Index() {
         </div>
 
         {upcomingTransactions && upcomingTransactions.length > 0 && (
-          <div className="bg-amber-50 p-2 rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-2">
-            <p className="text-lg text-center text-amber-700 p-1 font-bold">Upcoming</p>
+          <div className="bg-important p-2 rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-2">
+            <p className="text-lg text-center text-important p-1 font-bold">Upcoming</p>
             <Spacer size={1} />
             <ul ref={listParent}>
               {renderRecurringTransactions(

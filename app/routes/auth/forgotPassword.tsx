@@ -12,7 +12,7 @@ import { InfoText } from "~/components/InfoText";
 import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Forgot password - Budgetsco" }];
 };
 
@@ -71,7 +71,7 @@ export default function ForgotPassword() {
           <Spacer />
           <Form
             replace
-            method="post"
+            method="POST"
             onSubmit={(e) => handlePasswordResetRequest(e, emailId)}
           >
             <Input

@@ -37,7 +37,7 @@ export function Transaction({
   const submit = useSubmit();
   const isTransactionUpdateInProgress =
     navigation.state === "submitting" &&
-    navigation.formMethod === "delete" &&
+    navigation.formMethod === "DELETE" &&
     navigation.formData.get("transactionId") === transaction.id;
 
   return (
@@ -153,7 +153,7 @@ export function Transaction({
 
             <Form
               replace
-              method="delete"
+              method="DELETE"
               className="flex-1 cursor-pointer border-l border-r border-primary"
             >
               <input type="hidden" name="transactionId" value={transaction.id} />
@@ -175,7 +175,7 @@ export function Transaction({
                         const form = new FormData();
                         form.set("transactionId", transaction.id);
                         const submitOptions: SubmitOptions = {
-                          method: "delete",
+                          method: "DELETE",
                           replace: true,
                         };
                         if (submitAction) {

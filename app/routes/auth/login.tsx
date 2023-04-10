@@ -48,7 +48,7 @@ import { isMobileDevice } from "~/utils/browser.utils";
 import Turnstile from "~/components/Turnstile";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Login - Budgetsco" }];
 };
 
@@ -204,7 +204,7 @@ export default function Login() {
         }
       }
 
-      submit(form, { method: "post", replace: true });
+      submit(form, { method: "POST", replace: true });
     }
 
     error && setError("Invalid e-mail / password");
@@ -223,7 +223,7 @@ export default function Login() {
           </div>
           <Spacer />
 
-          <Form replace method="post" onSubmit={(e) => handleLogin(e, emailId, password)}>
+          <Form replace method="POST" onSubmit={(e) => handleLogin(e, emailId, password)}>
             <Input
               name="emailId"
               type="email"
@@ -247,7 +247,7 @@ export default function Login() {
             />
             <Spacer />
 
-            <Link className="text-emerald-900" to="/auth/forgotPassword">
+            <Link className="text-accent" to="/auth/forgotPassword">
               Forgot password?
             </Link>
 
@@ -278,14 +278,14 @@ export default function Login() {
                 By clicking 'Log in', you agree to our{" "}
                 <Link
                   to="/terms-of-service"
-                  className="text-emerald-900 underline underline-offset-2"
+                  className="text-accent underline underline-offset-2"
                 >
                   terms of service
                 </Link>{" "}
                 and{" "}
                 <Link
                   to="/privacy-policy"
-                  className="text-emerald-900 underline underline-offset-2"
+                  className="text-accent underline underline-offset-2"
                 >
                   privacy policy
                 </Link>
@@ -295,7 +295,7 @@ export default function Login() {
               <span>
                 Don't have an account?{" "}
                 <Link
-                  className="text-emerald-900 underline underline-offset-2"
+                  className="text-accent underline underline-offset-2"
                   to="/auth/register"
                 >
                   Register

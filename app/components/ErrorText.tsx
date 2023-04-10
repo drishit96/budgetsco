@@ -13,7 +13,7 @@ export function ErrorText({
     <>
       {isNotNullAndEmpty(error) && (
         <>
-          <div className="text-red-800 bg-red-50 p-2 mt-2 rounded-md">
+          <div className="text-urgent bg-urgent p-2 mt-2 rounded-md">
             {showIcon && (
               <>
                 <ErrorIcon size={24} color="#991B1B" />
