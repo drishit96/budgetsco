@@ -164,7 +164,7 @@ export default function ThisMonthReport() {
         </>
       )}
 
-      {investmentDone > expense && (
+      {calculate(investmentDone).gt(expense) && (
         <>
           <Spacer />
           <SuccessText text="🎉 Congrats on investing more than you spent" />
