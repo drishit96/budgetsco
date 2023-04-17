@@ -38,6 +38,8 @@ import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import type { AuthPageContext } from "../auth";
 import { saveBoolSettingToLocalStorage } from "~/utils/setting.utils";
 import Turnstile from "~/components/Turnstile";
+import { trackEvent, trackUserProfileUpdate } from "~/utils/analytics.utils.server";
+import { EventNames } from "~/lib/anaytics.contants";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
@@ -63,6 +65,11 @@ export const action: ActionFunction = async ({ request }) => {
     const browserTimezone = form.get("browserTimezone")?.toString() ?? "Etc/GMT";
     const browserLocale = form.get("browserLocale")?.toString() ?? "en-US";
     await saveBrowserPreferences(user.userId, browserTimezone, browserLocale);
+    trackUserProfileUpdate({
+      request,
+      updateType: "set",
+      data: { timezone: browserTimezone, locale: browserLocale },
+    });
 
     const userPreferences = await getUserPreferences(user.userId);
     if (userPreferences == null) {
@@ -76,6 +83,7 @@ export const action: ActionFunction = async ({ request }) => {
       saveNotificationToken(user.userId, notificationToken);
     }
 
+    trackEvent(request, EventNames.REGISTERED, undefined, user.userId);
     return redirect("/dashboard", {
       headers: {
         "Set-Cookie": sessionCookie,

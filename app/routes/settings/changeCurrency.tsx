@@ -28,6 +28,8 @@ import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import { saveBoolSettingToLocalStorage } from "~/utils/setting.utils";
 import { ErrorValidation } from "~/components/ErrorValidation";
 import { ComboBox } from "~/components/ComboBox";
+import { trackEvent, trackUserProfileUpdate } from "~/utils/analytics.utils.server";
+import { EventNames } from "~/lib/anaytics.contants";
 
 const currencyOptions = getAllCurrencyOptions();
 
@@ -60,6 +62,11 @@ export const action: ActionFunction = async ({ request }) => {
     return json({ errors: userPreferenceInput.errors });
   } else {
     lastModified = await updateCurrencyPreference(user.userId, currency);
+    trackEvent(request, EventNames.CURRENCY_CHANGED, {
+      oldCurrency: currentUserPreferences.currency ?? "Not set",
+      newCurrency: currency,
+    });
+    trackUserProfileUpdate({ request, updateType: "set", data: { currency } });
   }
 
   return json({

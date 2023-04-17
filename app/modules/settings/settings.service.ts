@@ -98,6 +98,23 @@ export async function updateIsMFAOnPreference(userId: string, isMFAOn: boolean) 
   }
 }
 
+export async function updateCollectAnalyticsPreference(
+  userId: string,
+  collectAnalytics: boolean
+) {
+  try {
+    const currentTime = new Date().getTime();
+    await prisma.userPreference.update({
+      data: { collectAnalytics, lastModified: currentTime },
+      where: { userId },
+    });
+    return currentTime;
+  } catch (error) {
+    console.log(error);
+    return 0;
+  }
+}
+
 export async function saveBrowserPreferences(
   userId: string,
   timezone: string,

@@ -6,11 +6,13 @@ import { useEffect } from "react";
 import { InlineSpacer } from "~/components/InlineSpacer";
 import { Input } from "~/components/Input";
 import { Spacer } from "~/components/Spacer";
+import { EventNames } from "~/lib/anaytics.contants";
 import {
   disable2FA,
   encryptAndSaveMFASecret,
 } from "~/modules/settings/security/mfa.service";
 import type { AppContext } from "~/root";
+import { trackEvent, trackUserProfileUpdate } from "~/utils/analytics.utils.server";
 import {
   generateAuthenticatorSecret,
   getSessionData,
@@ -30,6 +32,8 @@ export const action: ActionFunction = async ({ request }) => {
 
   if (request.method === "DELETE") {
     await disable2FA(user.userId);
+    trackEvent(request, EventNames.MFA_DISABLED);
+    trackUserProfileUpdate({ request, updateType: "unset", data: ["mfa"] });
     return json({ mfaOn: false });
   }
 
@@ -44,6 +48,8 @@ export const action: ActionFunction = async ({ request }) => {
   if (!isValid) return json({ error: "Invalid code" });
 
   await encryptAndSaveMFASecret(user.userId, secret);
+  trackEvent(request, EventNames.MFA_ENABLED);
+  trackUserProfileUpdate({ request, updateType: "set", data: { mfa: "yes" } });
 
   return json({ mfaOn: true });
 };

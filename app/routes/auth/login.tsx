@@ -46,6 +46,8 @@ import type { Currency } from "~/utils/number.utils";
 import type { AuthPageContext } from "../auth";
 import { isMobileDevice } from "~/utils/browser.utils";
 import Turnstile from "~/components/Turnstile";
+import { trackEvent } from "~/utils/analytics.utils.server";
+import { EventNames } from "~/lib/anaytics.contants";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
@@ -74,6 +76,8 @@ export const action: ActionFunction = async ({ request }) => {
       throw new Error(`userPreferences missing for userId: ${user.userId}`);
     }
 
+    trackEvent(request, EventNames.PASSWORD_VALID, undefined, user.userId);
+
     if (userPreferences.isMFAOn) {
       return redirect("/verifyMFA", {
         headers: {
@@ -92,7 +96,8 @@ export const action: ActionFunction = async ({ request }) => {
     }
 
     await Promise.allSettled(tasks);
-
+    trackEvent(request, EventNames.LOGGED_IN, undefined, user.userId);
+    
     return json(
       {
         idToken,
