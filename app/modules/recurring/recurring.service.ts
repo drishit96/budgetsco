@@ -176,40 +176,52 @@ export async function markTransactionAsDone(
   userId: string,
   timezone: string,
   transactionId: string
-) {
-  const recurringTransaction = await prisma.recurringTransaction.findFirst({
-    where: { id: transactionId, userId },
-  });
+): Promise<
+  | { isTransactionMarkedAsDone: false; type: null }
+  | { isTransactionMarkedAsDone: true; type: string }
+> {
+  try {
+    const recurringTransaction = await prisma.recurringTransaction.findFirst({
+      where: { id: transactionId, userId },
+    });
 
-  if (recurringTransaction == null) return true;
+    if (recurringTransaction == null) {
+      return { isTransactionMarkedAsDone: false, type: null };
+    }
 
-  const executionDate = getNextExecutionDate(
-    recurringTransaction.occurrence,
-    recurringTransaction.interval,
-    recurringTransaction.executionDate
-  );
+    const executionDate = getNextExecutionDate(
+      recurringTransaction.occurrence,
+      recurringTransaction.interval,
+      recurringTransaction.executionDate
+    );
 
-  await Promise.allSettled([
-    addNewTransaction(
-      {
-        amount: recurringTransaction.amount,
-        category: recurringTransaction.category,
-        category2: recurringTransaction.category2,
-        category3: recurringTransaction.category3,
-        paymentMode: recurringTransaction.paymentMode,
-        description: recurringTransaction.description,
-        type: recurringTransaction.type as TransactionType,
-      },
-      userId,
-      timezone
-    ),
-    prisma.recurringTransaction.update({
-      where: { id: transactionId },
-      data: { executionDate, isNotified: false },
-    }),
-  ]);
+    await Promise.allSettled([
+      addNewTransaction(
+        {
+          amount: recurringTransaction.amount,
+          category: recurringTransaction.category,
+          category2: recurringTransaction.category2,
+          category3: recurringTransaction.category3,
+          paymentMode: recurringTransaction.paymentMode,
+          description: recurringTransaction.description,
+          type: recurringTransaction.type as TransactionType,
+        },
+        userId,
+        timezone
+      ),
+      prisma.recurringTransaction.update({
+        where: { id: transactionId },
+        data: { executionDate, isNotified: false },
+      }),
+    ]);
 
-  return true;
+    return {
+      isTransactionMarkedAsDone: true,
+      type: recurringTransaction.type.toString(),
+    };
+  } catch (error) {
+    return { isTransactionMarkedAsDone: false, type: null };
+  }
 }
 
 export async function markAsNotified(userIds: string[], startDate: Date, endDate: Date) {

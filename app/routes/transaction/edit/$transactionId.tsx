@@ -54,6 +54,8 @@ import {
   getFirstDateOfThisMonth,
 } from "~/utils/date.utils";
 import { ComboBox } from "~/components/ComboBox";
+import { trackEvent } from "~/utils/analytics.utils.server";
+import { EventNames } from "~/lib/anaytics.contants";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
@@ -101,6 +103,8 @@ export const action: ActionFunction = async ({ request, params }) => {
 
       await Promise.allSettled(tasks);
       const isTransactionSaved = await editTransactionTask;
+      isTransactionSaved &&
+        trackEvent(request, EventNames.TRANSACTION_EDITED, { type: transaction.type });
       return isTransactionSaved ? json({ data: { isTransactionSaved: true } }) : null;
     } catch (err) {
       console.error(err);
