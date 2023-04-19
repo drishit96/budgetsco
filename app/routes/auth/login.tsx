@@ -46,6 +46,8 @@ import type { Currency } from "~/utils/number.utils";
 import type { AuthPageContext } from "../auth";
 import { isMobileDevice } from "~/utils/browser.utils";
 import Turnstile from "~/components/Turnstile";
+import { trackEvent } from "~/utils/analytics.utils.server";
+import { EventNames } from "~/lib/anaytics.contants";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
@@ -74,6 +76,8 @@ export const action: ActionFunction = async ({ request }) => {
       throw new Error(`userPreferences missing for userId: ${user.userId}`);
     }
 
+    trackEvent(request, EventNames.PASSWORD_VALID, undefined, user.userId);
+
     if (userPreferences.isMFAOn) {
       return redirect("/verifyMFA", {
         headers: {
@@ -92,7 +96,8 @@ export const action: ActionFunction = async ({ request }) => {
     }
 
     await Promise.allSettled(tasks);
-
+    trackEvent(request, EventNames.LOGGED_IN, undefined, user.userId);
+    
     return json(
       {
         idToken,
@@ -247,7 +252,7 @@ export default function Login() {
             />
             <Spacer />
 
-            <Link className="text-emerald-900" to="/auth/forgotPassword">
+            <Link className="text-accent" to="/auth/forgotPassword">
               Forgot password?
             </Link>
 
@@ -278,14 +283,14 @@ export default function Login() {
                 By clicking 'Log in', you agree to our{" "}
                 <Link
                   to="/terms-of-service"
-                  className="text-emerald-900 underline underline-offset-2"
+                  className="text-accent underline underline-offset-2"
                 >
                   terms of service
                 </Link>{" "}
                 and{" "}
                 <Link
                   to="/privacy-policy"
-                  className="text-emerald-900 underline underline-offset-2"
+                  className="text-accent underline underline-offset-2"
                 >
                   privacy policy
                 </Link>
@@ -295,7 +300,7 @@ export default function Login() {
               <span>
                 Don't have an account?{" "}
                 <Link
-                  className="text-emerald-900 underline underline-offset-2"
+                  className="text-accent underline underline-offset-2"
                   to="/auth/register"
                 >
                   Register

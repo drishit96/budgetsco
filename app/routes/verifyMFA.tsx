@@ -6,10 +6,12 @@ import { useEffect, useState } from "react";
 import { Input } from "~/components/Input";
 import { Spacer } from "~/components/Spacer";
 import { SuccessText } from "~/components/SuccessText";
+import { EventNames } from "~/lib/anaytics.contants";
 import { verify2FAToken } from "~/modules/settings/security/mfa.service";
 import { getUserPreferences } from "~/modules/settings/settings.service";
 import { getCustomCategories } from "~/modules/transaction/transaction.service";
 import type { AppContext } from "~/root";
+import { trackEvent } from "~/utils/analytics.utils.server";
 import {
   getPartialSessionData,
   getSessionData,
@@ -46,6 +48,7 @@ export const action: ActionFunction = async ({ request }) => {
   const { userId, idToken } = partialSessionData;
   const isValidToken = await verify2FAToken(userId, otp);
   if (isValidToken == false) return json({ error: "Invalid code" });
+  trackEvent(request, EventNames.MFA_VALID);
 
   const tasks = [];
   const getUserPreferencesTask = getUserPreferences(userId);
@@ -59,6 +62,7 @@ export const action: ActionFunction = async ({ request }) => {
     throw new Error(`userPreferences missing for userId: ${userId}`);
   }
 
+  trackEvent(request, EventNames.LOGGED_IN, undefined, userId);
   return json(
     {
       customCategories: await getCustomCategoriesTask,

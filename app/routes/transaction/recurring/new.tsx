@@ -23,6 +23,8 @@ import { getAllTransactionTypes } from "~/utils/category.utils";
 import { formatToCurrency } from "~/utils/number.utils";
 import { isNotNullAndEmpty, isNullOrEmpty } from "~/utils/text.utils";
 import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import { trackEvent } from "~/utils/analytics.utils.server";
+import { EventNames } from "~/lib/anaytics.contants";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
@@ -75,6 +77,11 @@ export let action: ActionFunction = async ({ request }) => {
       timezone,
       recurringTransaction.transaction
     );
+    trackEvent(request, EventNames.RECURRING_TRANSACTION_CREATED, {
+      type: recurringTransaction.transaction.type,
+      occurrence: recurringTransaction.transaction.occurrence,
+      interval: recurringTransaction.transaction.interval.toString(),
+    });
     return json({ isRecurringTransactionSaved });
   }
 };

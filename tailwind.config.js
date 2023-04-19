@@ -35,6 +35,7 @@ module.exports = {
         urgent: "var(--bg-color-urgent)",
         info: "var(--bg-color-info)",
         important: "var(--bg-color-important)",
+        accent: "var(--bg-color-accent)",
       },
       textColor: {
         primary: "var(--text-color-primary)",

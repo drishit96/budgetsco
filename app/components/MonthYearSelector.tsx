@@ -44,7 +44,7 @@ export default function MonthYearSelector({
         <div className="flex w-full">
           <Ripple>
             <button
-              className="flex p-3 border rounded-md mb-2 w-full"
+              className="flex p-3 border border-primary rounded-md mb-2 w-full"
               onClick={(e) => {
                 e.preventDefault();
                 setShowCompareSetting((prev) => !prev);

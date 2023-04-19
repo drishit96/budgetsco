@@ -12,6 +12,8 @@ import {
 import { Spacer } from "~/components/Spacer";
 import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import { getCurrentAppTheme } from "~/utils/setting.utils";
+import { trackEvent } from "~/utils/analytics.utils.server";
+import { EventNames } from "~/lib/anaytics.contants";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
@@ -26,6 +28,7 @@ export let action: ActionFunction = async ({ request }) => {
   const formName = form.get("formName");
 
   if (formName === "LOGOUT_FORM") {
+    trackEvent(request, EventNames.LOGOUT);
     return redirect("/auth/login", {
       headers: {
         "Set-Cookie": await getSessionCookieBuilder().serialize("", {
@@ -95,8 +98,8 @@ export default function Settings() {
                 <span
                   className={`w-min p-1 rounded-md text-sm ${
                     context.isActiveSubscription
-                      ? "text-green-900 bg-green-50"
-                      : "text-red-900 bg-red-50"
+                      ? "text-accent bg-accent"
+                      : "text-urgent bg-urgent"
                   }`}
                 >
                   {context.isActiveSubscription ? "ACTIVE" : "INACTIVE"}
@@ -109,8 +112,17 @@ export default function Settings() {
             <Spacer size={1} />
             <Ripple>
               <Link
-                to="/settings/editBudget"
+                to="/settings/profile"
                 className="p-4 border border-primary rounded-t-lg focus-border"
+              >
+                <span>My profile</span>
+              </Link>
+            </Ripple>
+
+            <Ripple>
+              <Link
+                to="/settings/editBudget"
+                className="p-4 border-l border-r border-b border-primary focus-border"
               >
                 <span>Edit Budget</span>
               </Link>

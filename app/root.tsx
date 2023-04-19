@@ -136,7 +136,11 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
     return true;
   }
 
-  if (currentUrl.pathname.includes("/changeCurrency") && formMethod === "POST") {
+  if (
+    (currentUrl.pathname.includes("/changeCurrency") ||
+      currentUrl.pathname.includes("/profile")) &&
+    formMethod === "POST"
+  ) {
     return true;
   }
 

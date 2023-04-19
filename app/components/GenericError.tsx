@@ -9,8 +9,8 @@ export default function GenericError() {
         <Links />
       </head>
       <body className="flex min-h-full p-5 justify-center items-center">
-        <div className="p-2 bg-red-50 w-full">
-          <p className="text-md text-red-900">
+        <div className="p-2 bg-urgent w-full">
+          <p className="text-md text-urgent">
             Looks like something went wrong. Please try again later.
           </p>
         </div>

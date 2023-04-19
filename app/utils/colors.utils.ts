@@ -43,11 +43,11 @@ export const EXPENSE_TYPE_COLORS = ["#B91C1C", "#0369A1", "#15803D"];
 export function getBackgroundTintColor(color: Color) {
   switch (color) {
     case "green":
-      return "bg-green-50";
+      return "bg-accent";
     case "red":
-      return "bg-red-50";
+      return "bg-urgent";
     case "blue":
-      return "bg-sky-50";
+      return "bg-info";
   }
 }
 
@@ -103,11 +103,11 @@ export function getBackgroundDarkColor(color: Color) {
 export function getTextColor(color: Color) {
   switch (color) {
     case "green":
-      return "text-green-900";
+      return "text-accent";
     case "red":
-      return "text-red-900";
+      return "text-urgent";
     case "blue":
-      return "text-sky-900";
+      return "text-info";
   }
 }
 
@@ -125,7 +125,7 @@ export function getBorderColor(color: Color) {
 export function getTransactionColor(
   transactionType: "income" | "expense" | "investment"
 ) {
-  if (transactionType === "income") return "text-green-700";
-  if (transactionType === "expense") return "text-red-700";
-  if (transactionType === "investment") return "text-sky-700";
+  if (transactionType === "income") return "text-accent";
+  if (transactionType === "expense") return "text-urgent";
+  if (transactionType === "investment") return "text-info";
 }

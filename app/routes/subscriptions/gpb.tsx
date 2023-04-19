@@ -221,7 +221,7 @@ export default function GPB() {
             subscription.status === "SUBSCRIPTION_STATE_ACTIVE" &&
             selectedPlan && (
               <div className="p-4 border rounded-md">
-                <span className="pl-2 pr-2 pt-1 pb-1 rounded-md border border-green-900 bg-green-50 text-green-900 text-sm font-bold">
+                <span className="pl-2 pr-2 pt-1 pb-1 rounded-md border border-accent bg-accent text-accent text-sm font-bold">
                   ACTIVE
                 </span>
 

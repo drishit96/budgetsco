@@ -18,6 +18,7 @@ const preferencesInput = {
   paymentGateway: z.enum(["GPB", "STR"]).nullable(),
   isActiveSubscription: z.boolean().default(false),
   isMFAOn: z.boolean().default(false),
+  collectAnalytics: z.boolean().nullable(),
 };
 
 export const CurrencyPreferenceInputSchema = z.object({
