@@ -22,32 +22,49 @@ export async function trackEvent(
   data?: { [key: string]: string },
   userId?: string
 ) {
-  const sessionData = await getSessionData(request);
-  const collectAnalytics = sessionData?.collectAnalytics ?? false;
-  userId = userId ?? sessionData?.userId;
-  if (userId == null || collectAnalytics === false) return;
+  try {
+    const sessionData = await getSessionData(request);
+    const collectAnalytics = sessionData?.collectAnalytics;
+    userId = userId ?? sessionData?.userId;
+    if (userId == null || collectAnalytics === false) return;
 
-  const ip = request.headers.get("Fly-Client-IP");
-  batch.push({ event: eventName, properties: { distinct_id: userId, ip, ...data } });
+    const ip = request.headers.get("Fly-Client-IP");
+    batch.push({ event: eventName, properties: { distinct_id: userId, ip, ...data } });
 
-  if (batch.length < 500) return;
-  sendTrackedEvents();
+    if (batch.length < 500) return;
+    sendTrackedEvents();
+  } catch (error) {
+    logError(error);
+  }
 }
 
 export async function trackUserProfileUpdate(params: UserProfileUpdateParams) {
-  if (params.data == null) return;
-  const sessionData = await getSessionData(params.request);
-  if (sessionData == null) return;
-  const { userId } = sessionData;
-  params.updateType === "set" && mixpanel.people.set(userId, params.data);
-  params.updateType === "unset" && mixpanel.people.unset(userId, params.data);
+  try {
+    if (params.data == null) return;
+    const sessionData = await getSessionData(params.request);
+    if (sessionData == null) return;
+    const { userId, collectAnalytics } = sessionData;
+    if (collectAnalytics === false) return;
+
+    params.updateType === "set" && mixpanel.people.set(userId, params.data);
+    params.updateType === "unset" && mixpanel.people.unset(userId, params.data);
+
+    const ip = params.request.headers.get("Fly-Client-IP");
+    mixpanel.people.set_once(userId, { ip });
+  } catch (error) {
+    logError(error);
+  }
 }
 
 function sendTrackedEvents() {
-  if (batch.length == 0) return;
-  mixpanel.track_batch(batch, (error) => {
-    batch = [];
-    if (error == null) return;
-    logError(error[0]);
-  });
+  try {
+    if (batch.length == 0) return;
+    mixpanel.track_batch(batch, (error) => {
+      batch = [];
+      if (error == null) return;
+      logError(error[0]);
+    });
+  } catch (error) {
+    logError(error);
+  }
 }
