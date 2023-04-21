@@ -154,9 +154,9 @@ export async function updateSubscriptionStatus(purchaseToken: string) {
       // no susbcription found with given purchase token,
       // so we have to try to retreive userId from linkedPurchaseToken
       if (subscription.data.linkedPurchaseToken) {
-        const previousSubscription = await prisma.gPBSubscription.findFirst({
-          where: { purchaseToken },
-        });
+        const previousSubscription = await getSubscriptionByPurchaseToken(
+          subscription.data.linkedPurchaseToken
+        );
         if (previousSubscription == null) {
           throw new Error(
             "Cannot find linked purchase, so cannot not link new purcaseToken to any user." +
@@ -182,7 +182,7 @@ export async function updateSubscriptionStatus(purchaseToken: string) {
           }),
           prisma.gPBSubscription.update({
             data: { isLatest: false },
-            where: { purchaseToken },
+            where: { purchaseToken: subscription.data.linkedPurchaseToken },
           }),
         ]);
         return true;
