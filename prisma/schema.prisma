@@ -111,6 +111,7 @@ model UserPreference {
   paymentGateway        PaymentGateway?
   isActiveSubscription  Boolean         @default(false)
   isMFAOn               Boolean         @default(false)
+  collectAnalytics      Boolean?
   lastModified          Float           @default(0) @db.Double()
   user                  User?           @relation(fields: [userId], references: [id])
 

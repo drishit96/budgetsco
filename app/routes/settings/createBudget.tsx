@@ -15,6 +15,9 @@ import {
 import { useEffect } from "react";
 import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import Decimal from "decimal.js";
+import { trackEvent } from "~/utils/analytics.utils.server";
+import { EventNames } from "~/lib/anaytics.contants";
+import { formatDate_MMM_YYYY, getFirstDateOfThisMonth } from "~/utils/date.utils";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
@@ -98,6 +101,11 @@ export let action: ActionFunction = async ({ request }) => {
 
       const isTargetSaved = await createMonthlyTargetTask;
       if (isTargetSaved) {
+        const month = formatDate_MMM_YYYY(getFirstDateOfThisMonth(timezone));
+        trackEvent(request, EventNames.BUDGET_CREATED, {
+          month,
+          numberOfCategories: categoryWiseTargetDetails.size.toString(),
+        });
         return json({ data: { isBudgetSaved: true } });
       }
     } else {

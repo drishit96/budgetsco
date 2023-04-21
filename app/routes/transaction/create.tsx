@@ -45,6 +45,8 @@ import { parseRecurringTransactionInput } from "~/modules/recurring/recurring.sc
 import { createNewRecurringTransaction } from "~/modules/recurring/recurring.service";
 import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import { ComboBox } from "~/components/ComboBox";
+import { trackEvent } from "~/utils/analytics.utils.server";
+import { EventNames } from "~/lib/anaytics.contants";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
@@ -104,9 +106,24 @@ export const action: ActionFunction = async ({ request }) => {
       const isTransactionSaved = await addTransactionTask;
 
       if (isRecurringTransaction && recurringTransaction != null) {
-        createNewRecurringTransaction(userId, timezone, recurringTransaction);
+        createNewRecurringTransaction(userId, timezone, recurringTransaction).then(
+          (isDataSaved) => {
+            isDataSaved &&
+              trackEvent(request, EventNames.RECURRING_TRANSACTION_CREATED, {
+                type: recurringTransaction.type,
+                occurrence: recurringTransaction.occurrence,
+                interval: recurringTransaction.interval.toString(),
+              });
+          }
+        );
       }
 
+      if (isTransactionSaved) {
+        trackEvent(request, EventNames.TRANSACTION_CREATED, {
+          type: transaction.type,
+          isRecurring: isRecurringTransaction ? "yes" : "no",
+        });
+      }
       return isTransactionSaved ? json({ data: { isTransactionSaved: true } }) : null;
     } catch (err) {
       console.error(err);

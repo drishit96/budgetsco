@@ -13,7 +13,9 @@ import { Ripple } from "@rmwc/ripple";
 import { useEffect, useState } from "react";
 import { Input } from "~/components/Input";
 import { Spacer } from "~/components/Spacer";
+import { EventNames } from "~/lib/anaytics.contants";
 import type { AppContext } from "~/root";
+import { trackEvent } from "~/utils/analytics.utils.server";
 import {
   getSessionCookie,
   getSessionData,
@@ -82,7 +84,7 @@ export let action: ActionFunction = async ({ request }) => {
       throw new Error(`userPreferences missing for userId: ${userId}`);
     }
     const sessionCookie = await getSessionCookie(idToken, userPreferences);
-
+    trackEvent(request, EventNames.EMAIL_VERIFIED);
     return json(
       { isEmailVerified: true },
       {

@@ -24,7 +24,6 @@ import {
   getSessionData,
   getUserPreferencesFromSessionCookie,
 } from "~/utils/auth.utils.server";
-import type { Transition } from "@remix-run/react/dist/transition";
 import { Ripple } from "@rmwc/ripple";
 import {
   deleteRecurringTransaction,
@@ -51,6 +50,8 @@ import { formatDate_MMMM_YYYY } from "~/utils/date.utils";
 import type { Currency } from "~/utils/number.utils";
 import { abs, calculate, subtract } from "~/utils/number.utils";
 import SubscriptionRequiredBottomSheet from "~/components/SubscriptionRequiredBottomSheet";
+import { trackEvent } from "~/utils/analytics.utils.server";
+import { EventNames } from "~/lib/anaytics.contants";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
@@ -72,11 +73,19 @@ export let action: ActionFunction = async ({ request }) => {
       if (formName === "MARK_AS_DONE_FORM") {
         const transactionId = form.get("transactionId")?.toString();
         if (isNotNullAndEmpty(transactionId)) {
-          const isTransactionMarkedAsDone = await markTransactionAsDone(
+          const { isTransactionMarkedAsDone, type } = await markTransactionAsDone(
             userId,
             timezone,
             transactionId
           );
+
+          if (isTransactionMarkedAsDone) {
+            trackEvent(request, EventNames.RECURRING_TRANSACTION_MARKED_AS_DONE);
+            trackEvent(request, EventNames.TRANSACTION_CREATED, {
+              type,
+              isCreatedFromRecurringTransaction: "yes",
+            });
+          }
 
           return json({ isTransactionMarkedAsDone });
         }
@@ -109,16 +118,17 @@ export let action: ActionFunction = async ({ request }) => {
       const transactionId = form.get("transactionId")?.toString();
       if (transactionId == null) return null;
 
+      let isDeleted = false;
       const formName = form.get("formName")?.toString();
       if (formName === "DELETE_RECURRING_TRANSACTION_FORM") {
-        return json({
-          isDeleted: await deleteRecurringTransaction(userId, transactionId),
-        });
+        isDeleted = await deleteRecurringTransaction(userId, transactionId);
+        trackEvent(request, EventNames.RECURRING_TRANSACTION_DELETED);
+        return json({ isDeleted });
       }
 
-      return json({
-        isDeleted: await removeTransaction(transactionId, userId, timezone),
-      });
+      isDeleted = await removeTransaction(transactionId, userId, timezone);
+      trackEvent(request, EventNames.TRANSACTION_DELETED);
+      return json({ isDeleted });
     }
   }
 };
