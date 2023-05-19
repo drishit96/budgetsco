@@ -2,9 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Inter";
+  src: url("../../public/fonts/Inter.woff2") format("woff2");
+}
+
 @layer components {
-  html {
-    font-family: "Inter", sans-serif;
+  html,
+  body {
+    @apply font-inter;
   }
 
   button,

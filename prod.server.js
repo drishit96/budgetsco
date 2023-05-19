@@ -17,6 +17,7 @@ app.disable("x-powered-by");
 app.use("/build", express.static("public/build", { immutable: true, maxAge: "1y" }));
 app.use("/icons", express.static("public/icons", { immutable: true, maxAge: "1y" }));
 app.use("/images", express.static("public/images", { immutable: true, maxAge: "1y" }));
+app.use("/fonts", express.static("public/fonts", { immutable: true, maxAge: "1y" }));
 
 //cache everything else for 1 day
 app.use(express.static("public", { maxAge: "1d" }));
