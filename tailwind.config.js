@@ -2,6 +2,9 @@ module.exports = {
   mode: "jit",
   content: ["./app/**/*.{js,ts,jsx,tsx}"],
   theme: {
+    fontFamily: {
+      inter: ["Inter", "sans-serif"],
+    },
     extend: {
       colors: {
         "CHART-COLOR-1": "#C12552",
