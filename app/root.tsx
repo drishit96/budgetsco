@@ -368,7 +368,7 @@ export default function App() {
           </nav>
         ) : null}
 
-        {!isBackButtonVisible && !location.pathname.includes("/intro") && (
+        {!isBackButtonVisible && (
           <div className="z-20 flex items-center">
             <span className="flex justify-center w-full">
               <p className="text-base text-primary font-bold p-3 border-b">budgetsco</p>

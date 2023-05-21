@@ -33,7 +33,7 @@ export let loader: LoaderFunction = async ({ request }) => {
       return redirect("/auth/login");
     }
 
-    const { userId, timezone } = sessionData;
+    const { userId, timezone, isActiveSubscription } = sessionData;
     const urlParams = new URL(request.url).searchParams;
     const startMonth = urlParams.get("startMonth");
     const startYear = urlParams.get("startYear");
@@ -43,6 +43,7 @@ export let loader: LoaderFunction = async ({ request }) => {
     const trendingReport = await getTrendingReport(
       userId,
       timezone,
+      isActiveSubscription,
       startMonth && startYear ? `${startYear}-${startMonth.padStart(2, "0")}` : undefined,
       endMonth && endYear ? `${endYear}-${endMonth.padStart(2, "0")}` : undefined
     );
@@ -124,6 +125,8 @@ export default function TrendReport() {
         endYear={endYear}
         submitButtonName="Check Trend"
         submitAction="/reports/trend"
+        isSubscriptionRequired={!reportsPageContext.isActiveSubscription}
+        context={reportsPageContext}
       />
 
       <Spacer />

@@ -86,6 +86,8 @@ export default function CompareReport() {
         endYear={compareToYear}
         submitButtonName="Compare"
         submitAction="/reports/compare"
+        isSubscriptionRequired={false}
+        context={reportsPageContext}
       />
 
       <Spacer />
