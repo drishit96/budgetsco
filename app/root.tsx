@@ -58,16 +58,6 @@ export const links: LinksFunction = () => {
   return [
     { rel: "stylesheet", href: styles },
     { rel: "manifest", href: "/manifest.webmanifest" },
-    { rel: "preconnect", href: "https://fonts.googleapis.com" },
-    {
-      rel: "preconnect",
-      href: "https://fonts.gstatic.com",
-      crossOrigin: "anonymous",
-    },
-    {
-      rel: "stylesheet",
-      href: "https://fonts.googleapis.com/css2?family=Inter&display=swap",
-    },
     { rel: "icon", type: "image/ico", href: "/images/favicon.ico", sizes: "48x48" },
     { rel: "icon", type: "image/png", href: "/images/favicon-32x32.png", sizes: "32x32" },
     { rel: "icon", type: "image/png", href: "/images/favicon-16x16.png", sizes: "16x16" },
@@ -378,7 +368,7 @@ export default function App() {
           </nav>
         ) : null}
 
-        {!isBackButtonVisible && !location.pathname.includes("/intro") && (
+        {!isBackButtonVisible && (
           <div className="z-20 flex items-center">
             <span className="flex justify-center w-full">
               <p className="text-base text-primary font-bold p-3 border-b">budgetsco</p>

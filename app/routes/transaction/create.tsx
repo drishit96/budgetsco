@@ -59,11 +59,7 @@ export const action: ActionFunction = async ({ request }) => {
     return redirect("/auth/login");
   }
 
-  const { userId, timezone, isActiveSubscription } = sessionData;
-
-  if (!isActiveSubscription) {
-    return redirect("/subscriptions/gpb");
-  }
+  const { userId, timezone } = sessionData;
 
   const form = await request.formData();
   const isRecurringTransaction = form.get("isRecurring") === "on";
@@ -143,14 +139,10 @@ export const loader: LoaderFunction = async ({ request }) => {
     return redirect("/auth/login");
   }
 
-  const { userId, timezone, isActiveSubscription, isEmailVerified } = sessionData;
+  const { userId, timezone, isEmailVerified } = sessionData;
 
   if (!isEmailVerified) {
     return redirect("/verifyEmail");
-  }
-
-  if (!isActiveSubscription) {
-    return redirect("/subscriptions/gpb");
   }
 
   const currentMonthTarget = await getCurrentMonthTarget(userId, timezone);

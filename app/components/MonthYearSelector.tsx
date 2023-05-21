@@ -8,6 +8,8 @@ import { format_MMMM_YYYY } from "~/utils/date.utils";
 import CompareIcon from "./icons/CompareIcon";
 import EditIcon from "./icons/EditIcon";
 import { Spacer } from "./Spacer";
+import type { AppContext } from "~/root";
+import SubscriptionRequiredBottomSheet from "./SubscriptionRequiredBottomSheet";
 
 const months = getAllMonths();
 const years = getAllYears();
@@ -19,6 +21,8 @@ export default function MonthYearSelector({
   endYear,
   submitButtonName,
   submitAction,
+  isSubscriptionRequired,
+  context,
 }: {
   startMonth: number;
   startYear: number;
@@ -26,6 +30,8 @@ export default function MonthYearSelector({
   endYear: number;
   submitButtonName: string;
   submitAction: string;
+  isSubscriptionRequired: boolean;
+  context: AppContext;
 }) {
   const [compareSettingContainer] = useAutoAnimate<HTMLDivElement>();
   const [showCompareSettingButton, setShowCompareSettingButton] = useState(true);
@@ -120,23 +126,47 @@ export default function MonthYearSelector({
             </div>
             <Spacer size={3} />
             <div className="flex justify-center sm:justify-end">
-              <Ripple>
-                <button
-                  type="submit"
-                  className="btn-secondary w-full whitespace-nowrap"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    isMobileDevice() && setShowCompareSetting(false);
-                    submit(e.currentTarget, {
-                      method: "GET",
-                      replace: true,
-                      action: submitAction,
-                    });
-                  }}
-                >
-                  {submitButtonName}
-                </button>
-              </Ripple>
+              {isSubscriptionRequired ? (
+                <Ripple>
+                  <button
+                    type="button"
+                    className="btn-secondary w-full whitespace-nowrap"
+                    onClick={() => {
+                      context.setBottomSheetProps({
+                        show: true,
+                        content: (
+                          <SubscriptionRequiredBottomSheet
+                            context={context}
+                            onRefresh={() => {
+                              history.go(-2);
+                            }}
+                          />
+                        ),
+                      });
+                    }}
+                  >
+                    {submitButtonName}
+                  </button>
+                </Ripple>
+              ) : (
+                <Ripple>
+                  <button
+                    type="submit"
+                    className="btn-secondary w-full whitespace-nowrap"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      isMobileDevice() && setShowCompareSetting(false);
+                      submit(e.currentTarget, {
+                        method: "GET",
+                        replace: true,
+                        action: submitAction,
+                      });
+                    }}
+                  >
+                    {submitButtonName}
+                  </button>
+                </Ripple>
+              )}
             </div>
           </>
         )}

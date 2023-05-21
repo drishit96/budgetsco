@@ -355,7 +355,7 @@ export default function Index() {
           ref={bannerParent}
           className="flex flex-wrap items-center space-y-1 w-full md:w-3/4 lg:w-2/3 xl:w-1/2"
         >
-          {context.isActiveSubscription && !context.isMFAOn && (
+          {!context.isMFAOn && (
             <Banner
               type="important"
               message={`Enable two factor authentication (2FA) to add an additional layer of security to your account by requiring more than just a password to sign in. (You can always enable it from settings)`}
@@ -382,25 +382,23 @@ export default function Index() {
             permanentDismissSettingName={"showChangeCurrencyBanner"}
           />
 
-          {context.isActiveSubscription &&
-            browserSupportsNotification &&
-            Notification.permission !== "granted" && (
-              <Banner
-                type="tip"
-                message="Enable notifications for recurring transactions."
-                showAction
-                actionText={
-                  navigation.state === "submitting" &&
-                  navigation.formData.get("formName") === "SAVE_REGISTRATION_TOKEN"
-                    ? "Enabling..."
-                    : "Enable"
-                }
-                allowDismiss={false}
-                allowPermanentDismiss={true}
-                permanentDismissSettingName={"showNotificationBanner"}
-                onActionClick={requestNotificationPermission}
-              />
-            )}
+          {browserSupportsNotification && Notification.permission !== "granted" && (
+            <Banner
+              type="tip"
+              message="Enable notifications for recurring transactions."
+              showAction
+              actionText={
+                navigation.state === "submitting" &&
+                navigation.formData.get("formName") === "SAVE_REGISTRATION_TOKEN"
+                  ? "Enabling..."
+                  : "Enable"
+              }
+              allowDismiss={false}
+              allowPermanentDismiss={true}
+              permanentDismissSettingName={"showNotificationBanner"}
+              onActionClick={requestNotificationPermission}
+            />
+          )}
 
           {context.isEmailVerified && askUserForNewTarget && (
             <>
@@ -416,37 +414,13 @@ export default function Index() {
           )}
 
           {recommendToSetBudget && (
-            <>
-              {!context.isActiveSubscription ? (
-                <Banner
-                  type="tip"
-                  message="Don't let your expenses control you"
-                  showAction
-                  actionText="Set budget now"
-                  onActionClick={() => {
-                    context.setBottomSheetProps({
-                      show: true,
-                      content: (
-                        <SubscriptionRequiredBottomSheet
-                          context={context}
-                          onRefresh={() => {
-                            history.back();
-                          }}
-                        />
-                      ),
-                    });
-                  }}
-                />
-              ) : (
-                <Banner
-                  type="tip"
-                  message="Don't let your expenses control you"
-                  showLink
-                  link="/settings/editBudget"
-                  linkText="Set budget now"
-                />
-              )}
-            </>
+            <Banner
+              type="tip"
+              message="Don't let your expenses control you"
+              showLink
+              link="/settings/editBudget"
+              linkText="Set budget now"
+            />
           )}
         </div>
 
@@ -575,45 +549,17 @@ export default function Index() {
           </div>
         )}
 
-        {context.isActiveSubscription && (
-          <Link
-            to="/transaction/create/"
-            className="z-20 fixed bottom-16 right-8 shadow-xl focus-ring"
-          >
-            <Ripple>
-              <span className="flex items-center btn-primary">
-                <AddIcon size={24} color={"#FFF"} />
-                <p className="inline ml-1">Create transaction</p>
-              </span>
-            </Ripple>
-          </Link>
-        )}
-
-        {!context.isActiveSubscription && (
-          <button
-            className="z-20 fixed btn-primary bottom-16 right-8 shadow-xl"
-            onClick={() => {
-              context.setBottomSheetProps({
-                show: true,
-                content: (
-                  <SubscriptionRequiredBottomSheet
-                    context={context}
-                    onRefresh={() => {
-                      history.back();
-                    }}
-                  />
-                ),
-              });
-            }}
-          >
-            <Ripple>
-              <span className="flex items-center">
-                <AddIcon size={24} color={"#FFF"} />
-                <p className="inline ml-1">Create transaction</p>
-              </span>
-            </Ripple>
-          </button>
-        )}
+        <Link
+          to="/transaction/create/"
+          className="z-20 fixed bottom-16 right-8 shadow-xl focus-ring"
+        >
+          <Ripple>
+            <span className="flex items-center btn-primary">
+              <AddIcon size={24} color={"#FFF"} />
+              <p className="inline ml-1">Create transaction</p>
+            </span>
+          </Ripple>
+        </Link>
       </div>
     </main>
   );
