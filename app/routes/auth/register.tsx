@@ -123,7 +123,6 @@ export default function Register() {
 
   useEffect(() => {
     authPageContext.setActiveTab("register");
-    saveBoolSettingToLocalStorage("showIntro", false);
   }, [authPageContext]);
 
   async function handleRegister(

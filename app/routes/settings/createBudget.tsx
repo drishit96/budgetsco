@@ -30,12 +30,6 @@ export const loader: LoaderFunction = async ({ request }) => {
     return redirect("/auth/login");
   }
 
-  const { isActiveSubscription } = sessionData;
-
-  if (!isActiveSubscription) {
-    return redirect("/subscriptions/gpb");
-  }
-
   return json({});
 };
 

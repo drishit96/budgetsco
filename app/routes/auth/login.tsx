@@ -174,9 +174,6 @@ export default function Login() {
 
   useEffect(() => {
     authPageContext.setActiveTab("login");
-    if (isMobileDevice() && getBooleanFromLocalStorage("showIntro", true)) {
-      location.replace("/intro");
-    }
   }, [authPageContext]);
 
   async function handleLogin(
