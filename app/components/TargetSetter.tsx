@@ -16,6 +16,7 @@ import { Input } from "./Input";
 import { Spacer } from "./Spacer";
 import { ComboBox } from "./ComboBox";
 import { calculate, sum } from "~/utils/number.utils";
+import { ErrorText } from "./ErrorText";
 
 export default function TargetSetter({
   errors,
@@ -212,6 +213,21 @@ export default function TargetSetter({
               className="pb-10"
               disabled={isSubmittingData}
             >
+              {errors && errors.totalBudget == null && (
+                <>
+                  <ErrorText
+                    error={
+                      (errors &&
+                        errors.totalBudget == null &&
+                        "Invalid input in category-wise budget") ||
+                      undefined
+                    }
+                    showIcon={false}
+                  />
+                  <Spacer />
+                </>
+              )}
+
               <div className="flex items-center gap-3 flex-wrap pb-4">
                 <span className="font-semibold">Budget per category</span>
                 <span className="flex-grow"></span>
@@ -306,6 +322,7 @@ export default function TargetSetter({
                       <Spacer size={1} />
                       <Ripple unbounded disabled={isSubmittingData}>
                         <button
+                          id={`btn-deleteCategoryBudget${categoryBudget.index}`}
                           className="align-bottom"
                           onClick={(e) => deleteCategoryBudget(e, categoryBudget.index)}
                           disabled={isSubmittingData}
