@@ -239,11 +239,17 @@ export async function getComparisonReports(
 export async function getTrendingReport(
   userId: string,
   timezone: string,
+  isActiveSubscription: boolean,
   startMonth?: string,
   endMonth?: string
 ): Promise<TrendingReportResponse> {
-  startMonth = startMonth ?? getFirstDateOfXMonthsBeforeFormatted(5, timezone);
-  endMonth = endMonth ?? getFirstDateOfXMonthsBeforeFormatted(0, timezone);
+  if (!isActiveSubscription) {
+    startMonth = getFirstDateOfXMonthsBeforeFormatted(2, timezone);
+    endMonth = getFirstDateOfXMonthsBeforeFormatted(0, timezone);
+  } else {
+    startMonth = startMonth ?? getFirstDateOfXMonthsBeforeFormatted(5, timezone);
+    endMonth = endMonth ?? getFirstDateOfXMonthsBeforeFormatted(0, timezone);
+  }
 
   let startDate = parseDate(startMonth);
   let endDate = parseDate(endMonth);

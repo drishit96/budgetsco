@@ -92,11 +92,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     return redirect("/auth/login");
   }
 
-  const { timezone, isActiveSubscription } = sessionData;
-
-  if (!isActiveSubscription) {
-    return redirect("/subscriptions/gpb");
-  }
+  const { timezone } = sessionData;
 
   const urlParams = new URL(request.url).searchParams;
   const amount = urlParams.get("amount") ?? "0";

@@ -272,45 +272,17 @@ export default function TransactionHistory() {
       </div>
       <Spacer size={4} />
 
-      {context.isActiveSubscription && (
-        <Link
-          to="/transaction/create/"
-          className="z-20 fixed bottom-8 right-8 shadow-xl focus-ring"
-        >
-          <Ripple>
-            <span className="flex items-center btn-primary">
-              <AddIcon size={24} color={"#FFF"} />
-              <p className="inline ml-1">Create transaction</p>
-            </span>
-          </Ripple>
-        </Link>
-      )}
-
-      {!context.isActiveSubscription && (
-        <button
-          className="z-20 fixed bottom-8 right-8 shadow-xl focus-ring"
-          onClick={() => {
-            context.setBottomSheetProps({
-              show: true,
-              content: (
-                <SubscriptionRequiredBottomSheet
-                  context={context}
-                  onRefresh={() => {
-                    history.go(-2);
-                  }}
-                />
-              ),
-            });
-          }}
-        >
-          <Ripple>
-            <span className="flex items-center btn-primary">
-              <AddIcon size={24} color={"#FFF"} />
-              <p className="inline ml-1">Create transaction</p>
-            </span>
-          </Ripple>
-        </button>
-      )}
+      <Link
+        to="/transaction/create/"
+        className="z-20 fixed bottom-8 right-8 shadow-xl focus-ring"
+      >
+        <Ripple>
+          <span className="flex items-center btn-primary">
+            <AddIcon size={24} color={"#FFF"} />
+            <p className="inline ml-1">Create transaction</p>
+          </span>
+        </Ripple>
+      </Link>
     </main>
   );
 }

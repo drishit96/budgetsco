@@ -106,50 +106,23 @@ export function Transaction({
               </Link>
             </Ripple>
 
-            {context.isActiveSubscription && (
-              <Ripple>
-                <Link
-                  data-test-id={"btn-make-this-recurring"}
-                  to={`/transaction/recurring/new?amount=${
-                    transaction.amount
-                  }&category=${encodeURIComponent(transaction.category)}&type=${
-                    transaction.type
-                  }&paymentMode=${transaction.paymentMode}&description=${
-                    transaction.description
-                  }`}
-                  className="flex flex-col flex-1 items-center p-3 border-l border-primary focus-border"
-                >
-                  <RepeatIcon size={24} />
-                  <Spacer size={1} />
-                  <span className="text-center">Make this recurring</span>
-                </Link>
-              </Ripple>
-            )}
-
-            {!context.isActiveSubscription && (
-              <Ripple>
-                <button
-                  className="flex flex-col flex-1 items-center p-3 border-l border-primary focus-border"
-                  onClick={() => {
-                    context.setBottomSheetProps({
-                      show: true,
-                      content: (
-                        <SubscriptionRequiredBottomSheet
-                          context={context}
-                          onRefresh={() => {
-                            history.back();
-                          }}
-                        />
-                      ),
-                    });
-                  }}
-                >
-                  <RepeatIcon size={24} />
-                  <Spacer size={1} />
-                  <span className="text-center">Make this recurring</span>
-                </button>
-              </Ripple>
-            )}
+            <Ripple>
+              <Link
+                data-test-id={"btn-make-this-recurring"}
+                to={`/transaction/recurring/new?amount=${
+                  transaction.amount
+                }&category=${encodeURIComponent(transaction.category)}&type=${
+                  transaction.type
+                }&paymentMode=${transaction.paymentMode}&description=${
+                  transaction.description
+                }`}
+                className="flex flex-col flex-1 items-center p-3 border-l border-primary focus-border"
+              >
+                <RepeatIcon size={24} />
+                <Spacer size={1} />
+                <span className="text-center">Make this recurring</span>
+              </Link>
+            </Ripple>
 
             <Form
               replace

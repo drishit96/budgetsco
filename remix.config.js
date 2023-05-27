@@ -12,6 +12,7 @@ if (process.env.DEPLOYMENT_TARGET === "flyio") {
       v2_normalizeFormMethod: true,
       v2_errorBoundary: true,
       v2_routeConvention: true,
+      unstable_dev: false,
     },
     routes(defineRoutes) {
       // uses the v1 convention, works in v1.15+ and v2
@@ -57,6 +58,7 @@ if (process.env.DEPLOYMENT_TARGET === "flyio") {
       v2_normalizeFormMethod: true,
       v2_errorBoundary: true,
       v2_routeConvention: true,
+      unstable_dev: false,
     },
     routes(defineRoutes) {
       // uses the v1 convention, works in v1.15+ and v2
