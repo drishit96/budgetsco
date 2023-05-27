@@ -2,7 +2,15 @@ import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { formatErrors } from "~/utils/error.utils";
 
-export const decimal = ({ path, errorMsg }: { path?: string[]; errorMsg?: string }) =>
+export const decimal = ({
+  path,
+  errorMsg,
+  allowZero,
+}: {
+  path?: string[];
+  errorMsg?: string;
+  allowZero?: boolean;
+}) =>
   z
     .instanceof(Prisma.Decimal)
     .or(z.string())
@@ -15,10 +23,13 @@ export const decimal = ({ path, errorMsg }: { path?: string[]; errorMsg?: string
       }
     })
     .transform((value) => new Prisma.Decimal(value))
-    .refine((value) => value.greaterThan(0), {
-      message: errorMsg,
-      path,
-    });
+    .refine(
+      (value) => (allowZero ? value.greaterThanOrEqualTo(0) : value.greaterThan(0)),
+      {
+        message: errorMsg,
+        path,
+      }
+    );
 
 const transactionInput = {
   description: z.string().nullish(),
@@ -65,7 +76,10 @@ const d = decimal({});
 export type Decimal = z.output<typeof d>;
 export const TransactionsResponseSchema = z.array(TransactionResponseSchema);
 export const MonthlyTargetInputSchema = z.object(monthlyTargetInput);
-export const MonthlyCategoryWiseTargetInputSchema = z.map(z.string().min(1), decimal({}));
+export const MonthlyCategoryWiseTargetInputSchema = z.map(
+  z.string().min(1),
+  decimal({ errorMsg: "Budget has to be more than zero", allowZero: true })
+);
 
 export type TransactionInput = z.infer<typeof TransactionInputSchema>;
 export type TransactionResponse = z.infer<typeof TransactionResponseSchema>;
