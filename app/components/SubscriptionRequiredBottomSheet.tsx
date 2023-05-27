@@ -17,7 +17,7 @@ export default function SubscriptionRequiredBottomSheet({
           : "Subscription required"}
       </p>
       <Spacer />
-      <p>You need an active budgetsco subscription to create transactions.</p>
+      <p>You need an active budgetsco subscription to view trend of more than 3 months</p>
       <Spacer size={1} />
       <p className="text-sm">
         (Already subscribed?{" "}
