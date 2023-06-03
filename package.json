@@ -14,7 +14,8 @@
     "dev": "cp ./app/lib/test.ui.config.ts ./app/lib/ui.config.ts && concurrently \"npm run dev:css\" \"npm run dev:worker\" \"remix dev\"",
     "dev:css": "tailwindcss -w -i ./styles/app.css -o app/styles/app.css",
     "dev:worker": "esbuild ./app/entry.worker.ts --outfile=./public/entry.worker.js --bundle --format=esm --define:process.env.NODE_ENV='\"development\"' --watch",
-    "start": "cross-env NODE_ENV=production node ./server.js"
+    "start": "cross-env NODE_ENV=production node ./server.js",
+    "testserver": "concurrently \"npm run dev:css\" \"npm run dev:worker\" \"remix dev\""
   },
   "dependencies": {
     "@formkit/auto-animate": "1.0.0-beta.4",
@@ -52,7 +53,7 @@
     "zod": "^3.16.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.28.1",
+    "@playwright/test": "^1.34.0",
     "@remix-run/dev": "^1.16.0",
     "@remix-run/eslint-config": "^1.16.0",
     "@tailwindcss/forms": "^0.5.2",
