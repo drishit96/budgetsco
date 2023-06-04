@@ -41,7 +41,7 @@ const config: PlaywrightTestConfig = {
     baseURL: "http://localhost:3000",
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: "on-first-retry",
+    trace: "on",
     storageState: "storageState.json",
   },
 
@@ -104,7 +104,7 @@ const config: PlaywrightTestConfig = {
   /* Run your local dev server before starting the tests */
   webServer: [
     {
-      command: `./pscaledir/pscale connect expense-manager dev --org #{TEST_DB_ORG}# --service-token #{TEST_DB_SERVICE_TOKEN}# --service-token-id #{TEST_DB_TOKEN_ID}#`,
+      command: `./pscaledir/pscale connect expense-manager dev --org drishitmitra --service-token pscale_tkn_j3PUAyuM88NgV9IFByrU1RUP1gs7gRXn9H6Qi3a2j3k --service-token-id mn5b0wzia9bn`,
       port: 3306,
       reuseExistingServer: true,
     },
