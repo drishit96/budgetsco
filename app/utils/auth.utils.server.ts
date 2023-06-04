@@ -3,12 +3,17 @@ import { apps, auth } from "firebase-admin";
 import { createCookie } from "@remix-run/node";
 import type { UserPreferenceResponse } from "~/modules/settings/settings.schema";
 import { authenticator } from "otplib";
+import { logError } from "./logger.utils.server";
 
 function initializeFirebaseApp() {
-  if (apps.length == 0) {
-    initializeApp({
-      credential: cert(JSON.parse(process.env.FIREBASE_ADMIN_KEY!)),
-    });
+  try {
+    if (apps.length == 0) {
+      initializeApp({
+        credential: cert(JSON.parse(process.env.FIREBASE_ADMIN_KEY!)),
+      });
+    }
+  } catch (error) {
+    logError(error);
   }
 }
 
