@@ -46,7 +46,7 @@ import type { AuthPageContext } from "../auth";
 import Turnstile from "~/components/Turnstile";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
-import { UI_ENV } from "~/lib/test.ui.config";
+import { UI_ENV } from "~/lib/ui.config";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
@@ -96,7 +96,7 @@ export const action: ActionFunction = async ({ request }) => {
 
     await Promise.allSettled(tasks);
     trackEvent(request, EventNames.LOGGED_IN, undefined, user.userId);
-    
+
     return json(
       {
         idToken,
