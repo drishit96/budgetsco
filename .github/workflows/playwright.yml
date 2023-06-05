@@ -90,6 +90,9 @@ jobs:
           wget -O pscalecli.tar.gz https://github.com/planetscale/cli/releases/download/v0.145.0/pscale_0.145.0_linux_amd64.tar.gz
           tar -xvf pscalecli.tar.gz -C ./pscaledir
 
+      - name: Run tests
+        run: npx playwright test --project='Chromium'
+
       - uses: nick-fields/retry@v2
         with:
           timeout_seconds: 60
