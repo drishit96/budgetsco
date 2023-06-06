@@ -70,16 +70,10 @@ jobs:
         run: find -name "playwright.config.ts" -type f -exec sed -i ''s/#{TEST_DB_TOKEN_ID}#/${{ secrets.TEST_DB_TOKEN_ID }}/g'' {} \;
 
       - name: Find and Replace TEST_LOGIN_USERNAME - Using Secret
-        run: find -name "transactions.spec.ts" -type f -exec sed -i ''s/#{TEST_LOGIN_USERNAME}#/${{ secrets.TEST_LOGIN_USERNAME }}/g'' {} \;
-
-      - name: Find and Replace TEST_LOGIN_USERNAME - Using Secret
-        run: find -name "settings.spec.ts" -type f -exec sed -i ''s/#{TEST_LOGIN_USERNAME}#/${{ secrets.TEST_LOGIN_USERNAME }}/g'' {} \;
+        run: find -name "global-setup.ts" -type f -exec sed -i ''s/#{TEST_LOGIN_USERNAME}#/${{ secrets.TEST_LOGIN_USERNAME }}/g'' {} \;
 
       - name: Find and Replace TEST_LOGIN_PASSWORD - Using Secret
-        run: find -name "transactions.spec.ts" -type f -exec sed -i ''s/#{TEST_LOGIN_PASSWORD}#/${{ secrets.TEST_LOGIN_PASSWORD }}/g'' {} \;
-
-      - name: Find and Replace TEST_LOGIN_PASSWORD - Using Secret
-        run: find -name "settings.spec.ts" -type f -exec sed -i ''s/#{TEST_LOGIN_PASSWORD}#/${{ secrets.TEST_LOGIN_PASSWORD }}/g'' {} \;
+        run: find -name "global-setup.ts" -type f -exec sed -i ''s/#{TEST_LOGIN_PASSWORD}#/${{ secrets.TEST_LOGIN_PASSWORD }}/g'' {} \;
 
       - name: Create .env file with necessary values for testing
         run: |
