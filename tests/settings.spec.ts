@@ -8,7 +8,7 @@ test("can edit budget", async ({ page }) => {
   await page.getByRole("button", { name: "Log in" }).click();
   await page.waitForURL("**/dashboard", { timeout: 60000 });
 
-  await page.goto("/dashboard");
+  await page.goto("http://127.0.0.1:3000/dashboard");
   await page.getByRole("link", { name: "Settings" }).click();
   await page.getByRole("link", { name: "Edit Budget" }).click();
 
@@ -23,7 +23,7 @@ test("can edit budget", async ({ page }) => {
   }
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByText("Budget saved")).toBeVisible();
-  await page.goto("/settings/list");
+  await page.goto("http://127.0.0.1:3000/settings/list");
   await page.getByRole("link", { name: "Dashboard" }).click();
   await page.waitForURL("**/dashboard");
   await expect(page.getByText("10K").first()).toBeVisible();
@@ -35,7 +35,7 @@ test("can edit budget", async ({ page }) => {
   await page.locator("#btn-deleteCategoryBudget4").click();
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByText("Budget saved")).toBeVisible();
-  await page.goto("/settings/list");
+  await page.goto("http://127.0.0.1:3000/settings/list");
 
   await page.getByRole("link", { name: "Dashboard" }).click();
   await page.waitForURL("**/dashboard");
