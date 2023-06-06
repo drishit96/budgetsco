@@ -1,13 +1,6 @@
 import { test, expect } from "@playwright/test";
 
 test("can edit budget", async ({ page }) => {
-  await page.goto("http://127.0.0.1:3000/auth/login");
-
-  await page.getByLabel("E-mail Id").fill("#{TEST_LOGIN_USERNAME}#");
-  await page.getByLabel("Password").fill("#{TEST_LOGIN_PASSWORD}#");
-  await page.getByRole("button", { name: "Log in" }).click();
-  await page.waitForURL("**/dashboard", { timeout: 60000 });
-
   await page.goto("http://127.0.0.1:3000/dashboard");
   await page.getByRole("link", { name: "Settings" }).click();
   await page.getByRole("link", { name: "Edit Budget" }).click();
@@ -43,7 +36,7 @@ test("can edit budget", async ({ page }) => {
 });
 
 test("can change currency", async ({ page }) => {
-  await page.goto("/dashboard");
+  await page.goto("http://127.0.0.1:3000/dashboard");
   await page.getByRole("link", { name: "Settings" }).click();
   await page.getByRole("link", { name: "Change currency" }).click();
   await page.locator('input[name="currencyToShow"]').fill("USD");
@@ -54,7 +47,7 @@ test("can change currency", async ({ page }) => {
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByText("Currency updated")).toBeVisible();
 
-  await page.goto("/dashboard");
+  await page.goto("http://127.0.0.1:3000/dashboard");
   await expect(page.getByText("$").first()).toBeVisible();
   await expect(page.getByText("₹").first()).not.toBeVisible();
 
@@ -69,7 +62,7 @@ test("can change currency", async ({ page }) => {
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByText("Currency updated")).toBeVisible();
 
-  await page.goto("/dashboard");
+  await page.goto("http://127.0.0.1:3000/dashboard");
   await expect(page.getByText("$").first()).not.toBeVisible();
   await expect(page.getByText("₹").first()).toBeVisible();
 });

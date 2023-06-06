@@ -2,14 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test.describe.serial("transactionCrudGroup", () => {
   test("can create transaction", async ({ page }) => {
-    await page.goto("http://127.0.0.1:3000/auth/login");
-
-    await page.getByLabel("E-mail Id").fill("#{TEST_LOGIN_USERNAME}#");
-    await page.getByLabel("Password").fill("#{TEST_LOGIN_PASSWORD}#");
-    await page.getByRole("button", { name: "Log in" }).click();
-    await page.waitForURL("**/dashboard", { timeout: 60000 });
-
-    // await page.goto("/dashboard");
+    await page.goto("http://127.0.0.1:3000/dashboard");
     const existingTransactionCount = await page
       .locator("[data-test-id=more-Business-30]")
       .count();
@@ -30,7 +23,7 @@ test.describe.serial("transactionCrudGroup", () => {
   });
 
   test("can edit transaction", async ({ page }) => {
-    await page.goto("/dashboard");
+    await page.goto("http://127.0.0.1:3000/dashboard");
     const existingTransactionCount = await page
       .locator("[data-test-id=more-Business-30]")
       .count();
@@ -47,7 +40,7 @@ test.describe.serial("transactionCrudGroup", () => {
   });
 
   test("can delete transaction", async ({ page }) => {
-    await page.goto("/dashboard");
+    await page.goto("http://127.0.0.1:3000/dashboard");
     const existingTransactionCount = await page
       .locator("[data-test-id=more-Business-50]")
       .count();
