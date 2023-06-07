@@ -12,7 +12,7 @@ async function globalSetup(config: FullConfig) {
   await page.getByRole("button", { name: "Log in" }).click();
   await page.waitForURL("**/dashboard", { timeout: 60000 });
 
-  await page.waitForTimeout(5000);
+  await page.waitForTimeout(10000);
   await context.storageState({ path: "storageState.json" });
   await browser.close();
 }
