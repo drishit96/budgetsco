@@ -5,7 +5,7 @@ async function globalSetup(config: FullConfig) {
   const browser = await chromium.launch();
   const context = await browser.newContext();
   const page = await context.newPage();
-  await page.goto("http://127.0.0.1:3000/auth/login");
+  await page.goto("http://localhost:3000/auth/login");
 
   await page.getByLabel("E-mail Id").fill("#{TEST_LOGIN_USERNAME}#");
   await page.getByLabel("Password").fill("#{TEST_LOGIN_PASSWORD}#");
