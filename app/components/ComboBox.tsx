@@ -39,12 +39,6 @@ export const ComboBox = <
     onInputValueChange: ({ inputValue }) => {
       const filteredItems = matchSorter(downshiftProps.items, inputValue || "", {
         keys: ["value", "label"],
-        sorter: (items) => {
-          if (items.length == 0 || typeof items[0].item.value === "string") return items;
-          return items.sort(
-            (a, b) => (a.item.value as number) - (b.item.value as number)
-          );
-        },
       });
 
       if (onCreateItem) {
