@@ -36,6 +36,12 @@ import {
   getAllTransactionTypes,
   getCombinedTransactionTypeCategoriesForSelection,
   getTransactionTypeCategoriesForSelection,
+  getLastUsedType,
+  getLastUsedCategory,
+  saveLastUsedType,
+  saveLastUsedCategory,
+  getLastUsedPaymentMode,
+  saveLastUsedPaymentMode,
 } from "~/utils/category.utils";
 import { formatToCurrency, getCurrencySymbol, max, subtract } from "~/utils/number.utils";
 import { isNullOrEmpty } from "~/utils/text.utils";
@@ -172,6 +178,7 @@ export default function Create() {
   const [categories, setCategories] = useState(
     getTransactionTypeCategoriesForSelection("expense")
   );
+  const [lastUsedCategory, setLastUsedCategory] = useState<{ [key: string]: string }>();
   const actionData = useActionData<{
     errors?: { [key: string]: string };
     data?: { isTransactionSaved: boolean };
@@ -240,7 +247,16 @@ export default function Create() {
   }, [context]);
 
   useEffect(() => {
-    setCategories(getCombinedTransactionTypeCategoriesForSelection(transactionType));
+    const lastUsedType = getLastUsedType();
+    const lastUsedCategory = getLastUsedCategory();
+    const lastUsedPaymentMode = getLastUsedPaymentMode();
+    setTransactionType(lastUsedType);
+    setLastUsedCategory(lastUsedCategory);
+    if (lastUsedCategory && lastUsedCategory[lastUsedType]) {
+      setSelectedCategories([lastUsedCategory[lastUsedType]]);
+    }
+    setPaymentMode(lastUsedPaymentMode);
+    setCategories(getCombinedTransactionTypeCategoriesForSelection(lastUsedType));
   }, []);
 
   useEffect(() => {
@@ -296,8 +312,12 @@ export default function Create() {
         formData.set("customCategory", categories[0]);
         addNewCustomCategoryToLocalStorage(transactionType, categories[0]);
       }
+
+      saveLastUsedCategory({ ...lastUsedCategory, [transactionType]: categories[0] });
     }
 
+    saveLastUsedType(transactionType);
+    saveLastUsedPaymentMode(paymentMode);
     submit(formData, { method: "POST", replace: true });
   }
 
@@ -343,7 +363,7 @@ export default function Create() {
                   <select
                     name="type"
                     className="form-select select w-full"
-                    defaultValue={transactionTypes[0].value}
+                    value={transactionType}
                     onChange={(e) => {
                       if (isNullOrEmpty(e.target.value)) return;
                       setShowRemainingBudget(e.target.value === "expense");
@@ -369,7 +389,6 @@ export default function Create() {
                 <ComboBox
                   name="category"
                   labelId="Category"
-                  defaultInputValue={""}
                   placeholder="Type a category here"
                   onCreateItem={(item) => {
                     if (isNullOrEmpty(item)) return;
@@ -404,7 +423,6 @@ export default function Create() {
                 <ComboBox
                   name="paymentModeToShow"
                   labelId="Payment mode"
-                  defaultInputValue={paymentModes[0].value}
                   placeholder="Type a payment mode here"
                   onCreateItem={(item) => {
                     if (isNullOrEmpty(item)) return;
