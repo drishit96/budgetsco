@@ -1,5 +1,5 @@
 # base node image
-FROM node:16-alpine3.16 as base
+FROM node:lts-alpine3.17 as base
 
 ENV DEPLOYMENT_TARGET flyio
 
