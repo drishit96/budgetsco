@@ -81,7 +81,7 @@ async function sendNotificationsInBatches(
         });
       }
 
-      const batchResponse = await getMessaging().sendAll(messages);
+      const batchResponse = await getMessaging().sendEach(messages);
       if (batchResponse.failureCount > 0) {
         let invalidTokens: string[] = [];
         let index = 0;
@@ -106,6 +106,8 @@ async function sendNotificationsInBatches(
           }
           index += 1;
         }
+
+        console.log("Notified users: ", Array.from(notifiedUsers));
 
         notifiedUsers.size &&
           (await markAsNotified(Array.from(notifiedUsers.values()), startDate, endDate));
