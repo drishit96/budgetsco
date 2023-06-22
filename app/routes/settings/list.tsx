@@ -37,6 +37,8 @@ export let action: ActionFunction = async ({ request }) => {
       },
     });
   }
+
+  return json({});
 };
 
 export const loader: LoaderFunction = async ({ request }) => {

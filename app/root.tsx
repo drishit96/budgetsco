@@ -68,7 +68,7 @@ export const links: LinksFunction = () => {
 export const meta: V2_MetaFunction = () => {
   return [
     { property: "charset", content: "utf-8" },
-    { name: "description", content: "A smart, reliable and intuitive expense manager" },
+    { name: "description", content: "A smart, reliable & intuitive expense manager" },
     { name: "theme-color", content: "#047857" },
     { name: "viewport", content: "width=device-width,initial-scale=1" },
     {
