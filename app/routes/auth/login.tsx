@@ -31,7 +31,6 @@ import {
   saveCustomCategoriesToLocalStorage,
   saveLastModifiedToLocalStorage,
   saveBrowserPreferencesToLocalStorage,
-  getBooleanFromLocalStorage,
 } from "~/utils/category.utils";
 import { SuccessText } from "~/components/SuccessText";
 import { getUserPreferences } from "~/modules/settings/settings.service";
@@ -44,7 +43,6 @@ import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import type { AppContext } from "~/root";
 import type { Currency } from "~/utils/number.utils";
 import type { AuthPageContext } from "../auth";
-import { isMobileDevice } from "~/utils/browser.utils";
 import Turnstile from "~/components/Turnstile";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";

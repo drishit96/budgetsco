@@ -1,4 +1,11 @@
-import { format, sub, add } from "date-fns";
+import {
+  format,
+  sub,
+  add,
+  differenceInDays,
+  differenceInMonths,
+  differenceInYears,
+} from "date-fns";
 
 export function getFirstDateOfThisMonth(timezone: string) {
   const today = getCurrentLocalDateInUTC(timezone);
@@ -159,16 +166,19 @@ export function getNextExecutionDate(
 ) {
   let executionDate = previousDate || new Date();
   if (occurrence === "day") {
+    const diff = Math.abs(differenceInDays(new Date(), executionDate));
     executionDate = add(executionDate, {
-      days: interval,
+      days: diff + interval,
     });
   } else if (occurrence === "month") {
+    const diff = Math.abs(differenceInMonths(new Date(), executionDate));
     executionDate = add(executionDate, {
-      months: interval,
+      months: diff + interval,
     });
   } else if (occurrence === "year") {
+    const diff = Math.abs(differenceInYears(new Date(), executionDate));
     executionDate = add(executionDate, {
-      years: interval,
+      years: diff + interval,
     });
   }
   return executionDate;

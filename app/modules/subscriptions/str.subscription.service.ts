@@ -106,10 +106,6 @@ export async function updateSTRSubscriptionStatus(
   }
 }
 
-function getIsTrialActive(subscription: Stripe.Subscription): boolean {
-  return subscription.trial_end != null && subscription.trial_end > Date.now() / 1000;
-}
-
 function getExpiryOfSubscription(subscription: Stripe.Subscription): number {
   return (
     subscription.trial_end ?? subscription.cancel_at ?? subscription.current_period_end

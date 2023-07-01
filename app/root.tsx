@@ -68,12 +68,12 @@ export const links: LinksFunction = () => {
 export const meta: V2_MetaFunction = () => {
   return [
     { property: "charset", content: "utf-8" },
-    { name: "description", content: "A smart, reliable and intuitive expense manager" },
+    { name: "description", content: "A smart, reliable & intuitive expense manager" },
     { name: "theme-color", content: "#047857" },
     { name: "viewport", content: "width=device-width,initial-scale=1" },
     {
       property: "og:image",
-      content: "https://budgetsco.online/images/budgetsco-og-image.png",
+      content: "https://budgetsco.fly.dev/images/budgetsco-og-image.png",
     },
     { property: "og:image:width", content: "192" },
     { property: "og:image:height", content: "192" },
@@ -82,7 +82,7 @@ export const meta: V2_MetaFunction = () => {
       property: "og:description",
       content: "A simple, fast and reliable expense manager",
     },
-    { property: "og:url", content: "https://budgetsco.online" },
+    { property: "og:url", content: "https://budgetsco.fly.dev" },
   ];
 };
 

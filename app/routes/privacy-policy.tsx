@@ -141,9 +141,9 @@ export default function PrivacyPolicy() {
                 delete your data from our website/app or by contacting{" "}
                 <a
                   className="underline hover:text-accent"
-                  href="mailto:support@budgetsco.online"
+                  href="mailto:budgetsco+support@gmail.com"
                 >
-                  support@budgetsco.online
+                  budgetsco+support@gmail.com
                 </a>
               </p>
               <br />
@@ -160,9 +160,9 @@ export default function PrivacyPolicy() {
                 so by emailing{" "}
                 <a
                   className="underline hover:text-accent"
-                  href="mailto:support@budgetsco.online"
+                  href="mailto:budgetsco+support@gmail.com"
                 >
-                  support@budgetsco.online
+                  budgetsco+support@gmail.com
                 </a>
                 . We will retain and use your data as necessary to comply with our legal
                 obligations, resolve disputes, and enforce our agreements, but barring
@@ -189,9 +189,9 @@ export default function PrivacyPolicy() {
                 directed to{" "}
                 <a
                   className="underline hover:text-accent"
-                  href="mailto:support@budgetsco.online"
+                  href="mailto:budgetsco+support@gmail.com"
                 >
-                  support@budgetsco.online
+                  budgetsco+support@gmail.com
                 </a>
                 .
               </p>
