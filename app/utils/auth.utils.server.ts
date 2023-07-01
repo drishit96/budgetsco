@@ -161,7 +161,7 @@ export async function getPartialSessionData(request: Request) {
 
 export async function generateAuthenticatorSecret(emailId: string) {
   const secret = authenticator.generateSecret();
-  const uri = authenticator.keyuri(emailId, "budgetsco.online", secret);
+  const uri = authenticator.keyuri(emailId, "budgetsco.fly.dev", secret);
   return { secret, uri };
 }
 

@@ -179,7 +179,7 @@ export default function Settings() {
             <Spacer size={1} />
             <Ripple>
               <a
-                href={`mailto:support@budgetsco.online`}
+                href={`mailto:budgetsco+support@gmail.com`}
                 className="p-4 border border-primary rounded-t-lg focus-border"
               >
                 Get suppport

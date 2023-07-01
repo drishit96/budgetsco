@@ -332,9 +332,9 @@ export default function PrivacyPolicy() {
                 Questions about the Terms of Service should be sent to us at{" "}
                 <a
                   className="underline hover:text-accent"
-                  href="mailto:support@budgetsco.online"
+                  href="mailto:budgetsco+support@gmail.com"
                 >
-                  support@budgetsco.online
+                  budgetsco+support@gmail.com
                 </a>
                 .
               </p>
