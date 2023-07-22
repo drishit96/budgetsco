@@ -25,7 +25,7 @@ export default function SubscriptionRequiredBottomSheet({
           Refresh status
         </button>
         .<br /> If the issue persists, please contact{" "}
-        <a href="mailto:support@budgetsco.online">support@budgetsco.online</a>)
+        <a href="mailto:budgetsco+support@gmail.com">budgetsco+support@gmail.com</a>)
       </p>
       <Spacer />
       <Ripple>

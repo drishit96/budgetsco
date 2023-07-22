@@ -66,9 +66,6 @@ jobs:
       - name: "Install packages"
         run: npm install --production=false --legacy-peer-deps
 
-      - name: "Generate prisma schema"
-        run: npx prisma generate
-
       - name: "Build"
         run: DEPLOYMENT_TARGET=vercel npm run build
 
