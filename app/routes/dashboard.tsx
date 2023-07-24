@@ -49,16 +49,15 @@ import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import { formatDate_MMMM_YYYY } from "~/utils/date.utils";
 import type { Currency } from "~/utils/number.utils";
 import { abs, calculate, subtract } from "~/utils/number.utils";
-import SubscriptionRequiredBottomSheet from "~/components/SubscriptionRequiredBottomSheet";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.id === "root");
+  const rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Dashboard - Budgetsco" }];
 };
 
-export let action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request }) => {
   const sessionData = await getSessionData(request);
   if (sessionData == null || sessionData.userId == null) {
     return redirect("/auth/login");
@@ -133,7 +132,7 @@ export let action: ActionFunction = async ({ request }) => {
   }
 };
 
-export let loader: LoaderFunction = async ({ request }) => {
+export const loader: LoaderFunction = async ({ request }) => {
   const sessionData = await getSessionData(request);
   if (sessionData == null || sessionData.userId == null) {
     return redirect("/auth/login");
@@ -337,7 +336,7 @@ export default function Index() {
   useEffect(() => {
     if (
       navigation.state === "submitting" &&
-      navigation.formData.get("formName") === "SAVE_REGISTRATION_TOKEN"
+      navigation.formData?.get("formName") === "SAVE_REGISTRATION_TOKEN"
     ) {
       context.setSnackBarMsg("Notifications enabled");
     }
@@ -389,7 +388,7 @@ export default function Index() {
               showAction
               actionText={
                 navigation.state === "submitting" &&
-                navigation.formData.get("formName") === "SAVE_REGISTRATION_TOKEN"
+                navigation.formData?.get("formName") === "SAVE_REGISTRATION_TOKEN"
                   ? "Enabling..."
                   : "Enable"
               }

@@ -1,6 +1,5 @@
 import type { LoaderFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { getGPBUserSubscription } from "~/modules/subscriptions/gpb.subscriptions.service";
 import { getSessionData } from "~/utils/auth.utils.server";
 import { getGPBSubscriptionDetails } from "~/utils/gpb.payment.utils.server";

@@ -175,6 +175,7 @@ enum STRSubscriptionState {
   incomplete_expired
   canceled
   unpaid
+  paused
 }
 
 model STRSubscription {

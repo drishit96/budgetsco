@@ -2,11 +2,17 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Ripple } from "@rmwc/ripple";
 import { sub, add } from "date-fns";
 import { useEffect, useState } from "react";
-import type { ActionFunction, LoaderFunction, V2_MetaFunction } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import type { ShouldRevalidateFunction } from "@remix-run/react";
-import { useNavigation } from "@remix-run/react";
-import { Form, Link, useLoaderData, useOutletContext, useSubmit } from "@remix-run/react";
+import type { ShouldRevalidateFunction, V2_MetaFunction } from "@remix-run/react";
+import {
+  useNavigation,
+  Form,
+  Link,
+  useLoaderData,
+  useOutletContext,
+  useSubmit,
+} from "@remix-run/react";
 import NextIcon from "~/components/icons/NextIcon";
 import AddIcon from "~/components/icons/AddIcon";
 import PrevIcon from "~/components/icons/PrevIcon";
@@ -25,7 +31,6 @@ import {
   getFirstDateOfThisMonth,
   parseDate,
 } from "~/utils/date.utils";
-import SubscriptionRequiredBottomSheet from "~/components/SubscriptionRequiredBottomSheet";
 import FilterIcon from "~/components/icons/FilterIcon";
 import { InlineSpacer } from "~/components/InlineSpacer";
 import type { NewFilter } from "~/components/FilterBottomSheet";

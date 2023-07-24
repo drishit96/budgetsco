@@ -16,8 +16,7 @@ import {
   INVESTMENT_CHART_COLORS_MAP,
 } from "~/utils/colors.utils";
 import type { Currency } from "~/utils/number.utils";
-import { calculate, max, subtract } from "~/utils/number.utils";
-import { formatToCurrency } from "~/utils/number.utils";
+import { calculate, max, subtract, formatToCurrency } from "~/utils/number.utils";
 import { ErrorText } from "~/components/ErrorText";
 import { SuccessText } from "~/components/SuccessText";
 import { Ripple } from "@rmwc/ripple";

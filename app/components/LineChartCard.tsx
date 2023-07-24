@@ -9,8 +9,7 @@ import {
   Line,
 } from "recharts";
 import type { Currency } from "~/utils/number.utils";
-import { formatToCurrency } from "~/utils/number.utils";
-import { formatNumber } from "~/utils/number.utils";
+import { formatToCurrency, formatNumber } from "~/utils/number.utils";
 import ReportViewSwitch from "./ReportViewSwitch";
 import { Spacer } from "./Spacer";
 

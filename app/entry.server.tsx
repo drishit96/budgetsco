@@ -1,7 +1,6 @@
 import newrelic from "newrelic";
 import { renderToPipeableStream } from "react-dom/server";
-import type { EntryContext } from "@remix-run/node";
-import type { HandleDataRequestFunction } from "@remix-run/node";
+import type { EntryContext, HandleDataRequestFunction } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import { PassThrough } from "stream";
 import { Response } from "@remix-run/node";

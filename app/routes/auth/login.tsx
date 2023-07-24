@@ -1,7 +1,6 @@
 import { Ripple } from "@rmwc/ripple";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import {
   Form,
   Link,
@@ -95,7 +94,7 @@ export const action: ActionFunction = async ({ request }) => {
 
     await Promise.allSettled(tasks);
     trackEvent(request, EventNames.LOGGED_IN, undefined, user.userId);
-    
+
     return json(
       {
         idToken,

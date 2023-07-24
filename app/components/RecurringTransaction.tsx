@@ -35,14 +35,14 @@ export function RecurringTransaction({
   const submit = useSubmit();
   const isTransactionUpdateInProgress =
     navigation.state === "submitting" &&
-    navigation.formData.get("transactionId") === transaction.id;
+    navigation.formData?.get("transactionId") === transaction.id;
   const isTransactionMaskAsDoneInProgress =
     isTransactionUpdateInProgress &&
-    navigation.formData.get("formName") === "MARK_AS_DONE_FORM";
+    navigation.formData?.get("formName") === "MARK_AS_DONE_FORM";
   const isTransactionDeleteInProgress =
     isTransactionUpdateInProgress &&
     navigation.formMethod === "DELETE" &&
-    navigation.formData.get("formName") === "DELETE_RECURRING_TRANSACTION_FORM";
+    navigation.formData?.get("formName") === "DELETE_RECURRING_TRANSACTION_FORM";
 
   return (
     <div ref={listItemParent}>

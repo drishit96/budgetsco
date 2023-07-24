@@ -16,19 +16,16 @@ export function getFirstDateOfMonth(date: Date) {
   return new Date(Date.UTC(date.getFullYear(), date.getMonth(), 1));
 }
 
-export function getFirstDateOfXMonthsBeforeFormatted(
-  difference: number = 1,
-  timezone: string
-) {
+export function getFirstDateOfXMonthsBeforeFormatted(difference = 1, timezone: string) {
   return formatDate_YYY_MM(getFirstDateOfXMonthsBefore(difference, timezone));
 }
 
-export function getFirstDateOfXMonthsBefore(difference: number = 1, timezone: string) {
+export function getFirstDateOfXMonthsBefore(difference = 1, timezone: string) {
   const firstDateOfThisMonth = getFirstDateOfThisMonth(timezone);
   return sub(firstDateOfThisMonth, { months: difference });
 }
 
-export function getFirstDateOfXMonthsAfter(difference: number = 1, timezone: string) {
+export function getFirstDateOfXMonthsAfter(difference = 1, timezone: string) {
   const firstDateOfThisMonth = getFirstDateOfThisMonth(timezone);
   return add(firstDateOfThisMonth, { months: difference });
 }
@@ -121,7 +118,7 @@ export function getListOfYearsSince(year: number) {
   let currentYear = getCurrentYear();
   if (year > currentYear) return [];
 
-  let yearsSoFar: number[] = [];
+  const yearsSoFar: number[] = [];
   while (currentYear >= year) {
     yearsSoFar.push(currentYear);
     currentYear--;

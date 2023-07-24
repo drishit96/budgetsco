@@ -1,6 +1,6 @@
-import type { ActionFunction, LoaderFunction, V2_MetaFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import { json , redirect } from "@remix-run/node";
+import type { V2_MetaFunction } from "@remix-run/react";
 import { Form, useActionData, useNavigation, useOutletContext } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { Input } from "~/components/Input";
