@@ -13,7 +13,6 @@ import InfoIcon from "./icons/InfoIcon";
 import RepeatIcon from "./icons/RepeatIcon";
 import { Spacer } from "./Spacer";
 import TrashIcon from "./icons/TrashIcon";
-import SubscriptionRequiredBottomSheet from "./SubscriptionRequiredBottomSheet";
 
 export function Transaction({
   transaction,
@@ -38,7 +37,7 @@ export function Transaction({
   const isTransactionUpdateInProgress =
     navigation.state === "submitting" &&
     navigation.formMethod === "DELETE" &&
-    navigation.formData.get("transactionId") === transaction.id;
+    navigation.formData?.get("transactionId") === transaction.id;
 
   return (
     <div ref={listItemParent}>

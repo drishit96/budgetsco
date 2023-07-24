@@ -66,7 +66,7 @@ async function handleMessage(event: ExtendableMessageEvent) {
   } else if (event.data.type === "DELETE_FROM_CACHE") {
     try {
       const cache = await caches.open(DATA_CACHE);
-      let tasks: Promise<boolean>[] = [];
+      const tasks: Promise<boolean>[] = [];
       event.data.dataCacheToDelete.forEach((path: string) => {
         tasks.push(
           cache.delete(new URL(`${location.protocol}//${location.host}${path}`))
@@ -195,7 +195,6 @@ function isLoaderRequest(request: Request) {
 }
 
 function isCacheFirstRequest(request: Request) {
-  const url = new URL(request.url);
   return false;
 }
 
