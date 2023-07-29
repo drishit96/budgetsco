@@ -129,7 +129,7 @@ export async function editTransaction(
   timezone: string
 ) {
   try {
-    let tasks: Promise<any>[] = [];
+    const tasks: Promise<any>[] = [];
     const oldTransaction = await prisma.transaction.findFirst({
       where: { id: transactionId, userId },
     });
@@ -243,9 +243,9 @@ export async function editTransaction(
       }
     }
 
-    let categoriesToCreate = [];
-    let categoriesToUpdate = [];
-    let categoriesToDelete = [];
+    const categoriesToCreate = [];
+    const categoriesToUpdate = [];
+    const categoriesToDelete = [];
 
     if (newTransaction.type !== oldTransaction.type) {
       categoriesToDelete.push(
@@ -267,7 +267,7 @@ export async function editTransaction(
         newTransaction.category3,
       ];
 
-      for (let newCategory of newCategories) {
+      for (const newCategory of newCategories) {
         if (isNullOrEmpty(newCategory)) continue;
         if (oldCategories.includes(newCategory)) {
           categoriesToUpdate.push(newCategory);
@@ -276,7 +276,7 @@ export async function editTransaction(
         }
       }
 
-      for (let oldCategory of oldCategories) {
+      for (const oldCategory of oldCategories) {
         if (isNullOrEmpty(oldCategory)) continue;
         if (!newCategories.includes(oldCategory)) {
           categoriesToDelete.push(oldCategory);
@@ -439,8 +439,7 @@ async function updatePaymentModeAmount(
     },
     update: {
       amount: {
-        increment:
-          operationType === "add" ? amount : amount.negated(),
+        increment: operationType === "add" ? amount : amount.negated(),
       },
     },
     where: {
@@ -480,7 +479,7 @@ export async function getTransactions(
       where.AND = [];
       if (filter.types) {
         const typeFilter = [];
-        for (let type of filter.types) {
+        for (const type of filter.types) {
           if (isNullOrEmpty(type)) continue;
           typeFilter.push({ type });
         }
@@ -488,7 +487,7 @@ export async function getTransactions(
       }
       if (filter.categories) {
         const categoryFilter = [];
-        for (let category of filter.categories) {
+        for (const category of filter.categories) {
           if (isNullOrEmpty(category)) continue;
           categoryFilter.push({ category });
         }
@@ -591,7 +590,7 @@ export async function createMonthlyTarget(
 
   const categoryAmounts: Prisma.CategoryAmountCreateManyInput[] = [];
 
-  for (let targetData of categoryWiseTargetDetails) {
+  for (const targetData of categoryWiseTargetDetails) {
     categoryAmounts.push({
       date,
       type: "expense",
@@ -632,8 +631,8 @@ export async function editMonthlyTarget(
       return true;
     }
 
-    let valuesArr: Prisma.Sql[] = [];
-    for (let item of categoryWiseTargetDetails) {
+    const valuesArr: Prisma.Sql[] = [];
+    for (const item of categoryWiseTargetDetails) {
       const category = item[0];
       const budget = item[1];
       valuesArr.push(
@@ -811,7 +810,7 @@ export async function getCustomCategories(userId: string) {
   });
   if (customCategories.length == 0) return null;
   const map: { [key: string]: string[] } = {};
-  for (let category of customCategories) {
+  for (const category of customCategories) {
     if (map[category.type] == null) {
       map[category.type] = [category.value];
     } else {

@@ -3,8 +3,11 @@ import { ResponsiveContainer, PieChart, Pie, Cell, Label, Tooltip } from "rechar
 import type { Color, ColorMap } from "~/utils/colors.utils";
 import { CHART_COLOR_MAP } from "~/utils/colors.utils";
 import type { Currency } from "~/utils/number.utils";
-import { formatNumber, formatToCurrency } from "~/utils/number.utils";
-import { formatToCurrencyCompact } from "~/utils/number.utils";
+import {
+  formatNumber,
+  formatToCurrency,
+  formatToCurrencyCompact,
+} from "~/utils/number.utils";
 import { CustomLegend } from "./CustomLegend";
 import { InfoText } from "./InfoText";
 import ReportViewSwitch from "./ReportViewSwitch";

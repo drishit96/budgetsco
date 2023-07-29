@@ -1,4 +1,4 @@
-import type { V2_MetaFunction } from "@remix-run/node";
+import type { V2_MetaFunction } from "@remix-run/react";
 import { Link, useOutletContext } from "@remix-run/react";
 import { Ripple } from "@rmwc/ripple";
 import { useEffect } from "react";

@@ -36,7 +36,6 @@ import {
 import { isNotNullAndEmpty, isNullOrEmpty } from "~/utils/text.utils";
 import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import type { AuthPageContext } from "../auth";
-import { saveBoolSettingToLocalStorage } from "~/utils/setting.utils";
 import Turnstile from "~/components/Turnstile";
 import { trackEvent, trackUserProfileUpdate } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";

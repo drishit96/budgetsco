@@ -1,7 +1,6 @@
 import { Ripple } from "@rmwc/ripple";
 import type { LoaderFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { Form, useNavigation } from "@remix-run/react";
 import { Input } from "~/components/Input";
 import { Spacer } from "~/components/Spacer";

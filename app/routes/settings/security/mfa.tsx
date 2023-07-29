@@ -1,6 +1,6 @@
-import type { ActionFunction, LoaderFunction, V2_MetaFunction } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import type { ShouldRevalidateFunction } from "@remix-run/react";
+import type { ShouldRevalidateFunction, V2_MetaFunction } from "@remix-run/react";
 import { Form, useActionData, useLoaderData, useOutletContext } from "@remix-run/react";
 import { useEffect } from "react";
 import { InlineSpacer } from "~/components/InlineSpacer";

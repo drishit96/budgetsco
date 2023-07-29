@@ -1,7 +1,6 @@
 import type { DataFunctionArgs, LinksFunction, TypedResponse } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import type { ShouldRevalidateFunction } from "@remix-run/react";
-import { useNavigation, useRouteError } from "@remix-run/react";
 import {
   Link,
   Links,
@@ -13,6 +12,8 @@ import {
   useLoaderData,
   useLocation,
   useMatches,
+  useNavigation,
+  useRouteError,
 } from "@remix-run/react";
 
 import styles from "./styles/app.css";
@@ -43,8 +44,10 @@ import type {
 } from "@remix-run/react/dist/routeModules";
 import usePreferredLocale from "./lib/usePreferredLocale.hook";
 import type { UserSessionData } from "./utils/auth.utils.server";
-import { getSessionCookieWithUpdatedPreferences } from "./utils/auth.utils.server";
-import { getSessionData } from "./utils/auth.utils.server";
+import {
+  getSessionCookieWithUpdatedPreferences,
+  getSessionData,
+} from "./utils/auth.utils.server";
 import { getUserPreferencesAfterTimestamp } from "./modules/settings/settings.service";
 import {
   saveCustomCategoriesToLocalStorage,
