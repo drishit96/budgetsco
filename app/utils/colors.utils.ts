@@ -100,7 +100,7 @@ export function getBackgroundDarkColor(color: Color) {
   }
 }
 
-export function getTextColor(color: Color) {
+export function getTextColor(color?: Color) {
   switch (color) {
     case "green":
       return "text-accent";
@@ -108,6 +108,8 @@ export function getTextColor(color: Color) {
       return "text-urgent";
     case "blue":
       return "text-info";
+    default:
+      return "text-secondary";
   }
 }
 
