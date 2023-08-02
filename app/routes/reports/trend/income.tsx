@@ -67,10 +67,10 @@ export default function IncomeTrendReport() {
   const trendingReportContext = useOutletContext<TrendingReportContext>();
 
   const incomeDistribution = Object.entries(categoryIncomesByCategory)
-    .map(([category, categoryExpenses]) => {
+    .map(([category, categoryIncomes]) => {
       return {
         name: category.toString(),
-        value: sum(categoryExpenses.map((c) => c.income)),
+        value: sum(categoryIncomes.map((c) => c.income)),
       };
     })
     .sort((a, b) => (calculate(b.value).minus(a.value).gt(0) ? 1 : -1));
@@ -116,10 +116,10 @@ export default function IncomeTrendReport() {
         <PieChartCard
           title="Income sources"
           data={incomeDistribution}
-          total={totalExpense}
+          total={totalIncomeEarned}
           currency={trendingReportContext.userPreferredCurrency}
           locale={trendingReportContext.userPreferredLocale}
-          colHeaders={["Category", "Expense"]}
+          colHeaders={["Category", "Income"]}
           colors={CHART_COLOR_MAP}
         />
       </div>
