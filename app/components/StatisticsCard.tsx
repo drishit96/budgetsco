@@ -17,7 +17,7 @@ export function StatisticsCard({
   num: string;
   positiveIsBetter?: boolean;
   perc?: number;
-  color: Color;
+  color?: Color;
   currency: Currency;
   locale: string;
 }) {

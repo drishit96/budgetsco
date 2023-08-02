@@ -50,7 +50,7 @@ export default function Reports() {
               </p>
             </Ripple>
           </Link>
-          <Link className="w-1/3" to="/reports/trend" replace>
+          <Link className="w-1/3" to="/reports/trend/expense" replace>
             <Ripple>
               <p
                 className={`p-2 text-sm font-bold sm:text-base sm:font-normal text-center border-r-2 border-t-2 border-b-2 border-emerald-700 rounded-r-lg ${
