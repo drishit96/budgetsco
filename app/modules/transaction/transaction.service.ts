@@ -462,6 +462,7 @@ export async function getTransactions(
   filter?: {
     types?: string[];
     categories?: string[];
+    paymentModes?: string[];
   }
 ) {
   const currentMonth = month ? parseDate(month) : getFirstDateOfThisMonth(timezone);
@@ -492,6 +493,14 @@ export async function getTransactions(
           categoryFilter.push({ category });
         }
         categoryFilter.length && where.AND.push({ OR: categoryFilter });
+      }
+      if (filter.paymentModes) {
+        const paymentModeFilter = [];
+        for (const paymentMode of filter.paymentModes) {
+          if (isNullOrEmpty(paymentMode)) continue;
+          paymentModeFilter.push({ paymentMode });
+        }
+        paymentModeFilter.length && where.AND.push({ OR: paymentModeFilter });
       }
     }
 

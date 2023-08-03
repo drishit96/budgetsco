@@ -2,6 +2,7 @@ import { Ripple } from "@rmwc/ripple";
 import { useEffect, useState } from "react";
 import type { AppContext } from "~/root";
 import {
+  getAllPaymentModes,
   getAllTransactionTypes,
   getCombinedCategoriesForAllTransactionTypes,
 } from "~/utils/category.utils";
@@ -15,6 +16,7 @@ export type NewFilter = {
   selectedCategories: string[];
   month: string;
   selectedTypes: string[];
+  selectedPaymentModes: string[];
 };
 
 function FilterTab({
@@ -51,26 +53,37 @@ export default function FilterBottomSheet({
   defaultSelectedCategories,
   defaultMonth,
   defaultTypes,
+  defaultPaymentModes,
   onFilterSet,
 }: {
   context: AppContext;
   defaultSelectedCategories?: string[];
   defaultMonth: string;
   defaultTypes?: string[];
+  defaultPaymentModes?: string[];
   onFilterSet: (filter: NewFilter) => void;
 }) {
   const [categories, setCategories] = useState<{ label: string; value: string }[]>([]);
+  const [paymentModes, setPaymentModes] = useState<{ label: string; value: string }[]>(
+    []
+  );
   const [currentTab, setCurrentTab] = useState("category");
   const [categorySearchValue, setCategorySearchValue] = useState("");
+  const [paymentModeSearchValue, setPaymentModeSearchValue] = useState("");
   const [selectedTypes, setSelectedTypes] = useState(new Set(defaultTypes));
   const [selectedCategories, setSelectedCategories] = useState(
     new Set(defaultSelectedCategories)
   );
+  const [selectedPaymentModes, setSelectedPaymentModes] = useState(
+    new Set(defaultPaymentModes)
+  );
   useEffect(() => {
     setCategories(getCombinedCategoriesForAllTransactionTypes());
+    setPaymentModes(getAllPaymentModes());
     setSelectedTypes(new Set(defaultTypes));
     setSelectedCategories(new Set(defaultSelectedCategories));
-  }, [defaultTypes, defaultSelectedCategories]);
+    setSelectedPaymentModes(new Set(defaultPaymentModes));
+  }, [defaultTypes, defaultSelectedCategories, defaultPaymentModes]);
   return (
     <div className="flex flex-col text-primary">
       <p className="text-2xl font-semibold">Filter</p>
@@ -91,6 +104,13 @@ export default function FilterBottomSheet({
             count={selectedTypes.size}
             isCurrentTab={currentTab === "type"}
             onClick={() => setCurrentTab("type")}
+          />
+          <FilterTab
+            key="paymentMode"
+            name="Payment mode"
+            count={selectedPaymentModes.size}
+            isCurrentTab={currentTab === "paymentMode"}
+            onClick={() => setCurrentTab("paymentMode")}
           />
         </div>
         {currentTab === "category" && (
@@ -165,6 +185,52 @@ export default function FilterBottomSheet({
             ))}
           </div>
         )}
+        {currentTab === "paymentMode" && (
+          <div className="flex flex-col grow pl-2 pr-1 h-96 overflow-y-scroll bg-base">
+            <div className="sticky top-0 bg-base">
+              <Input
+                type="search"
+                name="paymentModeSearch"
+                label="Search a payment mode"
+                value={paymentModeSearchValue}
+                onChangeHandler={(e) => setPaymentModeSearchValue(e.target.value)}
+              />
+            </div>
+            <Spacer size={1} />
+            {paymentModes
+              .filter(
+                (c) =>
+                  paymentModeSearchValue == "" ||
+                  c.label
+                    .toLocaleLowerCase()
+                    .includes(paymentModeSearchValue.toLocaleLowerCase())
+              )
+              .map((paymentMode) => (
+                <label key={paymentMode.value}>
+                  <input
+                    className="form-checkbox checkbox"
+                    type="checkbox"
+                    name="category"
+                    value={paymentMode.value}
+                    checked={selectedPaymentModes.has(paymentMode.value)}
+                    onChange={(e) => {
+                      const newSet = new Set(selectedPaymentModes);
+                      if (newSet.has(e.target.value)) {
+                        newSet.delete(e.target.value);
+                      } else {
+                        newSet.add(e.target.value);
+                      }
+                      setSelectedPaymentModes(newSet);
+                    }}
+                  />
+                  <InlineSpacer />
+                  <span className="text-primary text-lg lg:text-base">
+                    {paymentMode.label}
+                  </span>
+                </label>
+              ))}
+          </div>
+        )}
       </div>
       <Spacer />
       <div className="flex space-x-1">
@@ -178,6 +244,7 @@ export default function FilterBottomSheet({
                 selectedCategories: [],
                 month: defaultMonth,
                 selectedTypes: [],
+                selectedPaymentModes: [],
               });
               history.back();
             }}
@@ -193,6 +260,7 @@ export default function FilterBottomSheet({
                 selectedCategories: Array.from(selectedCategories),
                 month: defaultMonth,
                 selectedTypes: Array.from(selectedTypes),
+                selectedPaymentModes: Array.from(selectedPaymentModes),
               });
               history.back();
             }}
