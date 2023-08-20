@@ -16,7 +16,7 @@ import {
   INVESTMENT_CHART_COLORS_MAP,
 } from "~/utils/colors.utils";
 import type { Currency } from "~/utils/number.utils";
-import { calculate, max, subtract, formatToCurrency } from "~/utils/number.utils";
+import { calculate, max, subtract, formatToCurrency, sum } from "~/utils/number.utils";
 import { ErrorText } from "~/components/ErrorText";
 import { SuccessText } from "~/components/SuccessText";
 import { Ripple } from "@rmwc/ripple";
@@ -68,8 +68,16 @@ function getBudgetUsedPercent(budget: string, expense: string) {
     : 0;
 }
 
-function getBudgetText(budget: string, currency: Currency) {
-  if (budget === "0") return "No budget";
+function getBudgetText(
+  budget: string,
+  nonPlannedExpenseCount: number,
+  currency: Currency
+) {
+  if (budget === "0") {
+    return nonPlannedExpenseCount === 1
+      ? `${nonPlannedExpenseCount} category`
+      : `${nonPlannedExpenseCount} categories`;
+  }
   return `Budget: ${formatToCurrency(budget, "en-US", currency)}`;
 }
 
@@ -83,6 +91,14 @@ function getBudgetLeftText(budget: string, expense: string, currency: Currency) 
   } else {
     return `${formatToCurrency(subtract(expense, budget), "en-US", currency)} overspent`;
   }
+}
+
+function getCategoryFilter(categories: string[]) {
+  const filter = [];
+  for (let category of categories) {
+    filter.push(`category=${encodeURIComponent(category)}`);
+  }
+  return filter.join("&");
 }
 
 export default function ThisMonthReport() {
@@ -124,6 +140,17 @@ export default function ThisMonthReport() {
       };
     }
   );
+
+  const categoryBudgetExpenses = categoryWiseTargetExpense.filter((e) => e.budget != "0");
+  const nonPlannedCategories = categoryWiseTargetExpense.filter((e) => e.budget == "0");
+
+  if (nonPlannedCategories.length) {
+    categoryBudgetExpenses.push({
+      category: "Not planned",
+      budget: "0",
+      expense: sum(nonPlannedCategories.map((n) => n.expense)),
+    });
+  }
 
   useEffect(() => {
     reportsPageContext.setActiveTab("thisMonth");
@@ -176,15 +203,17 @@ export default function ThisMonthReport() {
           <div className="p-3 border border-primary rounded-md w-full lg:w-6/12">
             <p className="text-xl font-bold">Budget vs Expense</p>
             <Spacer />
-            {categoryWiseTargetExpense.map((categoryExpense) => {
+            {categoryBudgetExpenses.map((categoryExpense) => {
               const percentage = getBudgetUsedPercent(
                 categoryExpense.budget,
                 categoryExpense.expense
               );
               return (
                 <Link
-                  to={`/transaction/history?type=expense&category=${encodeURIComponent(
-                    categoryExpense.category
+                  to={`/transaction/history?type=expense&${getCategoryFilter(
+                    categoryExpense.budget == "0"
+                      ? nonPlannedCategories.map((c) => c.category)
+                      : [categoryExpense.category]
                   )}`}
                   key={categoryExpense.category}
                 >
@@ -208,6 +237,7 @@ export default function ThisMonthReport() {
                         <p className="text-primary">
                           {getBudgetText(
                             categoryExpense.budget,
+                            nonPlannedCategories.length,
                             reportsPageContext.userPreferredCurrency
                           )}
                         </p>
