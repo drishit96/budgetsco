@@ -51,7 +51,7 @@ export let loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function ExpenseTrendReport() {
-  const { targets, totalExpense, categoryExpensesByCategory } =
+  const { targets, totalExpense, categoryExpensesByCategory, expensesByPaymentMode } =
     useLoaderData<ExpenseTrendReportResponse>();
 
   const navigation = useNavigation();
@@ -71,8 +71,16 @@ export default function ExpenseTrendReport() {
     value: key,
   }));
 
+  const paymentModes = Object.keys(expensesByPaymentMode).map((key) => ({
+    label: key,
+    value: key,
+  }));
+
   const [categoryForCategoryExpenseTrend, setCategoryForCategoryExpenseTrend] = useState(
     categories[0]
+  );
+  const [paymentModeExpenseTrendCategory, setPaymentModeExpenseTrendCategory] = useState(
+    paymentModes[0]
   );
 
   useEffect(() => {
@@ -82,6 +90,7 @@ export default function ExpenseTrendReport() {
   useEffect(() => {
     if (navigation.state === "loading") {
       setCategoryForCategoryExpenseTrend(categories[0]);
+      setPaymentModeExpenseTrendCategory(paymentModes[0]);
     }
   }, [navigation]);
 
@@ -89,7 +98,7 @@ export default function ExpenseTrendReport() {
     <>
       <div className="p-3 border border-primary rounded-md w-full lg:w-5/12">
         <PieChartCard
-          title="Expense breakdown"
+          title="Expense overview"
           data={expenseDistribution}
           total={totalExpense}
           currency={trendingReportContext.userPreferredCurrency}
@@ -102,7 +111,7 @@ export default function ExpenseTrendReport() {
       {categoryExpensesByCategory != null && categoryForCategoryExpenseTrend != null ? (
         <div className="p-3 border border-primary rounded-md w-full lg:w-6/12">
           <LineChartCard
-            title="Expense trend for"
+            title="Expense by category"
             locale={trendingReportContext.userPreferredLocale}
             currency={trendingReportContext.userPreferredCurrency}
             data={categoryExpensesByCategory[categoryForCategoryExpenseTrend.label]}
@@ -188,7 +197,7 @@ export default function ExpenseTrendReport() {
       ) : null}
 
       {targets?.length ? (
-        <div className="p-3 border border-primary rounded-md w-full lg:w-11/12">
+        <div className="p-3 border border-primary rounded-md w-full lg:w-6/12">
           <LineChartCard
             title="Budget vs Expense"
             locale={trendingReportContext.userPreferredLocale}
@@ -208,6 +217,94 @@ export default function ExpenseTrendReport() {
               },
             ]}
           />
+        </div>
+      ) : null}
+
+      {expensesByPaymentMode != null && paymentModeExpenseTrendCategory != null ? (
+        <div className="p-3 border border-primary rounded-md w-full lg:w-5/12">
+          <LineChartCard
+            title="Expense by payment mode"
+            locale={trendingReportContext.userPreferredLocale}
+            currency={trendingReportContext.userPreferredCurrency}
+            data={expensesByPaymentMode[paymentModeExpenseTrendCategory.label]}
+            xAxis={{ name: "Month", dataKey: "date" }}
+            lines={[
+              {
+                name: "Expense",
+                dataKey: "expense",
+                color: "#0E7490",
+              },
+            ]}
+            children={
+              <>
+                <Spacer size={1} />
+                <select
+                  name="Category"
+                  className="form-select select w-full"
+                  value={paymentModeExpenseTrendCategory.value}
+                  onChange={(e) =>
+                    setPaymentModeExpenseTrendCategory({
+                      label: e.target.value,
+                      value: e.target.value,
+                    })
+                  }
+                >
+                  {paymentModes.map((paymentMode) => (
+                    <option key={paymentMode.value} value={paymentMode.value}>
+                      {paymentMode.label}
+                    </option>
+                  ))}
+                </select>
+                <Spacer />
+                <div className="flex flex-wrap gap-2">
+                  <StatisticsCard
+                    name="Total"
+                    num={sum(
+                      expensesByPaymentMode[paymentModeExpenseTrendCategory.value].map(
+                        (c) => c.expense
+                      )
+                    )}
+                    currency={trendingReportContext.userPreferredCurrency}
+                    locale={trendingReportContext.userPreferredLocale}
+                  />
+                  <StatisticsCard
+                    name="Max"
+                    num={max(
+                      ...expensesByPaymentMode[paymentModeExpenseTrendCategory.value].map(
+                        (c) => c.expense
+                      )
+                    )}
+                    currency={trendingReportContext.userPreferredCurrency}
+                    locale={trendingReportContext.userPreferredLocale}
+                  />
+                  <StatisticsCard
+                    name="Median"
+                    num={median(
+                      expensesByPaymentMode[paymentModeExpenseTrendCategory.value].map(
+                        (c) => c.expense
+                      )
+                    )}
+                    currency={trendingReportContext.userPreferredCurrency}
+                    locale={trendingReportContext.userPreferredLocale}
+                  />
+                </div>
+              </>
+            }
+          />
+
+          <Spacer />
+          <div className="flex justify-end">
+            <Ripple>
+              <Link
+                to={`/transaction/history?type=expense&paymentMode=${encodeURIComponent(
+                  paymentModeExpenseTrendCategory.label
+                )}`}
+                className="w-full md:w-max text-center btn-secondary-sm whitespace-nowrap"
+              >
+                View transactions
+              </Link>
+            </Ripple>
+          </div>
         </div>
       ) : null}
     </>
