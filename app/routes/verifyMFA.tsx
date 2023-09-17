@@ -1,5 +1,5 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json , redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import type { V2_MetaFunction } from "@remix-run/react";
 import { Form, useActionData, useNavigation, useOutletContext } from "@remix-run/react";
 import { useEffect, useState } from "react";
@@ -10,6 +10,7 @@ import { EventNames } from "~/lib/anaytics.contants";
 import { verify2FAToken } from "~/modules/settings/security/mfa.service";
 import { getUserPreferences } from "~/modules/settings/settings.service";
 import { getCustomCategories } from "~/modules/transaction/transaction.service";
+import { saveNotificationToken } from "~/modules/user/user.service";
 import type { AppContext } from "~/root";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import {
@@ -22,8 +23,10 @@ import {
   saveBrowserPreferencesToLocalStorage,
   saveLastModifiedToLocalStorage,
 } from "~/utils/category.utils";
+import { getFCMRegistrationToken, isNotificationSupported } from "~/utils/firebase.utils";
 import { logError } from "~/utils/logger.utils.server";
 import type { Currency } from "~/utils/number.utils";
+import { isNotNullAndEmpty } from "~/utils/text.utils";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
@@ -54,6 +57,12 @@ export const action: ActionFunction = async ({ request }) => {
   const getUserPreferencesTask = getUserPreferences(userId);
   const getCustomCategoriesTask = getCustomCategories(userId);
   tasks.push(getUserPreferencesTask, getCustomCategoriesTask);
+
+  const notificationToken = form.get("notificationToken")?.toString();
+  if (isNotNullAndEmpty(notificationToken)) {
+    tasks.push(saveNotificationToken(userId, notificationToken));
+  }
+
   await Promise.allSettled(tasks);
 
   const userPreferences = await getUserPreferencesTask;
@@ -102,6 +111,7 @@ export default function VerifyMFA() {
     lastModified: number | null;
   }>();
   const [showSuccessText, setShowSuccessText] = useState(false);
+  const [notificationToken, setNotificationToken] = useState("");
 
   useEffect(() => {
     if (actionData && actionData.error == null) {
@@ -120,6 +130,20 @@ export default function VerifyMFA() {
     }
   }, [actionData, context]);
 
+  useEffect(() => {
+    checkAndSetNotificationToken();
+  }, []);
+
+  async function checkAndSetNotificationToken() {
+    const isNotificationsSupported = await isNotificationSupported();
+    if (isNotificationsSupported && Notification.permission === "granted") {
+      const { token } = await getFCMRegistrationToken();
+      if (isNotNullAndEmpty(token)) {
+        setNotificationToken(token);
+      }
+    }
+  }
+
   return (
     <>
       <main className="pt-4 pb-28">
@@ -135,6 +159,7 @@ export default function VerifyMFA() {
                   autoFocus
                   autoComplete="one-time-code"
                 />
+                <input type="hidden" name="notificationToken" value={notificationToken} />
                 <Spacer size={1} />
                 <button className="btn-primary w-full">
                   {navigation.state === "submitting" ? "Verifying code..." : "Continue"}
