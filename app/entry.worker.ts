@@ -13,7 +13,7 @@ const queue = new Queue("budgetsco");
 export type {};
 declare let self: ServiceWorkerGlobalScope;
 
-const STATIC_ASSETS = ["/build/", "/icons/", "/images", "/"];
+const STATIC_ASSETS = ["/build/", "/icons/", "/images", "/fonts", "/sounds", "/"];
 
 const ASSET_CACHE = "asset-cache";
 const DATA_CACHE = "data-cache";
