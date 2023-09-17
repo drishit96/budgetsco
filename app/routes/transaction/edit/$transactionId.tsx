@@ -249,9 +249,11 @@ export default function EditTransaction() {
   useEffect(() => {
     if (actionData?.data?.isTransactionSaved) {
       context.setSnackBarMsg("Transaction saved");
+      const successSound = new Audio("/sounds/success.mp3");
+      successSound.play();
       history.back();
     }
-  }, [actionData?.data?.isTransactionSaved]);
+  }, [actionData?.data?.isTransactionSaved, context]);
 
   useEffect(() => {
     context.showBackButton(true);

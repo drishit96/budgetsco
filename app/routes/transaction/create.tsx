@@ -238,9 +238,11 @@ export default function Create() {
   useEffect(() => {
     if (actionData?.data?.isTransactionSaved) {
       context.setSnackBarMsg("Transaction saved");
+      const successSound = new Audio("/sounds/success.mp3");
+      successSound.play();
       history.back();
     }
-  }, [actionData?.data?.isTransactionSaved]);
+  }, [actionData?.data?.isTransactionSaved, context]);
 
   useEffect(() => {
     context.showBackButton(true);
@@ -444,6 +446,7 @@ export default function Create() {
                   name="description"
                   className="input text-center"
                   placeholder="Description (optional)"
+                  dir="auto"
                 />
 
                 <Spacer size={3} />

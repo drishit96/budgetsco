@@ -68,6 +68,7 @@ export type ExpenseTrendReportResponse = Omit<
   "totalIncomeEarned" | "totalInvestmentDone"
 > & {
   categoryExpensesByCategory: { [key: string]: CategoryExpenseDate[] };
+  expensesByPaymentMode: { [key: string]: CategoryExpenseDate[] };
 };
 
 export type InvestmentTrendReportResponse = Omit<
@@ -75,6 +76,7 @@ export type InvestmentTrendReportResponse = Omit<
   "totalExpense" | "totalIncomeEarned"
 > & {
   categoryInvestmentsByCategory: { [key: string]: CategoryInvestmentDate[] };
+  investmentsByPaymentMode: { [key: string]: CategoryInvestmentDate[] };
 };
 
 export type IncomeTrendReportResponse = TrendReportResponse & {
@@ -272,9 +274,10 @@ export async function getExpenseTrendReport(
     [startDate, endDate] = [endDate, startDate];
   }
 
-  const [targets, categoryExpenses] = await Promise.all([
+  const [targets, categoryExpenses, expensesByPaymentMode] = await Promise.all([
     getTargets(userId, startDate, endDate),
     getAmountPerCategoryForTimeRange(userId, "expense", startDate, endDate),
+    getAmountPerPaymentModeForTimeRange(userId, "expense", startDate, endDate),
   ]);
 
   const totalExpense =
@@ -284,6 +287,7 @@ export async function getExpenseTrendReport(
     targets,
     totalExpense,
     categoryExpensesByCategory: Object.fromEntries(groupBy(categoryExpenses, "category")),
+    expensesByPaymentMode: Object.fromEntries(groupBy(expensesByPaymentMode, "category")),
   };
 }
 
@@ -309,9 +313,10 @@ export async function getInvestmentTrendReport(
     [startDate, endDate] = [endDate, startDate];
   }
 
-  const [targets, categoryInvestments] = await Promise.all([
+  const [targets, categoryInvestments, investmentsByPaymentMode] = await Promise.all([
     getTargets(userId, startDate, endDate),
     getAmountPerCategoryForTimeRange(userId, "investment", startDate, endDate),
+    getAmountPerPaymentModeForTimeRange(userId, "investment", startDate, endDate),
   ]);
 
   const totalInvestmentDone =
@@ -324,6 +329,9 @@ export async function getInvestmentTrendReport(
     totalInvestmentDone,
     categoryInvestmentsByCategory: Object.fromEntries(
       groupBy(categoryInvestments, "category")
+    ),
+    investmentsByPaymentMode: Object.fromEntries(
+      groupBy(investmentsByPaymentMode, "category")
     ),
   };
 }
@@ -587,6 +595,39 @@ async function getAmountPerCategoryForTimeRange(
       category: categoryAmount.category,
       [type]: categoryAmount.amount,
       date: formatDate_MMM_YYYY(categoryAmount.date),
+    })) as CategoryAmount<Prisma.Decimal, TransactionType>[];
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+}
+
+async function getAmountPerPaymentModeForTimeRange(
+  userId: string,
+  type: TransactionType,
+  startDate: Date,
+  endDate: Date
+) {
+  try {
+    const paymentModeAmounts = await prisma.paymentModeAmount.findMany({
+      where: {
+        userId,
+        date: { gte: startDate, lte: endDate },
+        transactionType: type,
+        amount: { gt: 0 },
+      },
+      select: {
+        paymentMode: true,
+        amount: true,
+        date: true,
+      },
+      orderBy: { date: "asc" },
+    });
+
+    return paymentModeAmounts.map((paymentModeAmount) => ({
+      category: paymentModeAmount.paymentMode,
+      [type]: paymentModeAmount.amount,
+      date: formatDate_MMM_YYYY(paymentModeAmount.date),
     })) as CategoryAmount<Prisma.Decimal, TransactionType>[];
   } catch (error) {
     console.log(error);

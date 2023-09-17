@@ -11,7 +11,7 @@ import PieChartCard from "~/components/PieChartCard";
 import { Ripple } from "@rmwc/ripple";
 import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
 import LineChartCard from "~/components/LineChartCard";
-import { avg, calculate, max, sum } from "~/utils/number.utils";
+import { avg, calculate, max, median, sum } from "~/utils/number.utils";
 import type { TrendingReportContext } from "../trend";
 import { StatisticsCard } from "~/components/StatisticsCard";
 import { logError } from "~/utils/logger.utils.server";
@@ -51,7 +51,7 @@ export let loader: LoaderFunction = async ({ request }) => {
 };
 
 export default function InvestmentTrendReport() {
-  const { totalInvestmentDone, categoryInvestmentsByCategory } =
+  const { totalInvestmentDone, categoryInvestmentsByCategory, investmentsByPaymentMode } =
     useLoaderData<InvestmentTrendReportResponse>();
 
   const navigation = useNavigation();
@@ -71,8 +71,15 @@ export default function InvestmentTrendReport() {
     value: key,
   }));
 
+  const paymentModes = Object.keys(investmentsByPaymentMode).map((key) => ({
+    label: key,
+    value: key,
+  }));
+
   const [categoryForCategoryInvestmentTrend, setCategoryForCategoryInvestmentTrend] =
     useState(categories[0]);
+  const [paymentModeInvestmentTrendCategory, setPaymentModeInvestmentTrendCategory] =
+    useState(paymentModes[0]);
 
   useEffect(() => {
     trendingReportContext.setTransactionType("investment");
@@ -81,6 +88,7 @@ export default function InvestmentTrendReport() {
   useEffect(() => {
     if (navigation.state === "loading") {
       setCategoryForCategoryInvestmentTrend(categories[0]);
+      setPaymentModeInvestmentTrendCategory(paymentModes[0]);
     }
   }, [navigation]);
 
@@ -88,7 +96,7 @@ export default function InvestmentTrendReport() {
     <>
       <div className="p-3 border border-primary rounded-md w-full lg:w-5/12">
         <PieChartCard
-          title="Investment breakdown"
+          title="Investment overview"
           data={investmentDistribution}
           total={totalInvestmentDone}
           currency={trendingReportContext.userPreferredCurrency}
@@ -102,7 +110,7 @@ export default function InvestmentTrendReport() {
       categoryForCategoryInvestmentTrend != null ? (
         <div className="p-3 border border-primary rounded-md w-full lg:w-6/12">
           <LineChartCard
-            title="Investment trend for"
+            title="Investment by category"
             locale={trendingReportContext.userPreferredLocale}
             currency={trendingReportContext.userPreferredCurrency}
             data={categoryInvestmentsByCategory[categoryForCategoryInvestmentTrend.label]}
@@ -177,6 +185,93 @@ export default function InvestmentTrendReport() {
               <Link
                 to={`/transaction/history?type=investment&category=${encodeURIComponent(
                   categoryForCategoryInvestmentTrend.label
+                )}`}
+                className="w-full md:w-max text-center btn-secondary-sm whitespace-nowrap"
+              >
+                View transactions
+              </Link>
+            </Ripple>
+          </div>
+        </div>
+      ) : null}
+      {investmentsByPaymentMode != null && paymentModeInvestmentTrendCategory != null ? (
+        <div className="p-3 border border-primary rounded-md w-full lg:w-11/12">
+          <LineChartCard
+            title="Investment by payment mode"
+            locale={trendingReportContext.userPreferredLocale}
+            currency={trendingReportContext.userPreferredCurrency}
+            data={investmentsByPaymentMode[paymentModeInvestmentTrendCategory.label]}
+            xAxis={{ name: "Month", dataKey: "date" }}
+            lines={[
+              {
+                name: "Investment",
+                dataKey: "investment",
+                color: "#0E7490",
+              },
+            ]}
+            children={
+              <>
+                <Spacer size={1} />
+                <select
+                  name="Category"
+                  className="form-select select w-full"
+                  value={paymentModeInvestmentTrendCategory.value}
+                  onChange={(e) =>
+                    setPaymentModeInvestmentTrendCategory({
+                      label: e.target.value,
+                      value: e.target.value,
+                    })
+                  }
+                >
+                  {paymentModes.map((paymentMode) => (
+                    <option key={paymentMode.value} value={paymentMode.value}>
+                      {paymentMode.label}
+                    </option>
+                  ))}
+                </select>
+                <Spacer />
+                <div className="flex flex-wrap gap-2">
+                  <StatisticsCard
+                    name="Total"
+                    num={sum(
+                      investmentsByPaymentMode[
+                        paymentModeInvestmentTrendCategory.value
+                      ].map((c) => c.investment)
+                    )}
+                    currency={trendingReportContext.userPreferredCurrency}
+                    locale={trendingReportContext.userPreferredLocale}
+                  />
+                  <StatisticsCard
+                    name="Max"
+                    num={max(
+                      ...investmentsByPaymentMode[
+                        paymentModeInvestmentTrendCategory.value
+                      ].map((c) => c.investment)
+                    )}
+                    currency={trendingReportContext.userPreferredCurrency}
+                    locale={trendingReportContext.userPreferredLocale}
+                  />
+                  <StatisticsCard
+                    name="Median"
+                    num={median(
+                      investmentsByPaymentMode[
+                        paymentModeInvestmentTrendCategory.value
+                      ].map((c) => c.investment)
+                    )}
+                    currency={trendingReportContext.userPreferredCurrency}
+                    locale={trendingReportContext.userPreferredLocale}
+                  />
+                </div>
+              </>
+            }
+          />
+
+          <Spacer />
+          <div className="flex justify-end">
+            <Ripple>
+              <Link
+                to={`/transaction/history?type=investment&paymentMode=${encodeURIComponent(
+                  paymentModeInvestmentTrendCategory.label
                 )}`}
                 className="w-full md:w-max text-center btn-secondary-sm whitespace-nowrap"
               >

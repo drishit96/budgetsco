@@ -334,11 +334,13 @@ export default function Index() {
   }, []);
 
   useEffect(() => {
-    if (
-      navigation.state === "submitting" &&
-      navigation.formData?.get("formName") === "SAVE_REGISTRATION_TOKEN"
-    ) {
-      context.setSnackBarMsg("Notifications enabled");
+    if (navigation.state === "submitting") {
+      if (navigation.formData?.get("formName") === "SAVE_REGISTRATION_TOKEN") {
+        context.setSnackBarMsg("Notifications enabled");
+      } else if (navigation.formData?.get("formName") === "MARK_AS_DONE_FORM") {
+        const successSound = new Audio("/sounds/success.mp3");
+        successSound.play();
+      }
     }
   }, [navigation.state, navigation.formData, context]);
 
