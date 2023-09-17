@@ -253,7 +253,7 @@ export default function EditTransaction() {
       successSound.play();
       history.back();
     }
-  }, [actionData?.data?.isTransactionSaved, context]);
+  }, [actionData?.data?.isTransactionSaved]);
 
   useEffect(() => {
     context.showBackButton(true);

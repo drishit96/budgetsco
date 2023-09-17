@@ -241,7 +241,7 @@ export default function TransactionHistory() {
                 <InlineSpacer size={1} />
                 {(categories.length > 0 || types.length > 0) && (
                   <span className="w-min pl-1 pr-1 rounded-full bg-emerald-700 text-white">
-                    {categories.length + types.length}
+                    {categories.length + types.length + paymentModes.length}
                   </span>
                 )}
               </button>
