@@ -24,7 +24,6 @@ export const BottomSheet = ({
       window.onpopstate = async () => {
         window.onpopstate = () => {};
         setShow(false);
-        history.back();
       };
     }
   }, [show, setShow]);

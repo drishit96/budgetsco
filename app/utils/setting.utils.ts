@@ -52,6 +52,36 @@ export function saveStringSettingToLocalStorage(settingName: string, value: stri
   }
 }
 
+export function getDictionaryFromLocalStorage(
+  settingName: string,
+  defaultValue: { [key: string]: string }
+) {
+  try {
+    if (window && window.localStorage) {
+      const value = window.localStorage.getItem(settingName);
+      if (value == null) return defaultValue;
+      return JSON.parse(value) as { [key: string]: string };
+    }
+    return defaultValue;
+  } catch (error) {
+    console.log(error);
+    return defaultValue;
+  }
+}
+
+export function saveDictionaryToLocalStorage(
+  settingName: string,
+  value: { [key: string]: string }
+) {
+  try {
+    if (window && window.localStorage) {
+      window.localStorage.setItem(settingName, JSON.stringify(value));
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export function getCurrentAppTheme() {
   return getStringSettingFromLocalStorage("theme", "system");
 }

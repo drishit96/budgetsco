@@ -2,11 +2,17 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Ripple } from "@rmwc/ripple";
 import { sub, add } from "date-fns";
 import { useEffect, useState } from "react";
-import type { ActionFunction, LoaderFunction, V2_MetaFunction } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import type { ShouldRevalidateFunction } from "@remix-run/react";
-import { useNavigation } from "@remix-run/react";
-import { Form, Link, useLoaderData, useOutletContext, useSubmit } from "@remix-run/react";
+import type { ShouldRevalidateFunction, V2_MetaFunction } from "@remix-run/react";
+import {
+  useNavigation,
+  Form,
+  Link,
+  useLoaderData,
+  useOutletContext,
+  useSubmit,
+} from "@remix-run/react";
 import NextIcon from "~/components/icons/NextIcon";
 import AddIcon from "~/components/icons/AddIcon";
 import PrevIcon from "~/components/icons/PrevIcon";
@@ -25,7 +31,6 @@ import {
   getFirstDateOfThisMonth,
   parseDate,
 } from "~/utils/date.utils";
-import SubscriptionRequiredBottomSheet from "~/components/SubscriptionRequiredBottomSheet";
 import FilterIcon from "~/components/icons/FilterIcon";
 import { InlineSpacer } from "~/components/InlineSpacer";
 import type { NewFilter } from "~/components/FilterBottomSheet";
@@ -63,9 +68,11 @@ export let loader: LoaderFunction = async ({ request }): Promise<any> => {
   const reqMonth = urlSearchParams.get("month") || undefined;
   const types = urlSearchParams.getAll("type") ?? undefined;
   const categories = urlSearchParams.getAll("category");
+  const paymentModes = urlSearchParams.getAll("paymentMode");
   const transactions = getTransactions(userId, timezone, reqMonth, {
     types,
     categories,
+    paymentModes,
   });
 
   const currentMonth = reqMonth ? parseDate(reqMonth) : getFirstDateOfThisMonth(timezone);
@@ -74,6 +81,7 @@ export let loader: LoaderFunction = async ({ request }): Promise<any> => {
     {
       types,
       categories,
+      paymentModes,
       prevMonth: formatDate_YYY_MM(sub(currentMonth, { months: 1 })),
       currentMonth: formatDate_YYY_MM(currentMonth),
       nextMonth: formatDate_YYY_MM(add(currentMonth, { months: 1 })),
@@ -104,6 +112,7 @@ export default function TransactionHistory() {
   const {
     types,
     categories,
+    paymentModes,
     prevMonth,
     currentMonth,
     nextMonth,
@@ -111,6 +120,7 @@ export default function TransactionHistory() {
   }: {
     types: string[];
     categories: string[];
+    paymentModes: string[];
     prevMonth: string;
     currentMonth: string;
     nextMonth: string;
@@ -125,7 +135,7 @@ export default function TransactionHistory() {
   }, [context]);
 
   function setNewFilter(newFilter: NewFilter) {
-    const { selectedCategories, month, selectedTypes } = newFilter;
+    const { selectedCategories, month, selectedTypes, selectedPaymentModes } = newFilter;
 
     const form = new FormData();
     form.set("month", month);
@@ -136,6 +146,10 @@ export default function TransactionHistory() {
 
     if (selectedTypes.length) {
       selectedTypes.forEach((type) => form.append("type", type));
+    }
+
+    if (selectedPaymentModes.length) {
+      selectedPaymentModes.forEach((type) => form.append("paymentMode", type));
     }
 
     window.addEventListener(
@@ -174,6 +188,15 @@ export default function TransactionHistory() {
                       value={category}
                     />
                   ))}
+                {paymentModes &&
+                  paymentModes.map((paymentMode) => (
+                    <input
+                      key={paymentMode}
+                      type="hidden"
+                      name="paymentMode"
+                      value={paymentMode}
+                    />
+                  ))}
                 <Ripple unbounded>
                   <button className="p-2" type="submit" name="month" value={prevMonth}>
                     <PrevIcon size={24} />
@@ -205,6 +228,7 @@ export default function TransactionHistory() {
                         defaultSelectedCategories={categories}
                         defaultMonth={currentMonth}
                         defaultTypes={types}
+                        defaultPaymentModes={paymentModes}
                         onFilterSet={setNewFilter}
                       />
                     ),
@@ -217,7 +241,7 @@ export default function TransactionHistory() {
                 <InlineSpacer size={1} />
                 {(categories.length > 0 || types.length > 0) && (
                   <span className="w-min pl-1 pr-1 rounded-full bg-emerald-700 text-white">
-                    {categories.length + types.length}
+                    {categories.length + types.length + paymentModes.length}
                   </span>
                 )}
               </button>

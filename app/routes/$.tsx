@@ -1,4 +1,4 @@
-import type { V2_MetaFunction } from "@remix-run/node";
+import type { V2_MetaFunction } from "@remix-run/react";
 import { Link } from "@remix-run/react";
 import { Spacer } from "~/components/Spacer";
 

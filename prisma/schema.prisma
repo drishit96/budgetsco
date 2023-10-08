@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["extendedWhereUnique"]
+  previewFeatures = []
 }
 
 datasource db {
@@ -175,6 +175,7 @@ enum STRSubscriptionState {
   incomplete_expired
   canceled
   unpaid
+  paused
 }
 
 model STRSubscription {

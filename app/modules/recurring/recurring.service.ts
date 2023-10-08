@@ -8,8 +8,10 @@ import prisma from "../../lib/prisma";
 import type { TransactionType } from "../transaction/transaction.schema";
 import { addNewTransaction } from "../transaction/transaction.service";
 import type { RecurringTransactionInput } from "./recurring.schema";
-import { parseRecurringTransactionResponse } from "./recurring.schema";
-import { parseRecurringTransactionsResponse } from "./recurring.schema";
+import {
+  parseRecurringTransactionResponse,
+  parseRecurringTransactionsResponse,
+} from "./recurring.schema";
 import { Prisma } from "@prisma/client";
 import { logError } from "~/utils/logger.utils.server";
 
@@ -152,7 +154,7 @@ export async function editRecurringTransaction(
   recurringTransactionInput: RecurringTransactionInput
 ) {
   try {
-    let executionDate = recurringTransactionInput.startDate;
+    const executionDate = recurringTransactionInput.startDate;
     delete recurringTransactionInput.startDate;
 
     await prisma.recurringTransaction.update({

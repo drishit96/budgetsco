@@ -1,4 +1,4 @@
-import type { V2_MetaFunction } from "@remix-run/node";
+import type { V2_MetaFunction } from "@remix-run/react";
 import { useOutletContext } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { Spacer } from "~/components/Spacer";
@@ -6,7 +6,7 @@ import type { AppContext } from "~/root";
 import { getCurrentAppTheme, setAppTheme } from "~/utils/setting.utils";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.route.id === "root");
+  let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Theme - Budgetsco" }];
 };
 
