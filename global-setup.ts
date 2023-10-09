@@ -3,7 +3,7 @@ import { chromium } from "@playwright/test";
 
 async function globalSetup(config: FullConfig) {
   const browser = await chromium.launch();
-  const context = await browser.newContext();
+  const context = await browser.newContext({ recordVideo: { dir: "videos/" } });
   const page = await context.newPage();
   await page.goto("http://localhost:3000/auth/login");
 
@@ -13,6 +13,7 @@ async function globalSetup(config: FullConfig) {
   await page.waitForURL("**/dashboard", { timeout: 60000 });
 
   await context.storageState({ path: "storageState.json" });
+  await context.close();
   await browser.close();
 }
 
