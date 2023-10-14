@@ -98,7 +98,7 @@ jobs:
           tar -xvf pscalecli.tar.gz -C ./pscaledir
 
       - name: Set DEBUG=pw:webserver
-        run: echo "DEBUG=pw:webserver" >> $DEBUG
+        run: echo "DEBUG=pw:webserver" >> $GITHUB_ENV
 
       - name: Check DEBUG value
         run: echo $DEBUG
