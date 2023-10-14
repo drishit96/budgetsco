@@ -98,7 +98,7 @@ jobs:
           tar -xvf pscalecli.tar.gz -C ./pscaledir
 
       - name: Set DEBUG=pw:webserver
-        run: export DEBUG=pw:webserver
+        run: echo "DEBUG=pw:webserver" >> $DEBUG
 
       - name: Check DEBUG value
         run: echo $DEBUG
