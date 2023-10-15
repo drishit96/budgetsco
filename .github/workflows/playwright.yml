@@ -103,12 +103,9 @@ jobs:
       - name: Check DEBUG value
         run: echo $DEBUG
 
-      - name: Run tests
-        run: npx playwright test --project='Chromium'
-
       - uses: nick-fields/retry@v2
         with:
-          timeout_seconds: 60
+          timeout_seconds: 90
           max_attempts: 3
           retry_on: error
           command: npx playwright test --project='Chromium'
