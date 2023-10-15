@@ -45,6 +45,7 @@ import type { AuthPageContext } from "../auth";
 import Turnstile from "~/components/Turnstile";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
+import { UI_ENV } from "~/lib/ui.config";
 
 export const meta: V2_MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
@@ -182,7 +183,7 @@ export default function Login() {
 
     const challengeResponse =
       (window.turnstile && window.turnstile.getResponse(window.turnstileWidgetId)) ?? "";
-    if (!challengeResponse) {
+    if (UI_ENV !== "test" && !challengeResponse) {
       setError("Invalid request");
       return;
     }

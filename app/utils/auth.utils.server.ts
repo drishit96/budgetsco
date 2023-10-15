@@ -3,12 +3,17 @@ import { apps, auth } from "firebase-admin";
 import { createCookie } from "@remix-run/node";
 import type { UserPreferenceResponse } from "~/modules/settings/settings.schema";
 import { authenticator } from "otplib";
+import { logError } from "./logger.utils.server";
 
 function initializeFirebaseApp() {
-  if (apps.length == 0) {
-    initializeApp({
-      credential: cert(JSON.parse(process.env.FIREBASE_ADMIN_KEY!)),
-    });
+  try {
+    if (apps.length == 0) {
+      initializeApp({
+        credential: cert(JSON.parse(process.env.FIREBASE_ADMIN_KEY!)),
+      });
+    }
+  } catch (error) {
+    logError(error);
   }
 }
 
@@ -18,7 +23,7 @@ export async function getUserIdFromSession(request: Request) {
 }
 
 export function getSessionCookieBuilder() {
-  return createCookie("__session", {
+  const cookieOptions: any = {
     expires: new Date(Date.now() + 432_000_000),
     httpOnly: true,
     maxAge: 432_000,
@@ -26,7 +31,16 @@ export function getSessionCookieBuilder() {
     sameSite: "strict",
     secrets: [process.env.COOKIE_SECRET!],
     secure: true,
-  });
+  };
+
+  // Temp fix for webkit based browsers not able to set cookie
+  // with sameSite: "strict" and secure: true options in localhost
+  if (process.env.NODE_ENV !== "production") {
+    delete cookieOptions.sameSite;
+    delete cookieOptions.secure;
+  }
+
+  return createCookie("__session", cookieOptions);
 }
 
 export function getPartialSessionCookieBuilder() {
