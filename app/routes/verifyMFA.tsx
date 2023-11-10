@@ -1,6 +1,6 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import type { V2_MetaFunction } from "@remix-run/react";
+import type { MetaFunction } from "@remix-run/react";
 import { Form, useActionData, useNavigation, useOutletContext } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { Input } from "~/components/Input";
@@ -28,7 +28,7 @@ import { logError } from "~/utils/logger.utils.server";
 import type { Currency } from "~/utils/number.utils";
 import { isNotNullAndEmpty } from "~/utils/text.utils";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "2FA - Budgetsco" }];
 };

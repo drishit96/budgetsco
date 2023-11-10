@@ -45,14 +45,14 @@ import { getUserPreferencesAfterTimestamp } from "~/modules/settings/settings.se
 import Banner from "~/components/Banner";
 import { getThisMonthTarget } from "~/modules/reports/reports.service";
 import { StatisticsCard } from "~/components/StatisticsCard";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import { formatDate_MMMM_YYYY } from "~/utils/date.utils";
 import type { Currency } from "~/utils/number.utils";
 import { abs, calculate, subtract } from "~/utils/number.utils";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   const rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Dashboard - Budgetsco" }];
 };

@@ -9,14 +9,14 @@ import { CHART_COLOR_MAP } from "~/utils/colors.utils";
 import { useEffect, useState } from "react";
 import PieChartCard from "~/components/PieChartCard";
 import { Ripple } from "@rmwc/ripple";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import LineChartCard from "~/components/LineChartCard";
 import { calculate, max, median, sum } from "~/utils/number.utils";
 import type { TrendingReportContext } from "../trend";
 import { StatisticsCard } from "~/components/StatisticsCard";
 import { logError } from "~/utils/logger.utils.server";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Trending report - Budgetsco" }];
 };
@@ -96,7 +96,7 @@ export default function ExpenseTrendReport() {
 
   return (
     <>
-      <div className="p-3 border border-primary rounded-md w-full lg:w-5/12">
+      <div className="p-3 border border-primary rounded-md w-full bg-background">
         <PieChartCard
           title="Expense overview"
           data={expenseDistribution}
@@ -109,7 +109,7 @@ export default function ExpenseTrendReport() {
       </div>
 
       {categoryExpensesByCategory != null && categoryForCategoryExpenseTrend != null ? (
-        <div className="p-3 border border-primary rounded-md w-full lg:w-6/12">
+        <div className="p-3 border border-primary rounded-md w-full bg-background">
           <LineChartCard
             title="Expense by category"
             locale={trendingReportContext.userPreferredLocale}
@@ -197,7 +197,7 @@ export default function ExpenseTrendReport() {
       ) : null}
 
       {targets?.length ? (
-        <div className="p-3 border border-primary rounded-md w-full lg:w-6/12">
+        <div className="p-3 border border-primary rounded-md w-full bg-background">
           <LineChartCard
             title="Budget vs Expense"
             locale={trendingReportContext.userPreferredLocale}
@@ -221,7 +221,7 @@ export default function ExpenseTrendReport() {
       ) : null}
 
       {expensesByPaymentMode != null && paymentModeExpenseTrendCategory != null ? (
-        <div className="p-3 border border-primary rounded-md w-full lg:w-5/12">
+        <div className="p-3 border border-primary rounded-md w-full bg-background">
           <LineChartCard
             title="Expense by payment mode"
             locale={trendingReportContext.userPreferredLocale}

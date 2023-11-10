@@ -24,7 +24,7 @@ import {
 } from "~/utils/category.utils";
 import type { Currency } from "~/utils/number.utils";
 import { isNullOrEmpty } from "~/utils/text.utils";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import { saveBoolSettingToLocalStorage } from "~/utils/setting.utils";
 import { ErrorValidation } from "~/components/ErrorValidation";
 import { ComboBox } from "~/components/ComboBox";
@@ -33,7 +33,7 @@ import { EventNames } from "~/lib/anaytics.contants";
 
 const currencyOptions = getAllCurrencyOptions();
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Change currency - Budgetsco" }];
 };

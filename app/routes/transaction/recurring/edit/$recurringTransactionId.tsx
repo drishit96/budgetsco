@@ -38,12 +38,12 @@ import {
 } from "~/modules/recurring/recurring.service";
 import RecurringSetup from "~/components/RecurringSetup";
 import { addNewCustomCategory } from "~/modules/transaction/transaction.service";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import { ComboBox } from "~/components/ComboBox";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [
     ...(rootModule?.meta ?? []),

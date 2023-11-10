@@ -32,11 +32,11 @@
   }
 
   .btn-secondary {
-    @apply bg-transparent text-accent border border-accent rounded-lg p-2 pl-4 pr-4 select-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-700;
+    @apply bg-background text-accent border border-accent rounded-lg p-2 pl-4 pr-4 select-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-700;
   }
 
   .btn-secondary-sm {
-    @apply bg-transparent text-accent border border-accent rounded-lg p-1 pl-2 pr-2 select-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-700;
+    @apply bg-background text-accent border border-accent rounded-lg p-1 pl-2 pr-2 select-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-700;
   }
 
   .input {

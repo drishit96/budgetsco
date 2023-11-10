@@ -13,13 +13,13 @@ import {
   parseMonthlyCategoryWiseTargetInput,
 } from "~/modules/transaction/transaction.schema";
 import { useEffect } from "react";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import Decimal from "decimal.js";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
 import { formatDate_MMM_YYYY, getFirstDateOfThisMonth } from "~/utils/date.utils";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Set budget - Budgetsco" }];
 };
