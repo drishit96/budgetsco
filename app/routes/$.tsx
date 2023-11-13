@@ -1,8 +1,8 @@
-import type { V2_MetaFunction } from "@remix-run/react";
+import type { MetaFunction } from "@remix-run/react";
 import { Link } from "@remix-run/react";
 import { Spacer } from "~/components/Spacer";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "404 - Budgetsco" }];
 };

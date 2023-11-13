@@ -15,11 +15,11 @@ import {
 } from "~/modules/settings/settings.service";
 import type { AppContext } from "~/root";
 import { getSessionData, getUserIdFromSession } from "~/utils/auth.utils.server";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import { trackUserProfileUpdate } from "~/utils/analytics.utils.server";
 import { InlineSpacer } from "~/components/InlineSpacer";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "My profile - Budgetsco" }];
 };

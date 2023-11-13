@@ -22,11 +22,11 @@ import { getSessionData } from "~/utils/auth.utils.server";
 import { getAllTransactionTypes } from "~/utils/category.utils";
 import { formatToCurrency } from "~/utils/number.utils";
 import { isNotNullAndEmpty, isNullOrEmpty } from "~/utils/text.utils";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [
     ...(rootModule?.meta ?? []),

@@ -3,7 +3,6 @@ import { renderToPipeableStream } from "react-dom/server";
 import type { EntryContext, HandleDataRequestFunction } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import { PassThrough } from "stream";
-import { Response } from "@remix-run/node";
 import isbot from "isbot";
 
 const ABORT_DELAY = 5000;
@@ -58,7 +57,7 @@ function handleBrowserRequest(
           addSecurityHeaders(responseHeaders, remixContext);
 
           resolve(
-            new Response(body, {
+            new Response(body as any, {
               headers: responseHeaders,
               status: didError ? 500 : responseStatusCode,
             })

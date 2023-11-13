@@ -9,14 +9,14 @@ import { INVESTMENT_CHART_COLORS_MAP } from "~/utils/colors.utils";
 import { useEffect, useState } from "react";
 import PieChartCard from "~/components/PieChartCard";
 import { Ripple } from "@rmwc/ripple";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import LineChartCard from "~/components/LineChartCard";
 import { avg, calculate, max, median, sum } from "~/utils/number.utils";
 import type { TrendingReportContext } from "../trend";
 import { StatisticsCard } from "~/components/StatisticsCard";
 import { logError } from "~/utils/logger.utils.server";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Trending report - Budgetsco" }];
 };
@@ -94,7 +94,7 @@ export default function InvestmentTrendReport() {
 
   return (
     <>
-      <div className="p-3 border border-primary rounded-md w-full lg:w-5/12">
+      <div className="p-3 border border-primary rounded-md w-full bg-background">
         <PieChartCard
           title="Investment overview"
           data={investmentDistribution}
@@ -108,7 +108,7 @@ export default function InvestmentTrendReport() {
 
       {categoryInvestmentsByCategory != null &&
       categoryForCategoryInvestmentTrend != null ? (
-        <div className="p-3 border border-primary rounded-md w-full lg:w-6/12">
+        <div className="p-3 border border-primary rounded-md w-full bg-background">
           <LineChartCard
             title="Investment by category"
             locale={trendingReportContext.userPreferredLocale}
@@ -195,7 +195,7 @@ export default function InvestmentTrendReport() {
         </div>
       ) : null}
       {investmentsByPaymentMode != null && paymentModeInvestmentTrendCategory != null ? (
-        <div className="p-3 border border-primary rounded-md w-full lg:w-11/12">
+        <div className="p-3 border border-primary rounded-md w-full bg-background">
           <LineChartCard
             title="Investment by payment mode"
             locale={trendingReportContext.userPreferredLocale}

@@ -38,7 +38,7 @@ import {
   saveNotificationToken,
   validateChallengeResponse,
 } from "~/modules/user/user.service";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import type { AppContext } from "~/root";
 import type { Currency } from "~/utils/number.utils";
 import type { AuthPageContext } from "../auth";
@@ -47,7 +47,7 @@ import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
 import { UI_ENV } from "~/lib/ui.config";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Login - Budgetsco" }];
 };

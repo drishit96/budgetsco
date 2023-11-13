@@ -13,14 +13,14 @@ import {
 import { useEffect, useState } from "react";
 import PieChartCard from "~/components/PieChartCard";
 import { Ripple } from "@rmwc/ripple";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import LineChartCard from "~/components/LineChartCard";
 import { add, avg, calculate, max, sum } from "~/utils/number.utils";
 import type { TrendingReportContext } from "../trend";
 import { StatisticsCard } from "~/components/StatisticsCard";
 import { logError } from "~/utils/logger.utils.server";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Trending report - Budgetsco" }];
 };
@@ -112,7 +112,7 @@ export default function IncomeTrendReport() {
 
   return (
     <>
-      <div className="p-3 border border-primary rounded-md w-full lg:w-5/12">
+      <div className="p-3 border border-primary rounded-md w-full bg-background">
         <PieChartCard
           title="Income sources"
           data={incomeDistribution}
@@ -124,7 +124,7 @@ export default function IncomeTrendReport() {
         />
       </div>
       {categoryIncomesByCategory != null && categoryForCategoryIncomeTrend != null ? (
-        <div className="p-3 border border-primary rounded-md w-full lg:w-6/12">
+        <div className="p-3 border border-primary rounded-md w-full bg-background">
           <LineChartCard
             title="Income trend for"
             locale={trendingReportContext.userPreferredLocale}
@@ -212,7 +212,7 @@ export default function IncomeTrendReport() {
       ) : null}
 
       {targets?.length ? (
-        <div className="p-3 border border-primary rounded-md w-full lg:w-6/12">
+        <div className="p-3 border border-primary rounded-md w-full bg-background">
           <LineChartCard
             title="Income vs Expense vs Investment"
             locale={trendingReportContext.userPreferredLocale}
@@ -240,7 +240,7 @@ export default function IncomeTrendReport() {
         </div>
       ) : null}
 
-      <div className="p-3 border border-primary rounded-md w-full lg:w-5/12">
+      <div className="p-3 border border-primary rounded-md w-full bg-background">
         <PieChartCard
           title="How did you use your money?"
           data={moneyDistribution}

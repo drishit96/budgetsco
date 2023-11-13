@@ -4,7 +4,7 @@ import { sub, add } from "date-fns";
 import { useEffect, useState } from "react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import type { ShouldRevalidateFunction, V2_MetaFunction } from "@remix-run/react";
+import type { ShouldRevalidateFunction, MetaFunction } from "@remix-run/react";
 import {
   useNavigation,
   Form,
@@ -37,7 +37,7 @@ import type { NewFilter } from "~/components/FilterBottomSheet";
 import FilterBottomSheet from "~/components/FilterBottomSheet";
 import { divide, formatToCurrency, sum } from "~/utils/number.utils";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Transaction history - Budgetsco" }];
 };
@@ -152,6 +152,7 @@ export default function TransactionHistory() {
       selectedPaymentModes.forEach((type) => form.append("paymentMode", type));
     }
 
+    context.setShowLoader(true);
     window.addEventListener(
       "popstate",
       function () {

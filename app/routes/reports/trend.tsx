@@ -12,13 +12,13 @@ import { getSessionData } from "~/utils/auth.utils.server";
 import type { ReportsPageContext } from "../reports";
 import { useEffect, useState } from "react";
 import MonthYearSelector from "~/components/MonthYearSelector";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import type { TransactionType } from "~/modules/transaction/transaction.schema";
 import { getFirstDateOfXMonthsBeforeFormatted, parseDate } from "~/utils/date.utils";
 import { Ripple } from "@rmwc/ripple";
 import { logError } from "~/utils/logger.utils.server";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Trending report - Budgetsco" }];
 };
@@ -162,7 +162,7 @@ export default function TrendReport() {
 
       <Spacer size={3} />
 
-      <div className="flex flex-wrap gap-2 justify-center">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(theme(width.72),1fr))] p-3 gap-2 justify-center bg-elevated-10 rounded-lg">
         <Outlet context={trendingReportContext} />
       </div>
     </div>

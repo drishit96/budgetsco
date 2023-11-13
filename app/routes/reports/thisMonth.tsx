@@ -21,16 +21,16 @@ import { ErrorText } from "~/components/ErrorText";
 import { SuccessText } from "~/components/SuccessText";
 import { Ripple } from "@rmwc/ripple";
 import type {
-  V2_ErrorBoundaryComponent,
-  V2_MetaFunction,
+  ErrorBoundaryComponent,
+  MetaFunction,
 } from "@remix-run/react/dist/routeModules";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "This month's report - Budgetsco" }];
 };
 
-export const ErrorBoundary: V2_ErrorBoundaryComponent = () => {
+export const ErrorBoundary: ErrorBoundaryComponent = () => {
   let error = useRouteError();
   console.log(error);
   return <GenericError />;
@@ -159,7 +159,7 @@ export default function ThisMonthReport() {
   return (
     <div>
       <Spacer size={3} />
-      <div className="flex flex-wrap gap-1">
+      <div className="flex flex-wrap gap-1 bg-elevated-10 p-3 rounded-lg">
         <StatisticsCard
           name="Budget"
           num={budget}
@@ -198,9 +198,9 @@ export default function ThisMonthReport() {
       )}
       <Spacer />
 
-      <div className="flex flex-wrap gap-3 justify-center">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(theme(width.72),1fr))] p-3 gap-2 justify-center bg-elevated-10 rounded-lg">
         {categoryWiseTargetExpense?.length > 0 && (
-          <div className="p-3 border border-primary rounded-md w-full lg:w-6/12">
+          <div className="p-3 border border-primary rounded-md w-full bg-background">
             <p className="text-xl font-bold">Budget vs Expense</p>
             <Spacer />
             {categoryBudgetExpenses.map((categoryExpense) => {
@@ -259,7 +259,7 @@ export default function ThisMonthReport() {
           </div>
         )}
 
-        <div className="p-3 border border-primary rounded-md w-full lg:w-5/12">
+        <div className="p-3 border border-primary rounded-md w-full bg-background">
           <PieChartCard
             title="Expense breakdown"
             data={expenseDistribution}
@@ -271,7 +271,7 @@ export default function ThisMonthReport() {
           />
         </div>
 
-        <div className="p-3 border border-primary rounded-md w-full lg:w-6/12">
+        <div className="p-3 border border-primary rounded-md w-full bg-background">
           <PieChartCard
             title="How did you use your money?"
             data={moneyDistribution}
@@ -284,7 +284,7 @@ export default function ThisMonthReport() {
           />
         </div>
 
-        <div className="p-3 border border-primary rounded-md w-full lg:w-5/12">
+        <div className="p-3 border border-primary rounded-md w-full bg-background">
           <PieChartCard
             title="What did you use to pay?"
             data={paymentModeExpense}
@@ -297,7 +297,7 @@ export default function ThisMonthReport() {
         </div>
 
         {calculate(investmentDone).gt(0) && (
-          <div className="p-3 border border-primary rounded-md w-full lg:w-5/12">
+          <div className="p-3 border border-primary rounded-md w-full bg-background">
             <PieChartCard
               title="Investment breakdown"
               data={investmentDistribution}

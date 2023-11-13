@@ -1,10 +1,10 @@
-import type { V2_MetaFunction } from "@remix-run/react";
+import type { MetaFunction } from "@remix-run/react";
 import { Link, useOutletContext } from "@remix-run/react";
 import { Ripple } from "@rmwc/ripple";
 import { useEffect } from "react";
 import type { AppContext } from "~/root";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Security - Budgetsco" }];
 };
