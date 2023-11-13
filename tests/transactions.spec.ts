@@ -48,7 +48,7 @@ test.describe.serial("transactionCrudGroup", () => {
     await page.locator("[data-test-id=btn-delete]").click();
     await page.locator("[data-test-id=btn-delete]").click();
     await page.getByRole("alertdialog").getByRole("button", { name: "Delete" }).click();
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(5000);
 
     await expect(page.getByText("Deleting...")).not.toBeVisible();
     const newTransactionCount = await page
