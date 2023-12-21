@@ -145,15 +145,20 @@ export default function TargetSetter({
   }, [categoryBudgets]);
 
   useEffect(() => {
-    if (previousBudgetFetcher.type === "done") {
-      if (previousBudgetFetcher.data && previousBudgetFetcher.data.length > 0) {
-        setCategoryBudgets([...categoryBudgets, ...previousBudgetFetcher.data]);
-        setMaxKey(previousBudgetFetcher.data.length);
+    if (previousBudgetFetcher.data != null) {
+      const budgetData = previousBudgetFetcher.data as {
+        index: number;
+        category: string;
+        budget: string;
+      }[];
+      if (budgetData.length > 0) {
+        setCategoryBudgets([...categoryBudgets, ...budgetData]);
+        setMaxKey(budgetData.length);
       } else {
         context.setSnackBarMsg("No budget found for previous month");
       }
     }
-  }, [previousBudgetFetcher.type]);
+  }, [previousBudgetFetcher.data]);
 
   return (
     <>

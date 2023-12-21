@@ -281,18 +281,16 @@ export default function EditTransaction() {
   }, [selectedCategories]);
 
   useEffect(() => {
-    if (categoryRemainingBudgetFetcher.type === "done") {
-      if (categoryRemainingBudgetFetcher.data) {
-        categoryRemainingBudgetMap.current = {
-          ...categoryRemainingBudgetMap.current,
-          ...(categoryRemainingBudgetFetcher.data as {
-            [key: string]: number | null;
-          }),
-        };
-        calculateRemainingBudget(amount);
-      }
+    if (categoryRemainingBudgetFetcher.data) {
+      categoryRemainingBudgetMap.current = {
+        ...categoryRemainingBudgetMap.current,
+        ...(categoryRemainingBudgetFetcher.data as {
+          [key: string]: number | null;
+        }),
+      };
+      calculateRemainingBudget(amount);
     }
-  }, [amount, calculateRemainingBudget, categoryRemainingBudgetFetcher]);
+  }, [amount, calculateRemainingBudget, categoryRemainingBudgetFetcher.data]);
 
   useEffect(() => {
     calculateRemainingBudget(amount);
