@@ -1,0 +1,118 @@
+name: E2E Tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  FIREBASE_API_KEY: ${{ vars.FIREBASE_API_KEY }}
+  FIREBASE_AUTH_DOMAIN: ${{ vars.FIREBASE_AUTH_DOMAIN }}
+  FIREBASE_PROJECT_ID: ${{ vars.FIREBASE_PROJECT_ID }}
+  FIREBASE_STORAGE_BUCKET: ${{ vars.FIREBASE_STORAGE_BUCKET }}
+  FIREBASE_MESSAGING_SENDER_ID: ${{ vars.FIREBASE_MESSAGING_SENDER_ID }}
+  FIREBASE_APP_ID: ${{ vars.FIREBASE_APP_ID }}
+  VAPID_KEY: ${{ vars.VAPID_KEY }}
+  STR_PRICING_TABLE_ID: ${{ vars.STR_PRICING_TABLE_ID }}
+  STR_PUBLISHABLE_KEY: ${{ vars.STR_PUBLISHABLE_KEY }}
+  TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.38.1-jammy
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Find and Replace FIREBASE_API_KEY - Using Build Variable
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{FIREBASE_API_KEY}#/${{ env.FIREBASE_API_KEY }}/g'' {} \;
+
+      - name: Find and Replace FIREBASE_AUTH_DOMAIN - Using Build Variable
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{FIREBASE_AUTH_DOMAIN}#/${{ env.FIREBASE_AUTH_DOMAIN }}/g'' {} \;
+
+      - name: Find and Replace FIREBASE_PROJECT_ID - Using Build Variable
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{FIREBASE_PROJECT_ID}#/${{ env.FIREBASE_PROJECT_ID }}/g'' {} \;
+
+      - name: Find and Replace FIREBASE_STORAGE_BUCKET - Using Build Variable
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{FIREBASE_STORAGE_BUCKET}#/${{ env.FIREBASE_STORAGE_BUCKET }}/g'' {} \;
+
+      - name: Find and Replace FIREBASE_MESSAGING_SENDER_ID - Using Build Variable
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{FIREBASE_MESSAGING_SENDER_ID}#/${{ env.FIREBASE_MESSAGING_SENDER_ID }}/g'' {} \;
+
+      - name: Find and Replace FIREBASE_APP_ID - Using Build Variable
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{FIREBASE_APP_ID}#/${{ env.FIREBASE_APP_ID }}/g'' {} \;
+
+      - name: Find and Replace VAPID_KEY - Using Build Variable
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{VAPID_KEY}#/${{ env.VAPID_KEY }}/g'' {} \;
+
+      - name: Find and Replace STR_PRICING_TABLE_ID - Using Build Variable
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{STR_PRICING_TABLE_ID}#/${{ env.STR_PRICING_TABLE_ID }}/g'' {} \;
+
+      - name: Find and Replace STR_PUBLISHABLE_KEY - Using Build Variable
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{STR_PUBLISHABLE_KEY}#/${{ env.STR_PUBLISHABLE_KEY }}/g'' {} \;
+
+      - name: Find and Replace TURNSTILE_SITE_KEY - Using Build Variable
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{TURNSTILE_SITE_KEY}#/${{ env.TURNSTILE_SITE_KEY }}/g'' {} \;
+
+      - name: Find and Replace UI_ENV
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{UI_ENV}#/test/g'' {} \;
+
+      - name: Find and Replace TEST_DB_ORG - Using Secret
+        run: find -name "playwright.config.ts" -type f -exec sed -i ''s/#{TEST_DB_ORG}#/${{ secrets.TEST_DB_ORG }}/g'' {} \;
+
+      - name: Find and Replace TEST_DB_SERVICE_TOKEN - Using Secret
+        run: find -name "playwright.config.ts" -type f -exec sed -i ''s/#{TEST_DB_SERVICE_TOKEN}#/${{ secrets.TEST_DB_SERVICE_TOKEN }}/g'' {} \;
+
+      - name: Find and Replace TEST_DB_TOKEN_ID - Using Secret
+        run: find -name "playwright.config.ts" -type f -exec sed -i ''s/#{TEST_DB_TOKEN_ID}#/${{ secrets.TEST_DB_TOKEN_ID }}/g'' {} \;
+
+      - name: Find and Replace TEST_LOGIN_USERNAME - Using Secret
+        run: find -name "auth.setup.ts" -type f -exec sed -i ''s/#{TEST_LOGIN_USERNAME}#/${{ secrets.TEST_LOGIN_USERNAME }}/g'' {} \;
+
+      - name: Find and Replace TEST_LOGIN_PASSWORD - Using Secret
+        run: find -name "auth.setup.ts" -type f -exec sed -i ''s/#{TEST_LOGIN_PASSWORD}#/${{ secrets.TEST_LOGIN_PASSWORD }}/g'' {} \;
+
+      - name: Create .env file with necessary values for testing
+        run: |
+          touch .env
+          echo DATABASE_URL=${{ secrets.TEST_DATABASE_URL }} >> .env
+          echo COOKIE_SECRET=${{ secrets.TEST_COOKIE_SECRET }} >> .env
+          echo FIREBASE_ADMIN_KEY=${{ secrets.FIREBASE_ADMIN_KEY }} >> .env
+          echo MIXPANEL_TOKEN=${{ secrets.MIXPANEL_TOKEN }} >> .env
+          echo GPLAY_API_KEY=${{ secrets.GPLAY_API_KEY }} >> .env
+          echo NEW_RELIC_APP_NAME=${{ secrets.NEW_RELIC_APP_NAME }} >> .env
+          echo NEW_RELIC_LICENSE_KEY=${{ secrets.NEW_RELIC_LICENSE_KEY }} >> .env
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Install Planetscale CLI
+        run: |
+          mkdir pscaledir
+          wget -O pscalecli.tar.gz https://github.com/planetscale/cli/releases/download/v0.145.0/pscale_0.145.0_linux_amd64.tar.gz
+          tar -xvf pscalecli.tar.gz -C ./pscaledir
+
+      - name: Set DEBUG=pw:webserver
+        run: echo "DEBUG=pw:webserver" >> $GITHUB_ENV
+
+      - name: Check DEBUG value
+        run: echo $DEBUG
+
+      - uses: nick-fields/retry@v2
+        with:
+          timeout_seconds: 90
+          max_attempts: 3
+          retry_on: error
+          command: npx playwright test --project='Chromium'
+
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30

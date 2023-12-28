@@ -1,7 +1,7 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { redirect, json } from "@remix-run/node";
 import { useOutletContext, useLoaderData } from "@remix-run/react";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import { useEffect } from "react";
 import { Spacer } from "~/components/Spacer";
 import { STR_PRICING_TABLE_ID, STR_PUBLISHABLE_KEY } from "~/lib/ui.config";
@@ -15,7 +15,7 @@ import { getSessionData } from "~/utils/auth.utils.server";
 import { formatDate_DD_MMMM_YYYY_hh_mm_aa } from "~/utils/date.utils";
 import { logError } from "~/utils/logger.utils.server";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Subscriptions - Budgetsco" }];
 };

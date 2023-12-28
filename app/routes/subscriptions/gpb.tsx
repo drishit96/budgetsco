@@ -1,6 +1,5 @@
 import type { LoaderFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { getGPBUserSubscription } from "~/modules/subscriptions/gpb.subscriptions.service";
 import { getSessionData } from "~/utils/auth.utils.server";
 import { getGPBSubscriptionDetails } from "~/utils/gpb.payment.utils.server";
@@ -13,7 +12,7 @@ import type { GPBSubscriptionState } from "@prisma/client";
 import { formatDate_DD_MMMM_YYYY_hh_mm_aa } from "~/utils/date.utils";
 import { Ripple } from "@rmwc/ripple";
 import Banner from "~/components/Banner";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 
 type GPBPlan = {
   id: string;
@@ -23,7 +22,7 @@ type GPBPlan = {
   amount: string;
 };
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Subscriptions - Budgetsco" }];
 };

@@ -45,20 +45,19 @@ import { getUserPreferencesAfterTimestamp } from "~/modules/settings/settings.se
 import Banner from "~/components/Banner";
 import { getThisMonthTarget } from "~/modules/reports/reports.service";
 import { StatisticsCard } from "~/components/StatisticsCard";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import { formatDate_MMMM_YYYY } from "~/utils/date.utils";
 import type { Currency } from "~/utils/number.utils";
 import { abs, calculate, subtract } from "~/utils/number.utils";
-import SubscriptionRequiredBottomSheet from "~/components/SubscriptionRequiredBottomSheet";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.id === "root");
+export const meta: MetaFunction = ({ matches }) => {
+  const rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Dashboard - Budgetsco" }];
 };
 
-export let action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request }) => {
   const sessionData = await getSessionData(request);
   if (sessionData == null || sessionData.userId == null) {
     return redirect("/auth/login");
@@ -133,7 +132,7 @@ export let action: ActionFunction = async ({ request }) => {
   }
 };
 
-export let loader: LoaderFunction = async ({ request }) => {
+export const loader: LoaderFunction = async ({ request }) => {
   const sessionData = await getSessionData(request);
   if (sessionData == null || sessionData.userId == null) {
     return redirect("/auth/login");
@@ -335,11 +334,13 @@ export default function Index() {
   }, []);
 
   useEffect(() => {
-    if (
-      navigation.state === "submitting" &&
-      navigation.formData.get("formName") === "SAVE_REGISTRATION_TOKEN"
-    ) {
-      context.setSnackBarMsg("Notifications enabled");
+    if (navigation.state === "submitting") {
+      if (navigation.formData?.get("formName") === "SAVE_REGISTRATION_TOKEN") {
+        context.setSnackBarMsg("Notifications enabled");
+      } else if (navigation.formData?.get("formName") === "MARK_AS_DONE_FORM") {
+        const successSound = new Audio("/sounds/success.mp3");
+        successSound.play();
+      }
     }
   }, [navigation.state, navigation.formData, context]);
 
@@ -389,7 +390,7 @@ export default function Index() {
               showAction
               actionText={
                 navigation.state === "submitting" &&
-                navigation.formData.get("formName") === "SAVE_REGISTRATION_TOKEN"
+                navigation.formData?.get("formName") === "SAVE_REGISTRATION_TOKEN"
                   ? "Enabling..."
                   : "Enable"
               }

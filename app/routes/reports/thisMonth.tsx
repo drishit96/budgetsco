@@ -16,22 +16,21 @@ import {
   INVESTMENT_CHART_COLORS_MAP,
 } from "~/utils/colors.utils";
 import type { Currency } from "~/utils/number.utils";
-import { calculate, max, subtract } from "~/utils/number.utils";
-import { formatToCurrency } from "~/utils/number.utils";
+import { calculate, max, subtract, formatToCurrency, sum } from "~/utils/number.utils";
 import { ErrorText } from "~/components/ErrorText";
 import { SuccessText } from "~/components/SuccessText";
 import { Ripple } from "@rmwc/ripple";
 import type {
-  V2_ErrorBoundaryComponent,
-  V2_MetaFunction,
+  ErrorBoundaryComponent,
+  MetaFunction,
 } from "@remix-run/react/dist/routeModules";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "This month's report - Budgetsco" }];
 };
 
-export const ErrorBoundary: V2_ErrorBoundaryComponent = () => {
+export const ErrorBoundary: ErrorBoundaryComponent = () => {
   let error = useRouteError();
   console.log(error);
   return <GenericError />;
@@ -69,8 +68,16 @@ function getBudgetUsedPercent(budget: string, expense: string) {
     : 0;
 }
 
-function getBudgetText(budget: string, currency: Currency) {
-  if (budget === "0") return "No budget";
+function getBudgetText(
+  budget: string,
+  nonPlannedExpenseCount: number,
+  currency: Currency
+) {
+  if (budget === "0") {
+    return nonPlannedExpenseCount === 1
+      ? `${nonPlannedExpenseCount} category`
+      : `${nonPlannedExpenseCount} categories`;
+  }
   return `Budget: ${formatToCurrency(budget, "en-US", currency)}`;
 }
 
@@ -84,6 +91,14 @@ function getBudgetLeftText(budget: string, expense: string, currency: Currency) 
   } else {
     return `${formatToCurrency(subtract(expense, budget), "en-US", currency)} overspent`;
   }
+}
+
+function getCategoryFilter(categories: string[]) {
+  const filter = [];
+  for (let category of categories) {
+    filter.push(`category=${encodeURIComponent(category)}`);
+  }
+  return filter.join("&");
 }
 
 export default function ThisMonthReport() {
@@ -126,6 +141,17 @@ export default function ThisMonthReport() {
     }
   );
 
+  const categoryBudgetExpenses = categoryWiseTargetExpense.filter((e) => e.budget != "0");
+  const nonPlannedCategories = categoryWiseTargetExpense.filter((e) => e.budget == "0");
+
+  if (nonPlannedCategories.length) {
+    categoryBudgetExpenses.push({
+      category: "Not planned",
+      budget: "0",
+      expense: sum(nonPlannedCategories.map((n) => n.expense)),
+    });
+  }
+
   useEffect(() => {
     reportsPageContext.setActiveTab("thisMonth");
   }, [reportsPageContext]);
@@ -133,7 +159,7 @@ export default function ThisMonthReport() {
   return (
     <div>
       <Spacer size={3} />
-      <div className="flex flex-wrap gap-1">
+      <div className="flex flex-wrap gap-1 bg-elevated-10 p-3 rounded-lg">
         <StatisticsCard
           name="Budget"
           num={budget}
@@ -172,20 +198,22 @@ export default function ThisMonthReport() {
       )}
       <Spacer />
 
-      <div className="flex flex-wrap gap-3 justify-center">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(theme(width.72),1fr))] p-3 gap-2 justify-center bg-elevated-10 rounded-lg">
         {categoryWiseTargetExpense?.length > 0 && (
-          <div className="p-3 border border-primary rounded-md w-full lg:w-6/12">
+          <div className="p-3 border border-primary rounded-md w-full bg-background">
             <p className="text-xl font-bold">Budget vs Expense</p>
             <Spacer />
-            {categoryWiseTargetExpense.map((categoryExpense) => {
+            {categoryBudgetExpenses.map((categoryExpense) => {
               const percentage = getBudgetUsedPercent(
                 categoryExpense.budget,
                 categoryExpense.expense
               );
               return (
                 <Link
-                  to={`/transaction/history?type=expense&category=${encodeURIComponent(
-                    categoryExpense.category
+                  to={`/transaction/history?type=expense&${getCategoryFilter(
+                    categoryExpense.budget == "0"
+                      ? nonPlannedCategories.map((c) => c.category)
+                      : [categoryExpense.category]
                   )}`}
                   key={categoryExpense.category}
                 >
@@ -209,6 +237,7 @@ export default function ThisMonthReport() {
                         <p className="text-primary">
                           {getBudgetText(
                             categoryExpense.budget,
+                            nonPlannedCategories.length,
                             reportsPageContext.userPreferredCurrency
                           )}
                         </p>
@@ -230,7 +259,7 @@ export default function ThisMonthReport() {
           </div>
         )}
 
-        <div className="p-3 border border-primary rounded-md w-full lg:w-5/12">
+        <div className="p-3 border border-primary rounded-md w-full bg-background">
           <PieChartCard
             title="Expense breakdown"
             data={expenseDistribution}
@@ -242,7 +271,7 @@ export default function ThisMonthReport() {
           />
         </div>
 
-        <div className="p-3 border border-primary rounded-md w-full lg:w-6/12">
+        <div className="p-3 border border-primary rounded-md w-full bg-background">
           <PieChartCard
             title="How did you use your money?"
             data={moneyDistribution}
@@ -255,7 +284,7 @@ export default function ThisMonthReport() {
           />
         </div>
 
-        <div className="p-3 border border-primary rounded-md w-full lg:w-5/12">
+        <div className="p-3 border border-primary rounded-md w-full bg-background">
           <PieChartCard
             title="What did you use to pay?"
             data={paymentModeExpense}
@@ -268,7 +297,7 @@ export default function ThisMonthReport() {
         </div>
 
         {calculate(investmentDone).gt(0) && (
-          <div className="p-3 border border-primary rounded-md w-full lg:w-5/12">
+          <div className="p-3 border border-primary rounded-md w-full bg-background">
             <PieChartCard
               title="Investment breakdown"
               data={investmentDistribution}

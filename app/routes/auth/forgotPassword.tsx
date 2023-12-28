@@ -1,7 +1,6 @@
 import { Ripple } from "@rmwc/ripple";
 import type { LoaderFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { Form, useNavigation } from "@remix-run/react";
 import { Input } from "~/components/Input";
 import { Spacer } from "~/components/Spacer";
@@ -9,9 +8,9 @@ import { useState } from "react";
 import { sendResetPasswordEmail } from "~/utils/firebase.utils";
 import { getSessionData } from "~/utils/auth.utils.server";
 import { InfoText } from "~/components/InfoText";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Forgot password - Budgetsco" }];
 };

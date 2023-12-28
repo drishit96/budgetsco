@@ -1,6 +1,5 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import { redirect, json } from "@remix-run/node";
 import {
   Form,
   useLoaderData,
@@ -8,7 +7,7 @@ import {
   useOutletContext,
   useSubmit,
 } from "@remix-run/react";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import { Ripple } from "@rmwc/ripple";
 import { useEffect, useState } from "react";
 import { Input } from "~/components/Input";
@@ -33,7 +32,7 @@ enum AuthActionType {
   PASSWORD_RESET = "resetPassword",
 }
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Budgetsco" }];
 };

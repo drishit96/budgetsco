@@ -49,12 +49,12 @@ import RecurringSetup from "~/components/RecurringSetup";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { parseRecurringTransactionInput } from "~/modules/recurring/recurring.schema";
 import { createNewRecurringTransaction } from "~/modules/recurring/recurring.service";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import { ComboBox } from "~/components/ComboBox";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Create transaction - Budgetsco" }];
 };
@@ -238,6 +238,8 @@ export default function Create() {
   useEffect(() => {
     if (actionData?.data?.isTransactionSaved) {
       context.setSnackBarMsg("Transaction saved");
+      const successSound = new Audio("/sounds/success.mp3");
+      successSound.play();
       history.back();
     }
   }, [actionData?.data?.isTransactionSaved]);
@@ -277,18 +279,16 @@ export default function Create() {
   }, [selectedCategories]);
 
   useEffect(() => {
-    if (categoryRemainingBudgetFetcher.type === "done") {
-      if (categoryRemainingBudgetFetcher.data) {
-        categoryRemainingBudgetMap.current = {
-          ...categoryRemainingBudgetMap.current,
-          ...(categoryRemainingBudgetFetcher.data as {
-            [key: string]: number | null;
-          }),
-        };
-        calculateRemainingBudget(amount);
-      }
+    if (categoryRemainingBudgetFetcher.data) {
+      categoryRemainingBudgetMap.current = {
+        ...categoryRemainingBudgetMap.current,
+        ...(categoryRemainingBudgetFetcher.data as {
+          [key: string]: number | null;
+        }),
+      };
+      calculateRemainingBudget(amount);
     }
-  }, [amount, calculateRemainingBudget, categoryRemainingBudgetFetcher]);
+  }, [amount, calculateRemainingBudget, categoryRemainingBudgetFetcher.data]);
 
   useEffect(() => {
     calculateRemainingBudget(amount);
@@ -444,6 +444,7 @@ export default function Create() {
                   name="description"
                   className="input text-center"
                   placeholder="Description (optional)"
+                  dir="auto"
                 />
 
                 <Spacer size={3} />

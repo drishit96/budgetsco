@@ -34,14 +34,13 @@ import {
   getUserPreferences,
 } from "~/modules/settings/settings.service";
 import { isNotNullAndEmpty, isNullOrEmpty } from "~/utils/text.utils";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import type { AuthPageContext } from "../auth";
-import { saveBoolSettingToLocalStorage } from "~/utils/setting.utils";
 import Turnstile from "~/components/Turnstile";
 import { trackEvent, trackUserProfileUpdate } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Register - Budgetsco" }];
 };

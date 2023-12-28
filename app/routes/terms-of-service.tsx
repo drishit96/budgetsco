@@ -1,6 +1,6 @@
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Terms of service - Budgetsco" }];
 };
@@ -332,9 +332,9 @@ export default function PrivacyPolicy() {
                 Questions about the Terms of Service should be sent to us at{" "}
                 <a
                   className="underline hover:text-accent"
-                  href="mailto:support@budgetsco.online"
+                  href="mailto:budgetsco+support@gmail.com"
                 >
-                  support@budgetsco.online
+                  budgetsco+support@gmail.com
                 </a>
                 .
               </p>

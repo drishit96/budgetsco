@@ -12,9 +12,9 @@ import type { ReportsPageContext } from "../reports";
 import MonthYearSelector from "~/components/MonthYearSelector";
 import { abs, calculate, formatToCurrency } from "~/utils/number.utils";
 import Bar from "~/components/Bar";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Compare reports - Budgetsco" }];
 };
@@ -92,7 +92,7 @@ export default function CompareReport() {
 
       <Spacer />
 
-      <div className="flex flex-wrap gap-1">
+      <div className="flex flex-wrap gap-1 bg-elevated-10 p-3 rounded-lg">
         <StatisticsCard
           name="Budget"
           num={budgetForMonth}
@@ -138,9 +138,9 @@ export default function CompareReport() {
 
       <br />
 
-      <div className="flex flex-wrap gap-2 justify-center">
+      <div className="flex flex-wrap gap-2 justify-center bg-elevated-10 p-3 rounded-lg">
         {categoryExpenses?.length && (
-          <div className="p-3 border border-primary rounded-md w-full">
+          <div className="p-3 border border-primary rounded-md w-full bg-background">
             <p className="text-xl font-bold">Expense per category</p>
             <Spacer />
             {categoryExpenses.map((categoryExpense) => {
