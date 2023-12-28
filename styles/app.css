@@ -83,7 +83,7 @@
   --border-color-accent: #047857;
   --bg-color: #fff;
   --bg-color-elevated-10: #f8fafc;
-  --bg-color-urgent: #fef2f2;
+  --bg-color-elevated-10-opacity-30: rgba(248, 250, 252, 0.3);
   --bg-color-info: rgb(240, 249, 255);
   --bg-color-important: rgb(255, 251, 235);
   --bg-color-accent: rgb(236, 253, 245);
@@ -106,6 +106,7 @@
   --border-color-accent: #059669;
   --bg-color: #222222;
   --bg-color-elevated-10: #383838;
+  --bg-color-elevated-10-opacity-30: rgba(56, 56, 56, 0.3);
   --bg-color-urgent: rgb(127, 29, 29, 0.2);
   --bg-color-info: rgb(12, 74, 110, 0.3);
   --bg-color-important: rgb(120, 53, 15, 0.3);
@@ -131,6 +132,7 @@
     --border-color-accent: #059669;
     --bg-color: #222222;
     --bg-color-elevated-10: #383838;
+    --bg-color-elevated-10-opacity-30: rgba(56, 56, 56, 0.3);
     --bg-color-urgent: rgb(127, 29, 29, 0.2);
     --bg-color-info: rgb(12, 74, 110, 0.3);
     --bg-color-important: rgb(120, 53, 15, 0.3);
@@ -155,6 +157,7 @@
     --border-color-accent: #047857;
     --bg-color: #fff;
     --bg-color-elevated-10: #f8fafc;
+    --bg-color-elevated-10-opacity-30: rgba(248, 250, 252, 0.3);
     --bg-color-urgent: #fef2f2;
     --bg-color-info: rgb(240, 249, 255);
     --bg-color-important: rgb(255, 251, 235);
@@ -430,18 +433,17 @@ dialog::backdrop {
   z-index: 100;
 }
 .mdc-dialog .mdc-dialog__surface {
-  background-color: var(--bg-color-elevated-10);
-  /* @alternate */
-  background-color: var(--mdc-theme-surface, var(--bg-color-elevated-10));
+  background-color: var(--bg-color-elevated-10-opacity-30);
+  backdrop-filter: blur(15px);
 }
 .mdc-dialog .mdc-dialog__scrim {
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.05);
 }
 .mdc-dialog .mdc-dialog__title {
-  color: var(--text-primary-dark);
+  color: var(--text-color-primary-dark);
 }
 .mdc-dialog .mdc-dialog__content {
-  color: var(--text-primary);
+  color: var(--text-color-primary);
 }
 .mdc-dialog.mdc-dialog--scrollable .mdc-dialog__title,
 .mdc-dialog.mdc-dialog--scrollable .mdc-dialog__actions {
