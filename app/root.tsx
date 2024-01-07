@@ -400,7 +400,7 @@ export default function App() {
         {(location.pathname.includes("/dashboard") ||
           location.pathname.includes("/reports") ||
           location.pathname.includes("/settings/list")) && (
-          <nav className="z-20 flex justify-evenly fixed bottom-0 left-1/2 -translate-x-1/2 w-full md:w-3/4 lg:w-2/3 xl:w-1/2 bg-elevated-10 border border-primary text-primary rounded-t-md font-bold shadow-2xl">
+          <nav className="z-20 flex justify-evenly fixed bottom-0 left-1/2 -translate-x-1/2 w-full md:w-3/4 lg:w-2/3 xl:w-1/2 backdrop-blur-3xl border border-primary text-primary rounded-t-md font-bold shadow-2xl">
             <Ripple accent>
               <Link
                 className="flex flex-col items-center w-full p-1 focus-border"
