@@ -36,6 +36,7 @@ import { InlineSpacer } from "~/components/InlineSpacer";
 import type { NewFilter } from "~/components/FilterBottomSheet";
 import FilterBottomSheet from "~/components/FilterBottomSheet";
 import { divide, formatToCurrency, sum } from "~/utils/number.utils";
+import TransactionsTable from "~/components/TransactionsTable";
 
 export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
@@ -129,10 +130,25 @@ export default function TransactionHistory() {
   const [expandedTransactionIndex, setExpandedTransactionIndex] = useState<
     number | undefined
   >(undefined);
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
 
   useEffect(() => {
     context.showBackButton(true);
   }, [context]);
+
+  const onWindowResize = () => {
+    if (!document.hidden) {
+      setIsLargeScreen(window.innerWidth >= 1180);
+    }
+  };
+
+  useEffect(() => {
+    setIsLargeScreen(window.innerWidth >= 1180);
+    window.addEventListener("resize", onWindowResize);
+    return () => {
+      window.removeEventListener("resize", onWindowResize);
+    };
+  }, []);
 
   function setNewFilter(newFilter: NewFilter) {
     const { selectedCategories, month, selectedTypes, selectedPaymentModes } = newFilter;
@@ -166,7 +182,7 @@ export default function TransactionHistory() {
     <main className="pt-7 pb-12 pl-3 pr-3">
       <h1 className="text-3xl text-center">Your transactions</h1>
       <div className="flex flex-col justify-center items-center">
-        <div className="w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-3">
+        <div className="w-full md:w-11/12 xl:w-10/12 mt-3">
           <div className="flex bg-base sticky top-0 z-10">
             <Form
               className="flex flex-col items-center md:items-start w-8/12 lg:w-10/12"
@@ -277,22 +293,26 @@ export default function TransactionHistory() {
           </div>
           <Spacer />
 
-          <ul ref={listParent}>
-            {transactions.map((transaction, index) => {
-              return (
-                <li key={transaction.id}>
-                  <Transaction
-                    transaction={transaction}
-                    navigation={navigation}
-                    hideDivider={index == transactions.length - 1}
-                    index={index}
-                    expandedIndex={expandedTransactionIndex}
-                    setExpandedIndex={setExpandedTransactionIndex}
-                  />
-                </li>
-              );
-            })}
-          </ul>
+          {isLargeScreen ? (
+            <TransactionsTable transactions={transactions} />
+          ) : (
+            <ul ref={listParent}>
+              {transactions.map((transaction, index) => {
+                return (
+                  <li key={transaction.id}>
+                    <Transaction
+                      transaction={transaction}
+                      navigation={navigation}
+                      hideDivider={index == transactions.length - 1}
+                      index={index}
+                      expandedIndex={expandedTransactionIndex}
+                      setExpandedIndex={setExpandedTransactionIndex}
+                    />
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
       </div>
       <Spacer size={4} />
