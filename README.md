@@ -1,4 +1,4 @@
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/drishit96/budgetsco/blob/main/LICENSE.md)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/drishit96/budgetsco/blob/main/LICENSE.md) [![E2E Tests](https://github.com/drishit96/budgetsco/actions/workflows/playwright.yml/badge.svg)](https://github.com/drishit96/budgetsco/actions/workflows/playwright.yml)
 
 # Budgetsco
 
