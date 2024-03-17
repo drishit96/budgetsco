@@ -228,17 +228,15 @@ export async function markTransactionAsDone(
 
 export async function markAsNotified(userIds: string[], startDate: Date, endDate: Date) {
   try {
-    //Used raw query due to issue: https://github.com/prisma/prisma/issues/5043
-    const result = await prisma.$executeRaw(
-      Prisma.sql`UPDATE RecurringTransaction SET isNotified = 1 WHERE userId IN (${Prisma.join(
-        userIds
-      )}) AND executionDate > ${formatDate_DD_MMMM_YYYY_hh_mm(
-        startDate
-      )} AND executionDate <= ${formatDate_DD_MMMM_YYYY_hh_mm(
-        endDate
-      )} AND isNotified = 0`
-    );
-    return result > 0;
+    const result = await prisma.recurringTransaction.updateMany({
+      where: {
+        userId: { in: userIds },
+        executionDate: { gt: startDate, lte: endDate },
+        isNotified: false,
+      },
+      data: { isNotified: true },
+    });
+    return result.count > 0;
   } catch (error) {
     logError(error);
     return false;

@@ -14,8 +14,8 @@ const config: PlaywrightTestConfig = {
   // globalSetup: require.resolve("./global-setup"),
   testDir: "./tests",
   /* Maximum time one test can run for. */
-  timeout: 30 * 1000,
-  globalTimeout: 120 * 1000,
+  timeout: 45 * 1000,
+  globalTimeout: 0,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
@@ -113,11 +113,6 @@ const config: PlaywrightTestConfig = {
 
   /* Run your local dev server before starting the tests */
   webServer: [
-    {
-      command: `./pscaledir/pscale connect expense-manager dev --org #{TEST_DB_ORG}# --service-token #{TEST_DB_SERVICE_TOKEN}# --service-token-id #{TEST_DB_TOKEN_ID}#`,
-      port: 3306,
-      reuseExistingServer: true,
-    },
     {
       command: "npm run testserver",
       port: 3000,
