@@ -647,7 +647,7 @@ export async function editMonthlyTarget(
       valuesArr.push(
         Prisma.sql`(${Prisma.join([
           userId,
-          formatDate_YYYY_MM_DD(date),
+          Prisma.sql`CAST(${formatDate_YYYY_MM_DD(date)} AS DATE)`,
           "expense",
           category,
           0,
@@ -657,9 +657,9 @@ export async function editMonthlyTarget(
     }
 
     const categoryBudgetUpdate = prisma.$executeRaw(
-      Prisma.sql`INSERT INTO CategoryAmount (userId, date, type, category, amount, budget) VALUES ${Prisma.join(
+      Prisma.sql`INSERT INTO "CategoryAmount" ("userId", "date", "type", "category", "amount", "budget") VALUES ${Prisma.join(
         valuesArr
-      )} ON DUPLICATE KEY UPDATE budget = VALUES(budget)`
+      )} ON CONFLICT ("userId", "date", "type", "category") DO UPDATE SET budget = EXCLUDED.budget`
     );
     tasks.push(categoryBudgetUpdate);
 

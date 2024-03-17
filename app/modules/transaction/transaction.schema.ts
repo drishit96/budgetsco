@@ -88,7 +88,13 @@ export type MonthlyTargetInput = z.infer<typeof MonthlyTargetInputSchema>;
 export type MonthlyCategoryWiseTargetInput = z.infer<
   typeof MonthlyCategoryWiseTargetInputSchema
 >;
-export type TransactionType = "income" | "expense" | "investment";
+export const TransactionTypes = {
+  expense: 0,
+  income: 1,
+  investment: 2,
+};
+
+export type TransactionType = keyof typeof TransactionTypes;
 
 export function parseTransactionInput(transaction: unknown) {
   const output = TransactionInputSchema.safeParse(transaction);

@@ -62,15 +62,6 @@ jobs:
       - name: Find and Replace UI_ENV
         run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{UI_ENV}#/test/g'' {} \;
 
-      - name: Find and Replace TEST_DB_ORG - Using Secret
-        run: find -name "playwright.config.ts" -type f -exec sed -i ''s/#{TEST_DB_ORG}#/${{ secrets.TEST_DB_ORG }}/g'' {} \;
-
-      - name: Find and Replace TEST_DB_SERVICE_TOKEN - Using Secret
-        run: find -name "playwright.config.ts" -type f -exec sed -i ''s/#{TEST_DB_SERVICE_TOKEN}#/${{ secrets.TEST_DB_SERVICE_TOKEN }}/g'' {} \;
-
-      - name: Find and Replace TEST_DB_TOKEN_ID - Using Secret
-        run: find -name "playwright.config.ts" -type f -exec sed -i ''s/#{TEST_DB_TOKEN_ID}#/${{ secrets.TEST_DB_TOKEN_ID }}/g'' {} \;
-
       - name: Find and Replace TEST_LOGIN_USERNAME - Using Secret
         run: find -name "auth.setup.ts" -type f -exec sed -i ''s/#{TEST_LOGIN_USERNAME}#/${{ secrets.TEST_LOGIN_USERNAME }}/g'' {} \;
 
@@ -90,12 +81,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
-
-      - name: Install Planetscale CLI
-        run: |
-          mkdir pscaledir
-          wget -O pscalecli.tar.gz https://github.com/planetscale/cli/releases/download/v0.145.0/pscale_0.145.0_linux_amd64.tar.gz
-          tar -xvf pscalecli.tar.gz -C ./pscaledir
 
       - name: Set DEBUG=pw:webserver
         run: echo "DEBUG=pw:webserver" >> $GITHUB_ENV
