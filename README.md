@@ -21,7 +21,7 @@ These instructions will get you a copy of the project up and running on your loc
 ## Built With
 
 - [Remix](https://remix.run/) - Web framework
-- [MySql](https://www.mysql.com/) - Database
+- [PostgreSQL](https://www.postgresql.org/) - Database
 - [Typescript](https://www.typescriptlang.org/) - Language
 - [Tailwind CSS](https://tailwindcss.com/) - CSS framework
 - [Firebase](https://firebase.google.com/docs/) - Authentication and push notifications
