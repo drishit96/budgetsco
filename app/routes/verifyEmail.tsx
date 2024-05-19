@@ -5,14 +5,14 @@ import { useEffect, useState } from "react";
 import { getSessionData } from "~/utils/auth.utils.server";
 import { sendVerificationEmail } from "~/utils/firebase.utils";
 import Banner from "~/components/Banner";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
-  let rootModule = matches.find((match) => match.id === "root");
+export const meta: MetaFunction = ({ matches }) => {
+  const rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Verify email - Budgetsco" }];
 };
 
-export let loader: LoaderFunction = async ({ request }) => {
+export const loader: LoaderFunction = async ({ request }) => {
   const sessionData = await getSessionData(request);
   if (sessionData == null || sessionData.userId == null) {
     return redirect("/auth/login");

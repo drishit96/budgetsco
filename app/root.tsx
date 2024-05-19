@@ -1,7 +1,6 @@
 import type { DataFunctionArgs, LinksFunction, TypedResponse } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import type { ShouldRevalidateFunction } from "@remix-run/react";
-import { useNavigation, useRouteError } from "@remix-run/react";
 import {
   Link,
   Links,
@@ -13,6 +12,8 @@ import {
   useLoaderData,
   useLocation,
   useMatches,
+  useNavigation,
+  useRouteError,
 } from "@remix-run/react";
 
 import styles from "./styles/app.css";
@@ -38,13 +39,15 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import clsx from "clsx";
 import DashboardIcon from "./components/icons/DashboardIcon";
 import type {
-  V2_ErrorBoundaryComponent,
-  V2_MetaFunction,
+  ErrorBoundaryComponent,
+  MetaFunction,
 } from "@remix-run/react/dist/routeModules";
 import usePreferredLocale from "./lib/usePreferredLocale.hook";
 import type { UserSessionData } from "./utils/auth.utils.server";
-import { getSessionCookieWithUpdatedPreferences } from "./utils/auth.utils.server";
-import { getSessionData } from "./utils/auth.utils.server";
+import {
+  getSessionCookieWithUpdatedPreferences,
+  getSessionData,
+} from "./utils/auth.utils.server";
 import { getUserPreferencesAfterTimestamp } from "./modules/settings/settings.service";
 import {
   saveCustomCategoriesToLocalStorage,
@@ -65,16 +68,28 @@ export const links: LinksFunction = () => {
   ];
 };
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [
     { property: "charset", content: "utf-8" },
-    { name: "description", content: "A simple, fast and reliable expense manager" },
+    { name: "description", content: "A smart, reliable & intuitive expense manager" },
     { name: "theme-color", content: "#047857" },
     { name: "viewport", content: "width=device-width,initial-scale=1" },
+    {
+      property: "og:image",
+      content: "https://budgetsco.fly.dev/images/budgetsco-og-image.png",
+    },
+    { property: "og:image:width", content: "192" },
+    { property: "og:image:height", content: "192" },
+    { property: "og:title", content: "Budgetsco" },
+    {
+      property: "og:description",
+      content: "A simple, fast and reliable expense manager",
+    },
+    { property: "og:url", content: "https://budgetsco.fly.dev" },
   ];
 };
 
-export const ErrorBoundary: V2_ErrorBoundaryComponent = () => {
+export const ErrorBoundary: ErrorBoundaryComponent = () => {
   let error = useRouteError();
   console.log(error);
   return <GenericError />;
@@ -237,6 +252,7 @@ export default function App() {
       loadingProgress.current?.classList.remove("w-0");
       loadingProgress.current?.classList.add("duration-1000", "w-full", "bg-yellow-500");
     } else {
+      setShowLoader(false);
       loadingProgress.current?.classList.remove(
         "duration-1000",
         "w-full",
@@ -346,7 +362,12 @@ export default function App() {
         >
           {showLoader && (
             <div className="flex w-full h-screen items-center justify-center">
-              <div className="flex items-center justify-center z-50 border-white border-4 rounded-full animate-ping p-4"></div>
+              <div className="flex flex-col items-center p-4 rounded-md bg-background">
+                <Spacer size={1} />
+                <div className="z-50 border-accent border-2 rounded-full animate-ping p-2"></div>
+                <Spacer />
+                <p className="text-sm text-primary">Loading...</p>
+              </div>
             </div>
           )}
         </div>
@@ -379,7 +400,7 @@ export default function App() {
         {(location.pathname.includes("/dashboard") ||
           location.pathname.includes("/reports") ||
           location.pathname.includes("/settings/list")) && (
-          <nav className="z-20 flex justify-evenly fixed bottom-0 left-1/2 -translate-x-1/2 w-full md:w-3/4 lg:w-2/3 xl:w-1/2 bg-elevated-10 border border-primary text-primary rounded-t-md font-bold shadow-2xl">
+          <nav className="z-20 flex justify-evenly fixed bottom-0 left-1/2 -translate-x-1/2 w-full md:w-3/4 lg:w-2/3 xl:w-1/2 backdrop-blur-3xl border border-primary text-primary rounded-t-md font-bold shadow-2xl">
             <Ripple accent>
               <Link
                 className="flex flex-col items-center w-full p-1 focus-border"

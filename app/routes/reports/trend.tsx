@@ -1,27 +1,24 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Link, useLoaderData, useNavigation, useOutletContext } from "@remix-run/react";
+import {
+  Link,
+  Outlet,
+  useLoaderData,
+  useLocation,
+  useOutletContext,
+} from "@remix-run/react";
 import { Spacer } from "~/components/Spacer";
 import { getSessionData } from "~/utils/auth.utils.server";
-import type { TrendingReportResponse } from "~/modules/reports/reports.service";
-import { getTrendingReport } from "~/modules/reports/reports.service";
-import {
-  CHART_COLOR_MAP,
-  EXPENSE_TYPE_COLORS,
-  EXPENSE_TYPE_COLOR_MAP,
-} from "~/utils/colors.utils";
 import type { ReportsPageContext } from "../reports";
 import { useEffect, useState } from "react";
-import PieChartCard from "~/components/PieChartCard";
 import MonthYearSelector from "~/components/MonthYearSelector";
-import { ErrorText } from "~/components/ErrorText";
-import { SuccessText } from "~/components/SuccessText";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { TransactionType } from "~/modules/transaction/transaction.schema";
+import { getFirstDateOfXMonthsBeforeFormatted, parseDate } from "~/utils/date.utils";
 import { Ripple } from "@rmwc/ripple";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
-import LineChartCard from "~/components/LineChartCard";
-import { add, calculate, max, sum } from "~/utils/number.utils";
+import { logError } from "~/utils/logger.utils.server";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Trending report - Budgetsco" }];
 };
@@ -33,87 +30,63 @@ export let loader: LoaderFunction = async ({ request }) => {
       return redirect("/auth/login");
     }
 
-    const { userId, timezone, isActiveSubscription } = sessionData;
-    const urlParams = new URL(request.url).searchParams;
-    const startMonth = urlParams.get("startMonth");
-    const startYear = urlParams.get("startYear");
-    const endMonth = urlParams.get("endMonth");
-    const endYear = urlParams.get("endYear");
+    const url = new URL(request.url);
+    if (url.pathname.endsWith("trend") || url.pathname.endsWith("trend/")) {
+      return redirect("/reports/trend/expense");
+    }
 
-    const trendingReport = await getTrendingReport(
-      userId,
-      timezone,
-      isActiveSubscription,
-      startMonth && startYear ? `${startYear}-${startMonth.padStart(2, "0")}` : undefined,
-      endMonth && endYear ? `${endYear}-${endMonth.padStart(2, "0")}` : undefined
-    );
+    const { timezone } = sessionData;
+    const urlParams = url.searchParams;
+    let startMonth = urlParams.get("startMonth");
+    let startYear = urlParams.get("startYear");
+    let endMonth = urlParams.get("endMonth");
+    let endYear = urlParams.get("endYear");
 
-    return json(trendingReport);
+    startMonth =
+      startMonth && startYear ? `${startYear}-${startMonth.padStart(2, "0")}` : null;
+    endMonth = endMonth && endYear ? `${endYear}-${endMonth.padStart(2, "0")}` : null;
+
+    startMonth = startMonth ?? getFirstDateOfXMonthsBeforeFormatted(5, timezone);
+    endMonth = endMonth ?? getFirstDateOfXMonthsBeforeFormatted(0, timezone);
+
+    const startDate = parseDate(startMonth);
+    const endDate = parseDate(endMonth);
+
+    return json({
+      startMonth: startDate.getMonth() + 1,
+      startYear: startDate.getFullYear(),
+      endMonth: endDate.getMonth() + 1,
+      endYear: endDate.getFullYear(),
+    });
   } catch (error) {
-    console.log(error);
+    logError(error);
     throw error;
   }
 };
 
+export type TrendingReportContext = {
+  setTransactionType: React.Dispatch<React.SetStateAction<TransactionType>>;
+} & ReportsPageContext;
+
 export default function TrendReport() {
-  const {
-    startMonth,
-    startYear,
-    endMonth,
-    endYear,
-    targets,
-    totalExpense,
-    totalIncomeEarned,
-    totalInvestmentDone,
-    categoryExpensesByCategory,
-  } = useLoaderData<TrendingReportResponse>();
+  const { startMonth, startYear, endMonth, endYear } = useLoaderData<{
+    startMonth: number;
+    startYear: number;
+    endMonth: number;
+    endYear: number;
+  }>();
 
-  const navigation = useNavigation();
+  const location = useLocation();
+  const [transactionType, setTransactionType] = useState<TransactionType>("expense");
   const reportsPageContext = useOutletContext<ReportsPageContext>();
-
-  const moneyDistribution = [
-    { name: "Expense", value: calculate(totalExpense).toFixed(2) },
-    { name: "Investment", value: calculate(totalInvestmentDone).toFixed(2) },
-    {
-      name: "Not used",
-      value: max(
-        "0",
-        calculate(totalIncomeEarned)
-          .minus(totalExpense)
-          .minus(totalInvestmentDone)
-          .toFixed(2)
-          .toString()
-      ),
-    },
-  ];
-
-  const expenseDistribution = Object.entries(categoryExpensesByCategory)
-    .map(([category, categoryExpenses]) => {
-      return {
-        name: category.toString(),
-        value: sum(categoryExpenses.map((c) => c.expense)),
-      };
-    })
-    .sort((a, b) => (calculate(b.value).minus(a.value).gt(0) ? 1 : -1));
-
-  const categories = Object.keys(categoryExpensesByCategory).map((key) => ({
-    label: key,
-    value: key,
-  }));
-
-  const [categoryForCategoryExpenseTrend, setCategoryForCategoryExpenseTrend] = useState(
-    categories[0]
-  );
+  const trendingReportContext: TrendingReportContext = {
+    setTransactionType,
+    ...reportsPageContext,
+  };
 
   useEffect(() => {
     reportsPageContext.setActiveTab("trend");
   }, [reportsPageContext]);
-
-  useEffect(() => {
-    if (navigation.state === "loading") {
-      setCategoryForCategoryExpenseTrend(categories[0]);
-    }
-  }, [navigation]);
 
   return (
     <div>
@@ -124,155 +97,73 @@ export default function TrendReport() {
         endMonth={endMonth}
         endYear={endYear}
         submitButtonName="Check Trend"
-        submitAction="/reports/trend"
+        submitAction={`/reports/trend/${transactionType}`}
         isSubscriptionRequired={!reportsPageContext.isActiveSubscription}
         context={reportsPageContext}
       />
 
-      <Spacer />
+      <Spacer size={3} />
 
-      {totalIncomeEarned !== "0" && calculate(totalExpense).gt(totalIncomeEarned) && (
-        <ErrorText error="You have already spent more than you have earned" showIcon />
-      )}
-
-      {totalInvestmentDone > totalExpense && (
-        <SuccessText text="🎉 Congrats on investing more than you spent" />
-      )}
-
-      <Spacer />
-
-      <div className="flex flex-wrap gap-2 justify-center">
-        {targets?.length ? (
-          <div className="p-3 border border-primary rounded-md w-full lg:w-6/12">
-            <LineChartCard
-              title="Budget vs Expense"
-              locale={reportsPageContext.userPreferredLocale}
-              currency={reportsPageContext.userPreferredCurrency}
-              data={targets}
-              xAxis={{ name: "Month", dataKey: "date" }}
-              lines={[
-                {
-                  name: "Budget",
-                  dataKey: "budget",
-                  color: "#A16207",
-                },
-                {
-                  name: "Expense",
-                  dataKey: "expense",
-                  color: "#0E7490",
-                },
-              ]}
-            />
-          </div>
-        ) : null}
-
-        <div className="p-3 border border-primary rounded-md w-full lg:w-5/12">
-          <PieChartCard
-            title="Expense breakdown"
-            data={expenseDistribution}
-            total={totalExpense}
-            currency={reportsPageContext.userPreferredCurrency}
-            locale={reportsPageContext.userPreferredLocale}
-            colHeaders={["Category", "Expense"]}
-            colors={CHART_COLOR_MAP}
-          />
+      <div className="flex justify-center">
+        <div className="flex grow max-w-md">
+          <Link
+            className="w-1/3"
+            to={"/reports/trend/expense" + (location?.search ?? "")}
+            replace
+          >
+            <Ripple>
+              <p
+                className={`pt-1 pb-1 text-sm font-bold sm:text-base sm:font-normal text-center border-l border-t border-b border-emerald-700 rounded-l-full focus-ring ${
+                  transactionType === "expense"
+                    ? "bg-emerald-700 text-white"
+                    : "text-accent"
+                }`}
+              >
+                Expense
+              </p>
+            </Ripple>
+          </Link>
+          <Link
+            className="w-1/3"
+            to={`/reports/trend/investment` + (location?.search ?? "")}
+            replace
+          >
+            <Ripple>
+              <p
+                className={`pt-1 pb-1 text-sm font-bold sm:text-base sm:font-normal text-center border border-emerald-700 ${
+                  transactionType === "investment"
+                    ? "bg-emerald-700 text-white"
+                    : "text-accent"
+                }`}
+              >
+                Investment
+              </p>
+            </Ripple>
+          </Link>
+          <Link
+            className="w-1/3"
+            to={`/reports/trend/income` + (location?.search ?? "")}
+            replace
+          >
+            <Ripple>
+              <p
+                className={`pt-1 pb-1 text-sm font-bold sm:text-base sm:font-normal text-center border-r border-t border-b border-emerald-700 rounded-r-full ${
+                  transactionType === "income"
+                    ? "bg-emerald-700 text-white"
+                    : "text-accent"
+                }`}
+              >
+                Income
+              </p>
+            </Ripple>
+          </Link>
         </div>
+      </div>
 
-        {categoryExpensesByCategory != null && categoryForCategoryExpenseTrend != null ? (
-          <div className="p-3 border border-primary rounded-md w-full lg:w-11/12">
-            <LineChartCard
-              title="Expense trend for"
-              locale={reportsPageContext.userPreferredLocale}
-              currency={reportsPageContext.userPreferredCurrency}
-              data={categoryExpensesByCategory[categoryForCategoryExpenseTrend.label]}
-              xAxis={{ name: "Month", dataKey: "date" }}
-              lines={[
-                {
-                  name: "Expense",
-                  dataKey: "expense",
-                  color: "#0E7490",
-                },
-              ]}
-              children={
-                <>
-                  <Spacer size={1} />
-                  <select
-                    name="Category"
-                    className="form-select select w-full"
-                    value={categoryForCategoryExpenseTrend.value}
-                    onChange={(e) =>
-                      setCategoryForCategoryExpenseTrend({
-                        label: e.target.value,
-                        value: e.target.value,
-                      })
-                    }
-                  >
-                    {categories.map((category) => (
-                      <option key={category.value} value={category.value}>
-                        {category.label}
-                      </option>
-                    ))}
-                  </select>
-                </>
-              }
-            />
+      <Spacer size={3} />
 
-            <Spacer />
-            <div className="flex justify-end">
-              <Ripple>
-                <Link
-                  to={`/transaction/history?type=expense&category=${encodeURIComponent(
-                    categoryForCategoryExpenseTrend.label
-                  )}`}
-                  className="w-full md:w-max text-center btn-secondary-sm whitespace-nowrap"
-                >
-                  View transactions
-                </Link>
-              </Ripple>
-            </div>
-          </div>
-        ) : null}
-
-        {targets?.length ? (
-          <div className="p-3 border border-primary rounded-md w-full lg:w-6/12">
-            <LineChartCard
-              title="Income vs Expense vs Investment"
-              locale={reportsPageContext.userPreferredLocale}
-              currency={reportsPageContext.userPreferredCurrency}
-              data={targets}
-              xAxis={{ name: "Month", dataKey: "date" }}
-              lines={[
-                {
-                  name: "Income",
-                  dataKey: "incomeEarned",
-                  color: EXPENSE_TYPE_COLORS[2],
-                },
-                {
-                  name: "Expense",
-                  dataKey: "expense",
-                  color: EXPENSE_TYPE_COLORS[0],
-                },
-                {
-                  name: "Investment",
-                  dataKey: "investmentDone",
-                  color: EXPENSE_TYPE_COLORS[1],
-                },
-              ]}
-            />
-          </div>
-        ) : null}
-
-        <div className="p-3 border border-primary rounded-md w-full lg:w-5/12">
-          <PieChartCard
-            title="How did you use your money?"
-            data={moneyDistribution}
-            total={max(totalIncomeEarned, add(totalExpense, totalInvestmentDone))}
-            currency={reportsPageContext.userPreferredCurrency}
-            locale={reportsPageContext.userPreferredLocale}
-            colors={EXPENSE_TYPE_COLOR_MAP}
-            colHeaders={["Transaction type", "Amount"]}
-          />
-        </div>
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(theme(width.72),1fr))] p-3 gap-2 justify-center bg-elevated-10 rounded-lg">
+        <Outlet context={trendingReportContext} />
       </div>
     </div>
   );

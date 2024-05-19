@@ -46,7 +46,7 @@ import {
   subtract,
 } from "~/utils/number.utils";
 import { isNullOrEmpty } from "~/utils/text.utils";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import { logError } from "~/utils/logger.utils.server";
 import {
   formatDate_YYYY_MM_DD,
@@ -57,7 +57,7 @@ import { ComboBox } from "~/components/ComboBox";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Edit transaction - Budgetsco" }];
 };
@@ -249,6 +249,8 @@ export default function EditTransaction() {
   useEffect(() => {
     if (actionData?.data?.isTransactionSaved) {
       context.setSnackBarMsg("Transaction saved");
+      const successSound = new Audio("/sounds/success.mp3");
+      successSound.play();
       history.back();
     }
   }, [actionData?.data?.isTransactionSaved]);
@@ -279,18 +281,16 @@ export default function EditTransaction() {
   }, [selectedCategories]);
 
   useEffect(() => {
-    if (categoryRemainingBudgetFetcher.type === "done") {
-      if (categoryRemainingBudgetFetcher.data) {
-        categoryRemainingBudgetMap.current = {
-          ...categoryRemainingBudgetMap.current,
-          ...(categoryRemainingBudgetFetcher.data as {
-            [key: string]: number | null;
-          }),
-        };
-        calculateRemainingBudget(amount);
-      }
+    if (categoryRemainingBudgetFetcher.data) {
+      categoryRemainingBudgetMap.current = {
+        ...categoryRemainingBudgetMap.current,
+        ...(categoryRemainingBudgetFetcher.data as {
+          [key: string]: number | null;
+        }),
+      };
+      calculateRemainingBudget(amount);
     }
-  }, [amount, calculateRemainingBudget, categoryRemainingBudgetFetcher]);
+  }, [amount, calculateRemainingBudget, categoryRemainingBudgetFetcher.data]);
 
   useEffect(() => {
     calculateRemainingBudget(amount);

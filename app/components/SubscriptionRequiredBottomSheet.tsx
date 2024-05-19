@@ -17,7 +17,7 @@ export default function SubscriptionRequiredBottomSheet({
           : "Subscription required"}
       </p>
       <Spacer />
-      <p>You need an active budgetsco subscription to create transactions.</p>
+      <p>You need an active budgetsco subscription to view trend of more than 3 months</p>
       <Spacer size={1} />
       <p className="text-sm">
         (Already subscribed?{" "}
@@ -25,7 +25,7 @@ export default function SubscriptionRequiredBottomSheet({
           Refresh status
         </button>
         .<br /> If the issue persists, please contact{" "}
-        <a href="mailto:support@budgetsco.online">support@budgetsco.online</a>)
+        <a href="mailto:budgetsco+support@gmail.com">budgetsco+support@gmail.com</a>)
       </p>
       <Spacer />
       <Ripple>

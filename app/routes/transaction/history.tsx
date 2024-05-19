@@ -2,11 +2,17 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Ripple } from "@rmwc/ripple";
 import { sub, add } from "date-fns";
 import { useEffect, useState } from "react";
-import type { ActionFunction, LoaderFunction, V2_MetaFunction } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import type { ShouldRevalidateFunction } from "@remix-run/react";
-import { useNavigation } from "@remix-run/react";
-import { Form, Link, useLoaderData, useOutletContext, useSubmit } from "@remix-run/react";
+import type { ShouldRevalidateFunction, MetaFunction } from "@remix-run/react";
+import {
+  useNavigation,
+  Form,
+  Link,
+  useLoaderData,
+  useOutletContext,
+  useSubmit,
+} from "@remix-run/react";
 import NextIcon from "~/components/icons/NextIcon";
 import AddIcon from "~/components/icons/AddIcon";
 import PrevIcon from "~/components/icons/PrevIcon";
@@ -25,14 +31,14 @@ import {
   getFirstDateOfThisMonth,
   parseDate,
 } from "~/utils/date.utils";
-import SubscriptionRequiredBottomSheet from "~/components/SubscriptionRequiredBottomSheet";
 import FilterIcon from "~/components/icons/FilterIcon";
 import { InlineSpacer } from "~/components/InlineSpacer";
 import type { NewFilter } from "~/components/FilterBottomSheet";
 import FilterBottomSheet from "~/components/FilterBottomSheet";
 import { divide, formatToCurrency, sum } from "~/utils/number.utils";
+import TransactionsTable from "~/components/TransactionsTable";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Transaction history - Budgetsco" }];
 };
@@ -63,9 +69,11 @@ export let loader: LoaderFunction = async ({ request }): Promise<any> => {
   const reqMonth = urlSearchParams.get("month") || undefined;
   const types = urlSearchParams.getAll("type") ?? undefined;
   const categories = urlSearchParams.getAll("category");
+  const paymentModes = urlSearchParams.getAll("paymentMode");
   const transactions = getTransactions(userId, timezone, reqMonth, {
     types,
     categories,
+    paymentModes,
   });
 
   const currentMonth = reqMonth ? parseDate(reqMonth) : getFirstDateOfThisMonth(timezone);
@@ -74,6 +82,7 @@ export let loader: LoaderFunction = async ({ request }): Promise<any> => {
     {
       types,
       categories,
+      paymentModes,
       prevMonth: formatDate_YYY_MM(sub(currentMonth, { months: 1 })),
       currentMonth: formatDate_YYY_MM(currentMonth),
       nextMonth: formatDate_YYY_MM(add(currentMonth, { months: 1 })),
@@ -104,6 +113,7 @@ export default function TransactionHistory() {
   const {
     types,
     categories,
+    paymentModes,
     prevMonth,
     currentMonth,
     nextMonth,
@@ -111,6 +121,7 @@ export default function TransactionHistory() {
   }: {
     types: string[];
     categories: string[];
+    paymentModes: string[];
     prevMonth: string;
     currentMonth: string;
     nextMonth: string;
@@ -119,13 +130,28 @@ export default function TransactionHistory() {
   const [expandedTransactionIndex, setExpandedTransactionIndex] = useState<
     number | undefined
   >(undefined);
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
 
   useEffect(() => {
     context.showBackButton(true);
   }, [context]);
 
+  const onWindowResize = () => {
+    if (!document.hidden) {
+      setIsLargeScreen(window.innerWidth >= 1180);
+    }
+  };
+
+  useEffect(() => {
+    setIsLargeScreen(window.innerWidth >= 1180);
+    window.addEventListener("resize", onWindowResize);
+    return () => {
+      window.removeEventListener("resize", onWindowResize);
+    };
+  }, []);
+
   function setNewFilter(newFilter: NewFilter) {
-    const { selectedCategories, month, selectedTypes } = newFilter;
+    const { selectedCategories, month, selectedTypes, selectedPaymentModes } = newFilter;
 
     const form = new FormData();
     form.set("month", month);
@@ -138,6 +164,11 @@ export default function TransactionHistory() {
       selectedTypes.forEach((type) => form.append("type", type));
     }
 
+    if (selectedPaymentModes.length) {
+      selectedPaymentModes.forEach((type) => form.append("paymentMode", type));
+    }
+
+    context.setShowLoader(true);
     window.addEventListener(
       "popstate",
       function () {
@@ -151,7 +182,7 @@ export default function TransactionHistory() {
     <main className="pt-7 pb-12 pl-3 pr-3">
       <h1 className="text-3xl text-center">Your transactions</h1>
       <div className="flex flex-col justify-center items-center">
-        <div className="w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-3">
+        <div className="w-full md:w-11/12 xl:w-10/12 mt-3">
           <div className="flex bg-base sticky top-0 z-10">
             <Form
               className="flex flex-col items-center md:items-start w-8/12 lg:w-10/12"
@@ -172,6 +203,15 @@ export default function TransactionHistory() {
                       type="hidden"
                       name="category"
                       value={category}
+                    />
+                  ))}
+                {paymentModes &&
+                  paymentModes.map((paymentMode) => (
+                    <input
+                      key={paymentMode}
+                      type="hidden"
+                      name="paymentMode"
+                      value={paymentMode}
                     />
                   ))}
                 <Ripple unbounded>
@@ -205,6 +245,7 @@ export default function TransactionHistory() {
                         defaultSelectedCategories={categories}
                         defaultMonth={currentMonth}
                         defaultTypes={types}
+                        defaultPaymentModes={paymentModes}
                         onFilterSet={setNewFilter}
                       />
                     ),
@@ -217,7 +258,7 @@ export default function TransactionHistory() {
                 <InlineSpacer size={1} />
                 {(categories.length > 0 || types.length > 0) && (
                   <span className="w-min pl-1 pr-1 rounded-full bg-emerald-700 text-white">
-                    {categories.length + types.length}
+                    {categories.length + types.length + paymentModes.length}
                   </span>
                 )}
               </button>
@@ -252,22 +293,26 @@ export default function TransactionHistory() {
           </div>
           <Spacer />
 
-          <ul ref={listParent}>
-            {transactions.map((transaction, index) => {
-              return (
-                <li key={transaction.id}>
-                  <Transaction
-                    transaction={transaction}
-                    navigation={navigation}
-                    hideDivider={index == transactions.length - 1}
-                    index={index}
-                    expandedIndex={expandedTransactionIndex}
-                    setExpandedIndex={setExpandedTransactionIndex}
-                  />
-                </li>
-              );
-            })}
-          </ul>
+          {isLargeScreen ? (
+            <TransactionsTable transactions={transactions} />
+          ) : (
+            <ul ref={listParent}>
+              {transactions.map((transaction, index) => {
+                return (
+                  <li key={transaction.id}>
+                    <Transaction
+                      transaction={transaction}
+                      navigation={navigation}
+                      hideDivider={index == transactions.length - 1}
+                      index={index}
+                      expandedIndex={expandedTransactionIndex}
+                      setExpandedIndex={setExpandedTransactionIndex}
+                    />
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
       </div>
       <Spacer size={4} />

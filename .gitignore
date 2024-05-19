@@ -23,3 +23,6 @@ storageState.json
 auth.json
 
 newrelic_agent.log
+/test-results/
+/playwright-report/
+/playwright/.cache/

@@ -10,12 +10,12 @@ import {
   getUserIdFromSession,
 } from "~/utils/auth.utils.server";
 import { Spacer } from "~/components/Spacer";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import { getCurrentAppTheme } from "~/utils/setting.utils";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Settings - Budgetsco" }];
 };
@@ -37,6 +37,8 @@ export let action: ActionFunction = async ({ request }) => {
       },
     });
   }
+
+  return json({});
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -177,7 +179,7 @@ export default function Settings() {
             <Spacer size={1} />
             <Ripple>
               <a
-                href={`mailto:support@budgetsco.online`}
+                href={`mailto:budgetsco+support@gmail.com`}
                 className="p-4 border border-primary rounded-t-lg focus-border"
               >
                 Get suppport

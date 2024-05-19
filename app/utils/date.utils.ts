@@ -1,4 +1,11 @@
-import { format, sub, add } from "date-fns";
+import {
+  format,
+  sub,
+  add,
+  differenceInDays,
+  differenceInMonths,
+  differenceInYears,
+} from "date-fns";
 
 export function getFirstDateOfThisMonth(timezone: string) {
   const today = getCurrentLocalDateInUTC(timezone);
@@ -9,19 +16,16 @@ export function getFirstDateOfMonth(date: Date) {
   return new Date(Date.UTC(date.getFullYear(), date.getMonth(), 1));
 }
 
-export function getFirstDateOfXMonthsBeforeFormatted(
-  difference: number = 1,
-  timezone: string
-) {
+export function getFirstDateOfXMonthsBeforeFormatted(difference = 1, timezone: string) {
   return formatDate_YYY_MM(getFirstDateOfXMonthsBefore(difference, timezone));
 }
 
-export function getFirstDateOfXMonthsBefore(difference: number = 1, timezone: string) {
+export function getFirstDateOfXMonthsBefore(difference = 1, timezone: string) {
   const firstDateOfThisMonth = getFirstDateOfThisMonth(timezone);
   return sub(firstDateOfThisMonth, { months: difference });
 }
 
-export function getFirstDateOfXMonthsAfter(difference: number = 1, timezone: string) {
+export function getFirstDateOfXMonthsAfter(difference = 1, timezone: string) {
   const firstDateOfThisMonth = getFirstDateOfThisMonth(timezone);
   return add(firstDateOfThisMonth, { months: difference });
 }
@@ -114,7 +118,7 @@ export function getListOfYearsSince(year: number) {
   let currentYear = getCurrentYear();
   if (year > currentYear) return [];
 
-  let yearsSoFar: number[] = [];
+  const yearsSoFar: number[] = [];
   while (currentYear >= year) {
     yearsSoFar.push(currentYear);
     currentYear--;
@@ -159,16 +163,19 @@ export function getNextExecutionDate(
 ) {
   let executionDate = previousDate || new Date();
   if (occurrence === "day") {
+    const diff = Math.abs(differenceInDays(new Date(), executionDate));
     executionDate = add(executionDate, {
-      days: interval,
+      days: diff + interval,
     });
   } else if (occurrence === "month") {
+    const diff = Math.abs(differenceInMonths(new Date(), executionDate));
     executionDate = add(executionDate, {
-      months: interval,
+      months: diff + interval,
     });
   } else if (occurrence === "year") {
+    const diff = Math.abs(differenceInYears(new Date(), executionDate));
     executionDate = add(executionDate, {
-      years: interval,
+      years: diff + interval,
     });
   }
   return executionDate;

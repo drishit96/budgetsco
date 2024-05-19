@@ -1,8 +1,7 @@
 import type { Color } from "~/utils/colors.utils";
 import { getTextColor } from "~/utils/colors.utils";
 import type { Currency } from "~/utils/number.utils";
-import { round } from "~/utils/number.utils";
-import { formatToCurrencyCompact } from "~/utils/number.utils";
+import { round, formatToCurrencyCompact } from "~/utils/number.utils";
 import { Spacer } from "./Spacer";
 
 export function StatisticsCard({
@@ -18,7 +17,7 @@ export function StatisticsCard({
   num: string;
   positiveIsBetter?: boolean;
   perc?: number;
-  color: Color;
+  color?: Color;
   currency: Currency;
   locale: string;
 }) {

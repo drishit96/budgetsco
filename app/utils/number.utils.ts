@@ -101,3 +101,24 @@ export function sum(args: string[]) {
   if (args == null || args.length == 0) return "0";
   return Decimal.sum(...args).toString();
 }
+
+export function avg(args: string[]) {
+  if (args == null || args.length == 0) return "0";
+  const nums = args.map((a) => new Decimal(a));
+  return Decimal.sum(...nums)
+    .dividedBy(nums.length)
+    .toString();
+}
+
+export function median(args: string[]) {
+  if (args == null || args.length == 0) return "0";
+  const nums = args.map((a) => new Decimal(a));
+  nums.sort((a, b) => a.minus(b).toNumber());
+
+  const centerIndex = nums.length / 2;
+  if (nums.length % 2 != 0) return nums[Math.floor(centerIndex)].toString();
+
+  return Decimal.sum(nums[centerIndex - 1], nums[centerIndex])
+    .dividedBy(2)
+    .toString();
+}

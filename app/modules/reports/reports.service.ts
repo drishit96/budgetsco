@@ -10,6 +10,7 @@ import {
 } from "~/utils/date.utils";
 import type { Prisma } from "@prisma/client";
 import Decimal from "decimal.js";
+import type { TransactionType } from "../transaction/transaction.schema";
 
 export type ThisMonthReportResponse = {
   budget: Prisma.Decimal;
@@ -47,11 +48,7 @@ export type ComparisonReportResponse = {
   maxExpense: Prisma.Decimal;
 };
 
-export type TrendingReportResponse = {
-  startMonth: number;
-  startYear: number;
-  endMonth: number;
-  endYear: number;
+type TrendReportResponse = {
   targets: {
     date: string;
     budget: Prisma.Decimal;
@@ -64,7 +61,26 @@ export type TrendingReportResponse = {
   totalExpense: Prisma.Decimal;
   totalIncomeEarned: Prisma.Decimal;
   totalInvestmentDone: Prisma.Decimal;
+};
+
+export type ExpenseTrendReportResponse = Omit<
+  TrendReportResponse,
+  "totalIncomeEarned" | "totalInvestmentDone"
+> & {
   categoryExpensesByCategory: { [key: string]: CategoryExpenseDate[] };
+  expensesByPaymentMode: { [key: string]: CategoryExpenseDate[] };
+};
+
+export type InvestmentTrendReportResponse = Omit<
+  TrendReportResponse,
+  "totalExpense" | "totalIncomeEarned"
+> & {
+  categoryInvestmentsByCategory: { [key: string]: CategoryInvestmentDate[] };
+  investmentsByPaymentMode: { [key: string]: CategoryInvestmentDate[] };
+};
+
+export type IncomeTrendReportResponse = TrendReportResponse & {
+  categoryIncomeByCategory: { [key: string]: CategoryIncomeDate[] };
 };
 
 export async function getThisMonthReport(
@@ -236,13 +252,13 @@ export async function getComparisonReports(
   return data;
 }
 
-export async function getTrendingReport(
+export async function getExpenseTrendReport(
   userId: string,
   timezone: string,
   isActiveSubscription: boolean,
   startMonth?: string,
   endMonth?: string
-): Promise<TrendingReportResponse> {
+): Promise<ExpenseTrendReportResponse> {
   if (!isActiveSubscription) {
     startMonth = getFirstDateOfXMonthsBeforeFormatted(2, timezone);
     endMonth = getFirstDateOfXMonthsBeforeFormatted(0, timezone);
@@ -258,9 +274,93 @@ export async function getTrendingReport(
     [startDate, endDate] = [endDate, startDate];
   }
 
-  const [targets, categoryExpenses] = await Promise.all([
+  const [targets, categoryExpenses, expensesByPaymentMode] = await Promise.all([
     getTargets(userId, startDate, endDate),
-    getExpensePerCategoryForTimeRange(userId, startDate, endDate),
+    getAmountPerCategoryForTimeRange(userId, "expense", startDate, endDate),
+    getAmountPerPaymentModeForTimeRange(userId, "expense", startDate, endDate),
+  ]);
+
+  const totalExpense =
+    targets.length > 0 ? Decimal.sum(...targets.map((t) => t.expense)) : new Decimal(0);
+
+  return {
+    targets,
+    totalExpense,
+    categoryExpensesByCategory: Object.fromEntries(groupBy(categoryExpenses, "category")),
+    expensesByPaymentMode: Object.fromEntries(groupBy(expensesByPaymentMode, "category")),
+  };
+}
+
+export async function getInvestmentTrendReport(
+  userId: string,
+  timezone: string,
+  isActiveSubscription: boolean,
+  startMonth?: string,
+  endMonth?: string
+): Promise<InvestmentTrendReportResponse> {
+  if (!isActiveSubscription) {
+    startMonth = getFirstDateOfXMonthsBeforeFormatted(2, timezone);
+    endMonth = getFirstDateOfXMonthsBeforeFormatted(0, timezone);
+  } else {
+    startMonth = startMonth ?? getFirstDateOfXMonthsBeforeFormatted(5, timezone);
+    endMonth = endMonth ?? getFirstDateOfXMonthsBeforeFormatted(0, timezone);
+  }
+
+  let startDate = parseDate(startMonth);
+  let endDate = parseDate(endMonth);
+
+  if (endDate < startDate) {
+    [startDate, endDate] = [endDate, startDate];
+  }
+
+  const [targets, categoryInvestments, investmentsByPaymentMode] = await Promise.all([
+    getTargets(userId, startDate, endDate),
+    getAmountPerCategoryForTimeRange(userId, "investment", startDate, endDate),
+    getAmountPerPaymentModeForTimeRange(userId, "investment", startDate, endDate),
+  ]);
+
+  const totalInvestmentDone =
+    targets.length > 0
+      ? Decimal.sum(...targets.map((t) => t.investmentDone))
+      : new Decimal(0);
+
+  return {
+    targets,
+    totalInvestmentDone,
+    categoryInvestmentsByCategory: Object.fromEntries(
+      groupBy(categoryInvestments, "category")
+    ),
+    investmentsByPaymentMode: Object.fromEntries(
+      groupBy(investmentsByPaymentMode, "category")
+    ),
+  };
+}
+
+export async function getIncomeTrendReport(
+  userId: string,
+  timezone: string,
+  isActiveSubscription: boolean,
+  startMonth?: string,
+  endMonth?: string
+): Promise<IncomeTrendReportResponse> {
+  if (!isActiveSubscription) {
+    startMonth = getFirstDateOfXMonthsBeforeFormatted(2, timezone);
+    endMonth = getFirstDateOfXMonthsBeforeFormatted(0, timezone);
+  } else {
+    startMonth = startMonth ?? getFirstDateOfXMonthsBeforeFormatted(5, timezone);
+    endMonth = endMonth ?? getFirstDateOfXMonthsBeforeFormatted(0, timezone);
+  }
+
+  let startDate = parseDate(startMonth);
+  let endDate = parseDate(endMonth);
+
+  if (endDate < startDate) {
+    [startDate, endDate] = [endDate, startDate];
+  }
+
+  const [targets, categoryIncomes] = await Promise.all([
+    getTargets(userId, startDate, endDate),
+    getAmountPerCategoryForTimeRange(userId, "income", startDate, endDate),
   ]);
 
   const totalExpense =
@@ -275,15 +375,11 @@ export async function getTrendingReport(
       : new Decimal(0);
 
   return {
-    startMonth: startDate.getMonth() + 1,
-    startYear: startDate.getFullYear(),
-    endMonth: endDate.getMonth() + 1,
-    endYear: endDate.getFullYear(),
     targets,
     totalExpense,
     totalIncomeEarned,
     totalInvestmentDone,
-    categoryExpensesByCategory: Object.fromEntries(groupBy(categoryExpenses, "category")),
+    categoryIncomeByCategory: Object.fromEntries(groupBy(categoryIncomes, "category")),
   };
 }
 
@@ -460,23 +556,31 @@ export type CategoryExpense = {
   expense: Prisma.Decimal;
 };
 
-export type CategoryExpenseDate = {
+type CategoryDate = {
   category: string;
-  expense: Prisma.Decimal;
   date: string;
 };
 
-async function getExpensePerCategoryForTimeRange(
+type CategoryAmount<T, K extends TransactionType> = CategoryDate & {
+  [prop in K]: T;
+};
+
+export type CategoryExpenseDate = CategoryAmount<Prisma.Decimal, "expense">;
+export type CategoryInvestmentDate = CategoryAmount<Prisma.Decimal, "investment">;
+export type CategoryIncomeDate = CategoryAmount<Prisma.Decimal, "income">;
+
+async function getAmountPerCategoryForTimeRange(
   userId: string,
+  type: TransactionType,
   startDate: Date,
   endDate: Date
-): Promise<CategoryExpenseDate[]> {
+) {
   try {
-    const categoryExpenses = await prisma.categoryAmount.findMany({
+    const categoryAmounts = await prisma.categoryAmount.findMany({
       where: {
         userId,
         date: { gte: startDate, lte: endDate },
-        type: "expense",
+        type,
         amount: { gt: 0 },
       },
       select: {
@@ -487,11 +591,44 @@ async function getExpensePerCategoryForTimeRange(
       orderBy: { date: "asc" },
     });
 
-    return categoryExpenses.map((categoryExpense) => ({
-      category: categoryExpense.category,
-      expense: categoryExpense.amount,
-      date: formatDate_MMM_YYYY(categoryExpense.date),
-    }));
+    return categoryAmounts.map((categoryAmount) => ({
+      category: categoryAmount.category,
+      [type]: categoryAmount.amount,
+      date: formatDate_MMM_YYYY(categoryAmount.date),
+    })) as CategoryAmount<Prisma.Decimal, TransactionType>[];
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+}
+
+async function getAmountPerPaymentModeForTimeRange(
+  userId: string,
+  type: TransactionType,
+  startDate: Date,
+  endDate: Date
+) {
+  try {
+    const paymentModeAmounts = await prisma.paymentModeAmount.findMany({
+      where: {
+        userId,
+        date: { gte: startDate, lte: endDate },
+        transactionType: type,
+        amount: { gt: 0 },
+      },
+      select: {
+        paymentMode: true,
+        amount: true,
+        date: true,
+      },
+      orderBy: { date: "asc" },
+    });
+
+    return paymentModeAmounts.map((paymentModeAmount) => ({
+      category: paymentModeAmount.paymentMode,
+      [type]: paymentModeAmount.amount,
+      date: formatDate_MMM_YYYY(paymentModeAmount.date),
+    })) as CategoryAmount<Prisma.Decimal, TransactionType>[];
   } catch (error) {
     console.log(error);
     return [];

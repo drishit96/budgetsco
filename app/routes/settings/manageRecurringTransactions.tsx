@@ -1,9 +1,8 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { useLoaderData, useNavigation } from "@remix-run/react";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import type { Navigation } from "@remix-run/router";
 import { useState } from "react";
 import { RecurringTransaction } from "~/components/RecurringTransaction";
@@ -14,7 +13,7 @@ import {
 } from "~/modules/recurring/recurring.service";
 import { getSessionData } from "~/utils/auth.utils.server";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [
     ...(rootModule?.meta ?? []),

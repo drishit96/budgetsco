@@ -129,7 +129,7 @@ export async function editTransaction(
   timezone: string
 ) {
   try {
-    let tasks: Promise<any>[] = [];
+    const tasks: Promise<any>[] = [];
     const oldTransaction = await prisma.transaction.findFirst({
       where: { id: transactionId, userId },
     });
@@ -243,9 +243,9 @@ export async function editTransaction(
       }
     }
 
-    let categoriesToCreate = [];
-    let categoriesToUpdate = [];
-    let categoriesToDelete = [];
+    const categoriesToCreate = [];
+    const categoriesToUpdate = [];
+    const categoriesToDelete = [];
 
     if (newTransaction.type !== oldTransaction.type) {
       categoriesToDelete.push(
@@ -267,7 +267,7 @@ export async function editTransaction(
         newTransaction.category3,
       ];
 
-      for (let newCategory of newCategories) {
+      for (const newCategory of newCategories) {
         if (isNullOrEmpty(newCategory)) continue;
         if (oldCategories.includes(newCategory)) {
           categoriesToUpdate.push(newCategory);
@@ -276,7 +276,7 @@ export async function editTransaction(
         }
       }
 
-      for (let oldCategory of oldCategories) {
+      for (const oldCategory of oldCategories) {
         if (isNullOrEmpty(oldCategory)) continue;
         if (!newCategories.includes(oldCategory)) {
           categoriesToDelete.push(oldCategory);
@@ -439,8 +439,7 @@ async function updatePaymentModeAmount(
     },
     update: {
       amount: {
-        increment:
-          operationType === "add" ? amount : amount.negated(),
+        increment: operationType === "add" ? amount : amount.negated(),
       },
     },
     where: {
@@ -463,6 +462,7 @@ export async function getTransactions(
   filter?: {
     types?: string[];
     categories?: string[];
+    paymentModes?: string[];
   }
 ) {
   const currentMonth = month ? parseDate(month) : getFirstDateOfThisMonth(timezone);
@@ -480,7 +480,7 @@ export async function getTransactions(
       where.AND = [];
       if (filter.types) {
         const typeFilter = [];
-        for (let type of filter.types) {
+        for (const type of filter.types) {
           if (isNullOrEmpty(type)) continue;
           typeFilter.push({ type });
         }
@@ -488,11 +488,19 @@ export async function getTransactions(
       }
       if (filter.categories) {
         const categoryFilter = [];
-        for (let category of filter.categories) {
+        for (const category of filter.categories) {
           if (isNullOrEmpty(category)) continue;
           categoryFilter.push({ category });
         }
         categoryFilter.length && where.AND.push({ OR: categoryFilter });
+      }
+      if (filter.paymentModes) {
+        const paymentModeFilter = [];
+        for (const paymentMode of filter.paymentModes) {
+          if (isNullOrEmpty(paymentMode)) continue;
+          paymentModeFilter.push({ paymentMode });
+        }
+        paymentModeFilter.length && where.AND.push({ OR: paymentModeFilter });
       }
     }
 
@@ -591,7 +599,7 @@ export async function createMonthlyTarget(
 
   const categoryAmounts: Prisma.CategoryAmountCreateManyInput[] = [];
 
-  for (let targetData of categoryWiseTargetDetails) {
+  for (const targetData of categoryWiseTargetDetails) {
     categoryAmounts.push({
       date,
       type: "expense",
@@ -632,14 +640,14 @@ export async function editMonthlyTarget(
       return true;
     }
 
-    let valuesArr: Prisma.Sql[] = [];
-    for (let item of categoryWiseTargetDetails) {
+    const valuesArr: Prisma.Sql[] = [];
+    for (const item of categoryWiseTargetDetails) {
       const category = item[0];
       const budget = item[1];
       valuesArr.push(
         Prisma.sql`(${Prisma.join([
           userId,
-          formatDate_YYYY_MM_DD(date),
+          Prisma.sql`CAST(${formatDate_YYYY_MM_DD(date)} AS DATE)`,
           "expense",
           category,
           0,
@@ -649,9 +657,9 @@ export async function editMonthlyTarget(
     }
 
     const categoryBudgetUpdate = prisma.$executeRaw(
-      Prisma.sql`INSERT INTO CategoryAmount (userId, date, type, category, amount, budget) VALUES ${Prisma.join(
+      Prisma.sql`INSERT INTO "CategoryAmount" ("userId", "date", "type", "category", "amount", "budget") VALUES ${Prisma.join(
         valuesArr
-      )} ON DUPLICATE KEY UPDATE budget = VALUES(budget)`
+      )} ON CONFLICT ("userId", "date", "type", "category") DO UPDATE SET budget = EXCLUDED.budget`
     );
     tasks.push(categoryBudgetUpdate);
 
@@ -811,7 +819,7 @@ export async function getCustomCategories(userId: string) {
   });
   if (customCategories.length == 0) return null;
   const map: { [key: string]: string[] } = {};
-  for (let category of customCategories) {
+  for (const category of customCategories) {
     if (map[category.type] == null) {
       map[category.type] = [category.value];
     } else {

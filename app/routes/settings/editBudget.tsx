@@ -16,12 +16,13 @@ import {
 } from "~/modules/transaction/transaction.schema";
 import { useEffect } from "react";
 import useConfirmOnBackPress from "~/lib/useConfirmOnBackPress.hook";
-import type { V2_MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
 import { formatDate_MMM_YYYY, getFirstDateOfThisMonth } from "~/utils/date.utils";
+import { logError } from "~/utils/logger.utils.server";
 
-export const meta: V2_MetaFunction = ({ matches }) => {
+export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "Edit budget - Budgetsco" }];
 };
@@ -110,8 +111,10 @@ export let action: ActionFunction = async ({ request }) => {
     }
 
     return json({ data: { isBudgetSaved: false } });
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    if (error && error.totalBudget == null) {
+      logError(error);
+    }
     return json({ data: { isBudgetSaved: false } });
   }
 };
