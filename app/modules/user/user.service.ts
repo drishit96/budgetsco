@@ -33,7 +33,6 @@ export async function saveNotificationToken(userId: string, notificationToken: s
     });
     return true;
   } catch (error) {
-    logError(error);
     return false;
   }
 }

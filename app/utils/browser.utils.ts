@@ -1,13 +1,10 @@
-export function getResolution() {
-  const width = window.screen.width * window.devicePixelRatio;
-  const height = window.screen.height * window.devicePixelRatio;
-  return [width, height];
-}
-
 export function isMobileView() {
-  if (window == null) return false;
-  const [width] = getResolution();
-  return width <= 640;
+  try {
+    if (window == null) return false;
+    return window.innerWidth <= 640;
+  } catch (e) {
+    return false;
+  }
 }
 
 export function isMobileDevice() {

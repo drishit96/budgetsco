@@ -113,7 +113,7 @@ export default function PieChartCard({
                 <tr>
                   {colHeaders.map((header, index) => (
                     <th
-                      className={`p-1 border border-primary ${
+                      className={`p-1 border border-primary tabular-nums ${
                         index == 0 ? "text-left" : "text-right"
                       }`}
                       key={header}
