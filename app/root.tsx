@@ -19,7 +19,7 @@ import {
 import styles from "./styles/app.css";
 import Report from "./components/Report";
 import GenericError from "./components/GenericError";
-import type { ReactElement } from "react";
+import type { ReactElement, ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { Spacer } from "./components/Spacer";
 import { isNotNullAndEmpty } from "./utils/text.utils";
@@ -154,7 +154,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 
 export type DialogProps = {
   title: string;
-  message: string;
+  message: ReactNode | string;
   showDialog: boolean;
   positiveButton?: string;
   negativeButton?: string;
@@ -173,6 +173,8 @@ export type BottomSheetProps = {
   show: boolean;
   content: ReactElement;
   closeButtonSize?: "sm" | "lg";
+  addToHistoryStack?: boolean;
+  onCloseClick?: () => void;
 };
 
 export type AppContext = {
@@ -532,7 +534,9 @@ export default function App() {
 
         <BottomSheet
           show={bottomSheetProps.show}
+          addToHistoryStack={bottomSheetProps.addToHistoryStack}
           closeButtonSize={bottomSheetProps.closeButtonSize}
+          onCloseClick={bottomSheetProps.onCloseClick}
           setShow={() => {
             setBottomSheetProps((prev) => ({ ...prev, show: !prev.show }));
           }}
