@@ -1,9 +1,15 @@
 import { formatDate_MMMM_YYYY } from "./date.utils";
+import { isNullOrEmpty } from "./text.utils";
 
-export function groupBy<T>(array: T[], key: keyof T) {
+export function groupBy<T>(array: T[], key: keyof T, includeKeyInObject = false) {
   let map = new Map<string, T[]>();
-  for (const item of array) {
+  for (let item of array) {
     const searchKey = (item[key] as unknown as string).trim();
+    if (isNullOrEmpty(searchKey)) continue;
+    if (includeKeyInObject) {
+      item = { ...item };
+      delete item[key];
+    }
     if (map.has(searchKey)) {
       map.get(searchKey)!.push(item);
     } else {

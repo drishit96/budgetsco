@@ -53,9 +53,7 @@ type TrendReportResponse = {
     date: string;
     budget: Prisma.Decimal;
     expense: Prisma.Decimal;
-    income: Prisma.Decimal;
     incomeEarned: Prisma.Decimal;
-    investment: Prisma.Decimal;
     investmentDone: Prisma.Decimal;
   }[];
   totalExpense: Prisma.Decimal;
@@ -67,20 +65,20 @@ export type ExpenseTrendReportResponse = Omit<
   TrendReportResponse,
   "totalIncomeEarned" | "totalInvestmentDone"
 > & {
-  categoryExpensesByCategory: { [key: string]: CategoryExpenseDate[] };
-  expensesByPaymentMode: { [key: string]: CategoryExpenseDate[] };
+  categoryExpensesByCategory: { [key: string]: ExpensePerDate[] };
+  expensesByPaymentMode: { [key: string]: ExpensePerDate[] };
 };
 
 export type InvestmentTrendReportResponse = Omit<
   TrendReportResponse,
   "totalExpense" | "totalIncomeEarned"
 > & {
-  categoryInvestmentsByCategory: { [key: string]: CategoryInvestmentDate[] };
-  investmentsByPaymentMode: { [key: string]: CategoryInvestmentDate[] };
+  categoryInvestmentsByCategory: { [key: string]: InvestmentPerDate[] };
+  investmentsByPaymentMode: { [key: string]: InvestmentPerDate[] };
 };
 
 export type IncomeTrendReportResponse = TrendReportResponse & {
-  categoryIncomeByCategory: { [key: string]: CategoryIncomeDate[] };
+  categoryIncomeByCategory: { [key: string]: IncomePerDate[] };
 };
 
 export async function getThisMonthReport(
@@ -286,8 +284,12 @@ export async function getExpenseTrendReport(
   return {
     targets,
     totalExpense,
-    categoryExpensesByCategory: Object.fromEntries(groupBy(categoryExpenses, "category")),
-    expensesByPaymentMode: Object.fromEntries(groupBy(expensesByPaymentMode, "category")),
+    categoryExpensesByCategory: Object.fromEntries(
+      groupBy(categoryExpenses, "category", true)
+    ),
+    expensesByPaymentMode: Object.fromEntries(
+      groupBy(expensesByPaymentMode, "category", true)
+    ),
   };
 }
 
@@ -328,10 +330,10 @@ export async function getInvestmentTrendReport(
     targets,
     totalInvestmentDone,
     categoryInvestmentsByCategory: Object.fromEntries(
-      groupBy(categoryInvestments, "category")
+      groupBy(categoryInvestments, "category", true)
     ),
     investmentsByPaymentMode: Object.fromEntries(
-      groupBy(investmentsByPaymentMode, "category")
+      groupBy(investmentsByPaymentMode, "category", true)
     ),
   };
 }
@@ -379,7 +381,9 @@ export async function getIncomeTrendReport(
     totalExpense,
     totalIncomeEarned,
     totalInvestmentDone,
-    categoryIncomeByCategory: Object.fromEntries(groupBy(categoryIncomes, "category")),
+    categoryIncomeByCategory: Object.fromEntries(
+      groupBy(categoryIncomes, "category", true)
+    ),
   };
 }
 
@@ -565,9 +569,12 @@ type CategoryAmount<T, K extends TransactionType> = CategoryDate & {
   [prop in K]: T;
 };
 
-export type CategoryExpenseDate = CategoryAmount<Prisma.Decimal, "expense">;
-export type CategoryInvestmentDate = CategoryAmount<Prisma.Decimal, "investment">;
-export type CategoryIncomeDate = CategoryAmount<Prisma.Decimal, "income">;
+export type ExpensePerDate = Omit<CategoryAmount<Prisma.Decimal, "expense">, "category">;
+export type InvestmentPerDate = Omit<
+  CategoryAmount<Prisma.Decimal, "investment">,
+  "category"
+>;
+export type IncomePerDate = Omit<CategoryAmount<Prisma.Decimal, "income">, "category">;
 
 async function getAmountPerCategoryForTimeRange(
   userId: string,
@@ -641,9 +648,7 @@ async function getTargets(userId: string, startDate: Date, endDate: Date) {
       date: true,
       budget: true,
       expense: true,
-      income: true,
       incomeEarned: true,
-      investment: true,
       investmentDone: true,
     },
     where: {

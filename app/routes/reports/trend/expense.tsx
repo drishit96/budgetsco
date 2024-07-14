@@ -58,10 +58,10 @@ export default function ExpenseTrendReport() {
   const trendingReportContext = useOutletContext<TrendingReportContext>();
 
   const expenseDistribution = Object.entries(categoryExpensesByCategory)
-    .map(([category, categoryExpenses]) => {
+    .map(([category, expensePerDate]) => {
       return {
         name: category.toString(),
-        value: sum(categoryExpenses.map((c) => c.expense)),
+        value: sum(expensePerDate.map((c) => c.expense)),
       };
     })
     .sort((a, b) => (calculate(b.value).minus(a.value).gt(0) ? 1 : -1));
