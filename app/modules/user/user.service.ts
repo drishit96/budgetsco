@@ -80,17 +80,18 @@ type TurnstileResponse = {
   cdata: string;
 };
 
-export async function validateChallengeResponse(form: FormData, action: ChallengeAction) {
+export async function validateChallengeResponse(
+  token: string | undefined,
+  action: ChallengeAction
+) {
   try {
     if (process.env.NODE_ENV !== "production") return true;
 
-    if (form == null) return false;
-    const token = form.get("cf-turnstile-response");
     if (token == null) return false;
 
     let formData = new FormData();
     formData.append("secret", process.env.TURNSTILE_SECRET_KEY!);
-    formData.append("response", token.toString());
+    formData.append("response", token);
 
     const url = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
     const result = await fetch(url, {

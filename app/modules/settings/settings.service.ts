@@ -98,6 +98,23 @@ export async function updateIsMFAOnPreference(userId: string, isMFAOn: boolean) 
   }
 }
 
+export async function updateIsPasskeyPresentPreference(
+  userId: string,
+  isPasskeyPresent: boolean
+) {
+  try {
+    const currentTime = new Date().getTime();
+    await prisma.userPreference.update({
+      data: { isPasskeyPresent, lastModified: currentTime },
+      where: { userId },
+    });
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
 export async function updateCollectAnalyticsPreference(
   userId: string,
   collectAnalytics: boolean

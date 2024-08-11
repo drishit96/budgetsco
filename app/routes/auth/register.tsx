@@ -48,7 +48,8 @@ export const meta: MetaFunction = ({ matches }) => {
 export const action: ActionFunction = async ({ request }) => {
   try {
     const form = await request.formData();
-    const isRequestFromHuman = await validateChallengeResponse(form, "register");
+    const cfToken = form.get("cf-turnstile-response")?.toString();
+    const isRequestFromHuman = await validateChallengeResponse(cfToken, "register");
     if (!isRequestFromHuman) return json({ apiError: "Invalid request" });
 
     const idToken = form.get("idToken")?.toString();

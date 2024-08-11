@@ -1,4 +1,3 @@
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import type { Navigation } from "@remix-run/router";
 import { Ripple } from "@rmwc/ripple";
 import type { SubmitOptions } from "@remix-run/react";
@@ -13,6 +12,7 @@ import InfoIcon from "./icons/InfoIcon";
 import RepeatIcon from "./icons/RepeatIcon";
 import { Spacer } from "./Spacer";
 import TrashIcon from "./icons/TrashIcon";
+import ListItem from "./ListItem";
 
 export function Transaction({
   transaction,
@@ -31,7 +31,6 @@ export function Transaction({
   setExpandedIndex: React.Dispatch<React.SetStateAction<number | undefined>>;
   submitAction?: string;
 }) {
-  const [listItemParent] = useAutoAnimate<HTMLDivElement>();
   const context = useOutletContext<AppContext>();
   const submit = useSubmit();
   const isTransactionUpdateInProgress =
@@ -40,49 +39,42 @@ export function Transaction({
     navigation.formData?.get("transactionId") === transaction.id;
 
   return (
-    <div ref={listItemParent}>
-      <Ripple>
-        <button
-          data-test-id={`more-${transaction.category.split(" ").join("")}-${
-            transaction.amount
-          }`}
-          className={`w-full bg-base focus-border border-primary p-2 
-          ${hideDivider ? "" : "border-b"} 
-          ${expandedIndex === index ? "border-t border-l border-r rounded-t-md" : ""}`}
-          onClick={(e) => {
-            e.preventDefault();
-            setExpandedIndex((prevIndex) => (prevIndex === index ? undefined : index));
-          }}
-        >
-          <div className="flex flex-col">
-            <div className="flex">
-              <span className="font-bold">{transaction.category}</span>
-              <span className="flex-grow"></span>
-              <span
-                className={
-                  getTransactionColor(transaction.type) + " font-bold tabular-nums"
-                }
-              >
-                {transaction.type === "income" ? "+" : "-"}
-                {formatNumber(
-                  transaction.amount.toString(),
-                  context.userPreferredLocale ?? context.locale
-                )}
-              </span>
-            </div>
-            <Spacer size={1} />
-            <div className="flex">
-              <span className="text-gray-500">
-                {formatDate_DD_MMMM_YYYY(new Date(transaction.createdAt))}
-              </span>
-              <span className="flex-grow"></span>
-              <span className="text-gray-500">{transaction.paymentMode}</span>
-            </div>
+    <ListItem
+      dataTestId={`more-${transaction.category.split(" ").join("")}-${
+        transaction.amount
+      }`}
+      hideDivider={hideDivider}
+      index={index}
+      expandedIndex={expandedIndex}
+      setExpandedIndex={setExpandedIndex}
+      content={
+        <div className="flex flex-col">
+          <div className="flex">
+            <span className="font-bold">{transaction.category}</span>
+            <span className="flex-grow"></span>
+            <span
+              className={
+                getTransactionColor(transaction.type) + " font-bold tabular-nums"
+              }
+            >
+              {transaction.type === "income" ? "+" : "-"}
+              {formatNumber(
+                transaction.amount.toString(),
+                context.userPreferredLocale ?? context.locale
+              )}
+            </span>
           </div>
-        </button>
-      </Ripple>
-
-      {expandedIndex === index && (
+          <Spacer size={1} />
+          <div className="flex">
+            <span className="text-gray-500">
+              {formatDate_DD_MMMM_YYYY(new Date(transaction.createdAt))}
+            </span>
+            <span className="flex-grow"></span>
+            <span className="text-gray-500">{transaction.paymentMode}</span>
+          </div>
+        </div>
+      }
+      expandedContent={
         <div>
           {transaction.description && (
             <div className="text-primary border-l border-r border-primary bg-base">
@@ -166,7 +158,7 @@ export function Transaction({
             </Form>
           </div>
         </div>
-      )}
-    </div>
+      }
+    ></ListItem>
   );
 }

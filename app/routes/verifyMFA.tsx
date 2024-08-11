@@ -26,7 +26,7 @@ import {
 import { getFCMRegistrationToken, isNotificationSupported } from "~/utils/firebase.utils";
 import { logError } from "~/utils/logger.utils.server";
 import type { Currency } from "~/utils/number.utils";
-import { isNotNullAndEmpty } from "~/utils/text.utils";
+import { isNotNullAndEmpty, isNullOrEmpty } from "~/utils/text.utils";
 
 export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
@@ -46,7 +46,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   const form = await request.formData();
   const otp = form.get("otp")?.toString();
-  if (otp == null) return json({ error: "Invalid code" });
+  if (isNullOrEmpty(otp)) return json({ error: "Invalid code" });
 
   const { userId, idToken } = partialSessionData;
   const isValidToken = await verify2FAToken(userId, otp);
