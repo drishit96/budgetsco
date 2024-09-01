@@ -58,10 +58,6 @@ export const meta: MetaFunction = ({ matches }) => {
 export const action: ActionFunction = async ({ request }) => {
   try {
     const form = await request.formData();
-    const cfToken = form.get("cf-turnstile-response")?.toString();
-    const isRequestFromHuman = await validateChallengeResponse(cfToken, "login");
-    if (!isRequestFromHuman) return json({ apiError: "Invalid request" });
-
     const idToken = form.get("idToken")?.toString();
 
     if (request.method === "GET" || idToken == null) {
@@ -71,6 +67,12 @@ export const action: ActionFunction = async ({ request }) => {
     const user = await getUserDataFromIdToken(idToken, true);
     if (user == null || user.emailId == null) {
       return redirect("/auth/login");
+    }
+
+    if (!user.isPasskeyLogin) {
+      const cfToken = form.get("cf-turnstile-response")?.toString();
+      const isRequestFromHuman = await validateChallengeResponse(cfToken, "login");
+      if (!isRequestFromHuman) return json({ apiError: "Invalid request" });
     }
 
     const userPreferences = await getUserPreferences(user.userId);
@@ -145,6 +147,7 @@ export default function Login() {
     locale: string;
     lastModified: number | null;
   }>();
+  const [turnstileToken, setTurnstileToken] = useState("");
   const [error, setError] = useState("");
   const [showSuccessText, setShowSuccessText] = useState(false);
   const submit = useSubmit();
@@ -225,9 +228,7 @@ export default function Login() {
   async function handlePasskeyLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    const challengeResponse =
-      (window.turnstile && window.turnstile.getResponse(window.turnstileWidgetId)) ?? "";
-    if (UI_ENV !== "test" && !challengeResponse) {
+    if (UI_ENV !== "test" && !turnstileToken) {
       setError("Invalid request");
       return;
     }
@@ -239,7 +240,7 @@ export default function Login() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ cfToken: challengeResponse }),
+      body: JSON.stringify({ cfToken: turnstileToken }),
     });
 
     let authResponse: AuthenticationResponseJSON | null = null;
@@ -264,7 +265,6 @@ export default function Login() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        cfToken: challengeResponse,
         authResponse,
       }),
     });
@@ -295,7 +295,6 @@ export default function Login() {
         const form = new FormData();
         form.set("idToken", idToken);
         form.set("browserTimezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
-        form.set("cf-turnstile-response", challengeResponse);
 
         const isNotificationsSupported = await isNotificationSupported();
         if (isNotificationsSupported && Notification.permission === "granted") {
@@ -363,7 +362,7 @@ export default function Login() {
                 value={Intl.DateTimeFormat().resolvedOptions().timeZone}
               />
 
-              <Turnstile action="login" />
+              <Turnstile action="login" onNewToken={setTurnstileToken} />
 
               <Spacer />
               <Ripple>

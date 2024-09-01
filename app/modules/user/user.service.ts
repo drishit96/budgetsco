@@ -1,6 +1,7 @@
 import { DBErrorDescriptions, DBErrors } from "~/lib/error.constant";
 import { logError } from "~/utils/logger.utils.server";
 import prisma from "../../lib/prisma";
+import { isNullOrEmpty } from "~/utils/text.utils";
 
 export async function createUser(id: string, emailId: string) {
   try {
@@ -87,7 +88,7 @@ export async function validateChallengeResponse(
   try {
     if (process.env.NODE_ENV !== "production") return true;
 
-    if (token == null) return false;
+    if (isNullOrEmpty(token)) return false;
 
     let formData = new FormData();
     formData.append("secret", process.env.TURNSTILE_SECRET_KEY!);

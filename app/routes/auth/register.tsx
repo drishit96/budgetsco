@@ -115,6 +115,7 @@ export default function Register() {
   }>({});
   const submit = useSubmit();
 
+  const [turnstileToken, setTurnstileToken] = useState("");
   const [emailId, setEmailId] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -147,9 +148,7 @@ export default function Register() {
       return;
     }
 
-    const challengeResponse =
-      (window.turnstile && window.turnstile.getResponse(window.turnstileWidgetId)) ?? "";
-    if (!challengeResponse) {
+    if (!turnstileToken) {
       setErrors((prev) => ({
         ...prev,
         confirmPassword: "Invalid request",
@@ -163,7 +162,7 @@ export default function Register() {
       form.set("idToken", idToken);
       form.set("browserTimezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
       form.set("browserLocale", navigator.language);
-      form.set("cf-turnstile-response", challengeResponse);
+      form.set("cf-turnstile-response", turnstileToken);
 
       const isNotificationsSupported = await isNotificationSupported();
       if (isNotificationsSupported && Notification.permission === "granted") {
@@ -251,7 +250,7 @@ export default function Register() {
               value={Intl.DateTimeFormat().resolvedOptions().timeZone}
             />
 
-            <Turnstile action="register" />
+            <Turnstile action="register" onNewToken={setTurnstileToken} />
 
             <Spacer />
             <Ripple>

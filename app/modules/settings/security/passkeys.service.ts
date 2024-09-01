@@ -12,6 +12,7 @@ import { randomUUID } from "crypto";
 import { logError } from "~/utils/logger.utils.server";
 import { isNullOrEmpty } from "~/utils/text.utils";
 import { updateIsPasskeyPresentPreference } from "../settings.service";
+import prisma from "../../../lib/prisma";
 
 const RP_NAME = "budgetsco";
 // const RP_ID = "localhost";
