@@ -27,6 +27,7 @@ if (process.env.DEPLOYMENT_TARGET === "flyio") {
       "d3-time",
       "d3-time-format",
       "react-is",
+      "@simplewebauthn/browser",
     ],
   };
 } else {
@@ -62,6 +63,7 @@ if (process.env.DEPLOYMENT_TARGET === "flyio") {
       "d3-time",
       "d3-time-format",
       "react-is",
+      "@simplewebauthn/browser",
     ],
   };
 }

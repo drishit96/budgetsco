@@ -356,13 +356,13 @@ export default function Index() {
           ref={bannerParent}
           className="flex flex-wrap items-center space-y-1 w-full md:w-3/4 lg:w-2/3 xl:w-1/2"
         >
-          {!context.isMFAOn && (
+          {!context.isMFAOn && !context.isPasskeyPresent && (
             <Banner
               type="important"
-              message={`Enable two factor authentication (2FA) to add an additional layer of security to your account by requiring more than just a password to sign in. (You can always enable it from settings)`}
+              message={`Add a passkey to avoid the need to remember your password. Or enable two factor authentication (2FA) to add an additional layer of security to your account by requiring more than just a password to sign in. (You can always enable it from settings)`}
               showLink
-              link="/settings/security/mfa"
-              linkText="Set up 2FA"
+              link="/settings/security/list"
+              linkText="Set up passkey or 2FA"
               allowDismiss={false}
               allowPermanentDismiss={true}
               permanentDismissSettingName={"show2FASuggestion"}

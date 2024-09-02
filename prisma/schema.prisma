@@ -101,6 +101,7 @@ model UserPreference {
   isActiveSubscription Boolean  @default(false)
   isMFAOn              Boolean  @default(false)
   collectAnalytics     Boolean?
+  isPasskeyPresent     Boolean  @default(false)
   lastModified         Float    @default(0)
   user                 User?    @relation(fields: [userId], references: [id])
 
@@ -157,4 +158,37 @@ model STRSubscription {
   cancelAtExpiry Boolean @default(false)
 
   @@index([subscriptionId])
+}
+
+model PasskeyChallenge {
+  webAuthnUserID String
+  userId         String?
+  challenge      String
+  createdAt      Float  @default(0)
+
+  @@id([webAuthnUserID])
+  @@index([userId, createdAt])
+}
+
+model Passkey {
+  id             String  @id
+  webAuthnUserID String
+  userId         String
+  publicKey      Bytes   @db.ByteA
+  deviceType     String
+  backedUp       Boolean @default(false)
+  displayName    String?
+  createdAt      Float   @default(0)
+  lastUsed       Float   @default(0)
+  transports     PasskeyTransport[]
+
+  @@unique([userId, webAuthnUserID])
+}
+
+model PasskeyTransport {
+  id            String
+  transport     String
+  passkey       Passkey @relation(fields: [id], references: [id])
+
+  @@id([id, transport])
 }

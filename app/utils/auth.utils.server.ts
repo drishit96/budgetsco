@@ -55,6 +55,18 @@ export function getPartialSessionCookieBuilder() {
   });
 }
 
+export function getPasskeyPartialSessionCookieBuilder() {
+  return createCookie("__passkey_partial_session", {
+    expires: new Date(Date.now() + 90_000),
+    httpOnly: true,
+    maxAge: 90,
+    path: "/",
+    sameSite: "strict",
+    secrets: [process.env.COOKIE_SECRET!],
+    secure: true,
+  });
+}
+
 type SessionCookie = {
   session: string;
   prefs: UserPreferenceResponse;
@@ -104,6 +116,7 @@ export async function getUserDataFromIdToken(
       emailId: decodedToken.email,
       isEmailVerified: decodedToken.email_verified,
       tokenExpiry: decodedToken.exp,
+      isPasskeyLogin: decodedToken.isPasskeyLogin,
     };
   } catch (error) {
     console.log(error);
@@ -161,6 +174,32 @@ export async function getPartialSessionCookie(userId: string, idToken: string) {
     userId,
     idToken,
   });
+}
+
+export async function getPasskeyPartialSessionCookie(webAuthnUserID: string) {
+  return getPasskeyPartialSessionCookieBuilder().serialize({
+    webAuthnUserID,
+  });
+}
+
+export async function getPasskeyPartialSessionData(request: Request) {
+  try {
+    const partialSessionCookie: { webAuthnUserID: string } =
+      await getPasskeyPartialSessionCookieBuilder().parse(request.headers.get("Cookie"));
+    return partialSessionCookie;
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function getCustomToken(userId: string) {
+  try {
+    initializeFirebaseApp();
+    return await auth().createCustomToken(userId, { isPasskeyLogin: true });
+  } catch (error) {
+    logError(error);
+    return null;
+  }
 }
 
 export async function getPartialSessionData(request: Request) {

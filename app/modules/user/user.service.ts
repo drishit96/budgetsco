@@ -1,6 +1,7 @@
 import { DBErrorDescriptions, DBErrors } from "~/lib/error.constant";
 import { logError } from "~/utils/logger.utils.server";
 import prisma from "../../lib/prisma";
+import { isNullOrEmpty } from "~/utils/text.utils";
 
 export async function createUser(id: string, emailId: string) {
   try {
@@ -80,17 +81,18 @@ type TurnstileResponse = {
   cdata: string;
 };
 
-export async function validateChallengeResponse(form: FormData, action: ChallengeAction) {
+export async function validateChallengeResponse(
+  token: string | undefined,
+  action: ChallengeAction
+) {
   try {
     if (process.env.NODE_ENV !== "production") return true;
 
-    if (form == null) return false;
-    const token = form.get("cf-turnstile-response");
-    if (token == null) return false;
+    if (isNullOrEmpty(token)) return false;
 
     let formData = new FormData();
     formData.append("secret", process.env.TURNSTILE_SECRET_KEY!);
-    formData.append("response", token.toString());
+    formData.append("response", token);
 
     const url = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
     const result = await fetch(url, {

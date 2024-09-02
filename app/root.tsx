@@ -120,6 +120,7 @@ export const loader = async ({
     locale,
     isEmailVerified,
     isMFAOn,
+    isPasskeyPresent,
     paymentGateway,
   } = sessionData;
   return json({
@@ -128,6 +129,7 @@ export const loader = async ({
     locale,
     isEmailVerified,
     isMFAOn,
+    isPasskeyPresent,
     paymentGateway,
   });
 };
@@ -154,7 +156,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 
 export type DialogProps = {
   title: string;
-  message: ReactNode | string;
+  message: JSX.Element | string;
   showDialog: boolean;
   positiveButton?: string;
   negativeButton?: string;
@@ -200,6 +202,7 @@ export default function App() {
     updateLocalStore,
     customCategories,
     isMFAOn,
+    isPasskeyPresent,
     paymentGateway,
     lastModified,
   } = useLoaderData<typeof loader>();
@@ -242,6 +245,7 @@ export default function App() {
     locale,
     isEmailVerified,
     isMFAOn,
+    isPasskeyPresent,
     paymentGateway,
   };
 

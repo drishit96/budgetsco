@@ -52,6 +52,7 @@ export async function verify2FAToken(userId: string, token: string) {
     return verifyAuthenticatorToken(token, decoder.decode(decryptedSecret));
   } catch (error) {
     logError(error);
+    return false;
   }
 }
 

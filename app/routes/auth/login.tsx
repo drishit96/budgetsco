@@ -17,6 +17,7 @@ import {
   getFCMRegistrationToken,
   isNotificationSupported,
   signInUser,
+  signInUserWithCustomToken,
 } from "~/utils/firebase.utils";
 import {
   getUserDataFromIdToken,
@@ -46,6 +47,8 @@ import Turnstile from "~/components/Turnstile";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
 import { UI_ENV } from "~/lib/ui.config";
+import type { AuthenticationResponseJSON } from "@simplewebauthn/types";
+import { browserSupportsWebAuthn, startAuthentication } from "@simplewebauthn/browser";
 
 export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
@@ -55,9 +58,6 @@ export const meta: MetaFunction = ({ matches }) => {
 export const action: ActionFunction = async ({ request }) => {
   try {
     const form = await request.formData();
-    const isRequestFromHuman = await validateChallengeResponse(form, "login");
-    if (!isRequestFromHuman) return json({ apiError: "Invalid request" });
-
     const idToken = form.get("idToken")?.toString();
 
     if (request.method === "GET" || idToken == null) {
@@ -69,6 +69,12 @@ export const action: ActionFunction = async ({ request }) => {
       return redirect("/auth/login");
     }
 
+    if (!user.isPasskeyLogin) {
+      const cfToken = form.get("cf-turnstile-response")?.toString();
+      const isRequestFromHuman = await validateChallengeResponse(cfToken, "login");
+      if (!isRequestFromHuman) return json({ apiError: "Invalid request" });
+    }
+
     const userPreferences = await getUserPreferences(user.userId);
     if (userPreferences == null) {
       throw new Error(`userPreferences missing for userId: ${user.userId}`);
@@ -76,7 +82,7 @@ export const action: ActionFunction = async ({ request }) => {
 
     trackEvent(request, EventNames.PASSWORD_VALID, undefined, user.userId);
 
-    if (userPreferences.isMFAOn) {
+    if (!user.isPasskeyLogin && userPreferences.isMFAOn) {
       return redirect("/verifyMFA", {
         headers: {
           "Set-Cookie": await getPartialSessionCookie(user.userId, idToken),
@@ -136,12 +142,12 @@ export default function Login() {
   const navigation = useNavigation();
   const actionData = useActionData<{
     apiError?: string;
-    idToken: string;
     customCategories: { [key: string]: string[] } | null;
     currency: Currency | null;
     locale: string;
     lastModified: number | null;
   }>();
+  const [turnstileToken, setTurnstileToken] = useState("");
   const [error, setError] = useState("");
   const [showSuccessText, setShowSuccessText] = useState(false);
   const submit = useSubmit();
@@ -149,6 +155,9 @@ export default function Login() {
   const [emailId, setEmailId] = useState("");
   const [password, setPassword] = useState("");
   const [isLoginInProgress, setIsLoginInProgress] = useState(false);
+  const [isPasskeyLoginInProgress, setIsPasskeyLoginInProgress] = useState(false);
+
+  const [doesBrowserSupportsWebAuthn, setDoesBrowserSupportsWebAuthn] = useState(false);
 
   const authPageContext = useOutletContext<AuthPageContext>();
 
@@ -165,6 +174,7 @@ export default function Login() {
       actionData.locale && context.setUserPreferredLocale(actionData.locale);
       setShowSuccessText(true);
       setIsLoginInProgress(false);
+      setIsPasskeyLoginInProgress(false);
 
       return history.replaceState(null, "", "/dashboard");
     }
@@ -173,6 +183,10 @@ export default function Login() {
   useEffect(() => {
     authPageContext.setActiveTab("login");
   }, [authPageContext]);
+
+  useEffect(() => {
+    setDoesBrowserSupportsWebAuthn(browserSupportsWebAuthn());
+  }, []);
 
   async function handleLogin(
     e: React.FormEvent<HTMLFormElement>,
@@ -211,6 +225,92 @@ export default function Login() {
     setIsLoginInProgress(false);
   }
 
+  async function handlePasskeyLogin(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    if (UI_ENV !== "test" && !turnstileToken) {
+      setError("Invalid request");
+      return;
+    }
+
+    setIsPasskeyLoginInProgress(true);
+
+    const resp = await fetch("/api/getPasskeyAuthenticationOptions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ cfToken: turnstileToken }),
+    });
+
+    let authResponse: AuthenticationResponseJSON | null = null;
+    try {
+      const authenticationOptions = await resp.json();
+      authResponse = await startAuthentication(authenticationOptions);
+    } catch (error: any) {
+      console.log(error);
+      setIsPasskeyLoginInProgress(false);
+      setError("Something went wrong. Please try again");
+    }
+
+    if (authResponse == null) {
+      setIsPasskeyLoginInProgress(false);
+      setError("Something went wrong. Please try again");
+      return;
+    }
+
+    const verificationResp = await fetch("/api/verifyPasskey", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        authResponse,
+      }),
+    });
+
+    const verificationResponse = await verificationResp.json();
+    if (verificationResponse == null) {
+      setIsPasskeyLoginInProgress(false);
+      setError("Something went wrong. Please try again");
+      return;
+    }
+
+    if (verificationResponse.isVerified) {
+      const token = verificationResponse.token;
+      if (token == null) {
+        setIsPasskeyLoginInProgress(false);
+        setError("Something went wrong. Please try again");
+        return;
+      }
+
+      const { idToken, error } = await signInUserWithCustomToken(token);
+      if (error) {
+        setIsPasskeyLoginInProgress(false);
+        setError("Something went wrong. Please try again");
+        return;
+      }
+
+      if (idToken) {
+        const form = new FormData();
+        form.set("idToken", idToken);
+        form.set("browserTimezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
+
+        const isNotificationsSupported = await isNotificationSupported();
+        if (isNotificationsSupported && Notification.permission === "granted") {
+          const { token: notificationToken } = await getFCMRegistrationToken();
+          if (isNotNullAndEmpty(notificationToken)) {
+            form.set("notificationToken", notificationToken);
+          }
+        }
+        submit(form, { method: "POST", replace: true });
+      }
+    } else {
+      setIsPasskeyLoginInProgress(false);
+      setError("Passkey verification failed. Please try again");
+    }
+  }
+
   return (
     <>
       <main className="pt-7 w-full md:w-3/4 lg:w-1/3">
@@ -223,54 +323,83 @@ export default function Login() {
           </div>
           <Spacer />
 
-          <Form replace method="POST" onSubmit={(e) => handleLogin(e, emailId, password)}>
-            <Input
-              name="emailId"
-              type="email"
-              label="E-mail Id"
-              value={emailId}
-              autoComplete="email"
-              autoFocus={true}
-              required
-              onChangeHandler={(e) => setEmailId(e.target.value)}
-            />
-            <Spacer />
+          <div>
+            <Form
+              replace
+              method="POST"
+              onSubmit={(e) => handleLogin(e, emailId, password)}
+            >
+              <Input
+                name="emailId"
+                type="email"
+                label="E-mail Id"
+                value={emailId}
+                autoComplete="email"
+                autoFocus={true}
+                required
+                onChangeHandler={(e) => setEmailId(e.target.value)}
+              />
+              <Spacer />
 
-            <Input
-              name="password"
-              type="password"
-              label="Password"
-              value={password}
-              autoComplete="current-password"
-              required
-              onChangeHandler={(e) => setPassword(e.target.value)}
-            />
-            <Spacer />
+              <Input
+                name="password"
+                type="password"
+                label="Password"
+                value={password}
+                autoComplete="current-password"
+                required
+                onChangeHandler={(e) => setPassword(e.target.value)}
+              />
+              <Spacer />
 
-            <Link className="text-accent" to="/auth/forgotPassword">
-              Forgot password?
-            </Link>
+              <Link className="text-accent" to="/auth/forgotPassword">
+                Forgot password?
+              </Link>
 
-            <input
-              name="browserTimezone"
-              type="hidden"
-              value={Intl.DateTimeFormat().resolvedOptions().timeZone}
-            />
+              <input
+                name="browserTimezone"
+                type="hidden"
+                value={Intl.DateTimeFormat().resolvedOptions().timeZone}
+              />
 
-            <Turnstile action="login" />
+              <Turnstile action="login" onNewToken={setTurnstileToken} />
 
-            <Spacer />
-            <Ripple>
-              <button
-                type="submit"
-                className="btn-primary w-full"
-                disabled={navigation.state === "submitting" || isLoginInProgress}
-              >
-                {navigation.state === "submitting" || isLoginInProgress
-                  ? "Logging in..."
-                  : "Log in"}
-              </button>
-            </Ripple>
+              <Spacer />
+              <Ripple>
+                <button
+                  type="submit"
+                  className="btn-primary w-full"
+                  disabled={
+                    navigation.state === "submitting" ||
+                    isLoginInProgress ||
+                    isPasskeyLoginInProgress
+                  }
+                >
+                  {isLoginInProgress ? "Logging in..." : "Log in"}
+                </button>
+              </Ripple>
+            </Form>
+
+            {doesBrowserSupportsWebAuthn && (
+              <>
+                <Spacer />
+                <Form method="POST" replace onSubmit={handlePasskeyLogin}>
+                  <Ripple>
+                    <button
+                      type="submit"
+                      className="btn-secondary w-full"
+                      disabled={isLoginInProgress || isPasskeyLoginInProgress}
+                    >
+                      {isPasskeyLoginInProgress
+                        ? navigation.state === "submitting"
+                          ? "Verifying passkey..."
+                          : "Waiting for authenticator..."
+                        : "Login with Passkey"}
+                    </button>
+                  </Ripple>
+                </Form>
+              </>
+            )}
 
             <Spacer size={3} />
             <div className="flex flex-col items-center text-sm">
@@ -302,7 +431,7 @@ export default function Login() {
                 </Link>
               </span>
             </div>
-          </Form>
+          </div>
         </div>
       </main>
     </>
