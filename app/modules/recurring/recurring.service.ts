@@ -249,3 +249,43 @@ export async function deleteRecurringTransaction(userId: string, transactionId: 
   });
   return count > 0;
 }
+
+export async function skipRecurringTransaction(
+  userId: string,
+  transactionId: string
+): Promise<boolean> {
+  try {
+    const transaction = await prisma.recurringTransaction.findFirst({
+      where: {
+        id: transactionId,
+        userId,
+      },
+    });
+
+    if (!transaction) {
+      return false;
+    }
+
+    // Update the next execution date to skip this occurrence
+    const nextDate = getNextExecutionDate(
+      transaction.occurrence,
+      transaction.interval,
+      transaction.executionDate
+    );
+
+    await prisma.recurringTransaction.update({
+      where: {
+        id: transactionId,
+      },
+      data: {
+        executionDate: nextDate,
+        isNotified: false,
+      },
+    });
+
+    return true;
+  } catch (error) {
+    console.error("Error skipping recurring transaction:", error);
+    return false;
+  }
+}

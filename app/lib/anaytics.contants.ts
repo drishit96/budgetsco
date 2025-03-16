@@ -17,6 +17,7 @@ const EventNames = {
   BUDGET_CREATED: "Budget created",
   BUDGET_EDITED: "Budget edited",
   LOGOUT: "Logged out",
+  RECURRING_TRANSACTION_SKIPPED: "Recurring transaction skipped",
 } as const;
 
 export { EventNames };
