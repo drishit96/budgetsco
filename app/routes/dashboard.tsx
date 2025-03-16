@@ -30,6 +30,7 @@ import {
   getOverDueTransactions,
   getUpcomingTransactions,
   markTransactionAsDone,
+  skipRecurringTransaction,
 } from "~/modules/recurring/recurring.service";
 import type { RecurringTransactionsResponse } from "~/modules/recurring/recurring.schema";
 import { RecurringTransaction } from "~/components/RecurringTransaction";
@@ -109,6 +110,20 @@ export const action: ActionFunction = async ({ request }) => {
         if (isNotNullAndEmpty(token)) {
           const isTokenSaved = await saveNotificationToken(userId, token);
           return json({ registrationTokenSaved: isTokenSaved });
+        }
+      } else if (formName === "SKIP_TRANSACTION_FORM") {
+        const transactionId = form.get("transactionId")?.toString();
+        if (isNotNullAndEmpty(transactionId)) {
+          const isTransactionSkipped = await skipRecurringTransaction(
+            userId,
+            transactionId
+          );
+
+          if (isTransactionSkipped) {
+            trackEvent(request, EventNames.RECURRING_TRANSACTION_SKIPPED);
+          }
+
+          return json({ isTransactionSkipped });
         }
       }
     }

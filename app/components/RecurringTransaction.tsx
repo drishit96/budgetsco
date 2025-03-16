@@ -12,6 +12,7 @@ import InfoIcon from "./icons/InfoIcon";
 import { Spacer } from "./Spacer";
 import TrashIcon from "./icons/TrashIcon";
 import EditIcon from "./icons/EditIcon";
+import SkipIcon from "./icons/SkipIcon";
 
 export function RecurringTransaction({
   transaction,
@@ -43,6 +44,9 @@ export function RecurringTransaction({
     isTransactionUpdateInProgress &&
     navigation.formMethod === "DELETE" &&
     navigation.formData?.get("formName") === "DELETE_RECURRING_TRANSACTION_FORM";
+  const isTransactionSkipInProgress =
+    isTransactionUpdateInProgress &&
+    navigation.formData?.get("formName") === "SKIP_TRANSACTION_FORM";
 
   return (
     <div ref={listItemParent}>
@@ -105,6 +109,29 @@ export function RecurringTransaction({
                   <CheckIcon size={24} />
                   <Spacer size={1} />
                   {isTransactionMaskAsDoneInProgress ? "Saving..." : "Done"}
+                </button>
+              </Ripple>
+            </Form>
+          )}
+
+          {!manageView && (
+            <Form
+              replace
+              method="POST"
+              className="flex-1 cursor-pointer border-l border-r border-primary"
+            >
+              <input type="hidden" name="formName" value="SKIP_TRANSACTION_FORM" />
+              <input type="hidden" name="transactionId" value={transaction.id} />
+              <Ripple>
+                <button
+                  data-test-id={"btn-recurring-skip"}
+                  className="flex flex-col w-full p-3 items-center focus-border"
+                  type="submit"
+                  disabled={isTransactionUpdateInProgress}
+                >
+                  <SkipIcon size={24} />
+                  <Spacer size={1} />
+                  {isTransactionSkipInProgress ? "Skipping..." : "Skip"}
                 </button>
               </Ripple>
             </Form>
