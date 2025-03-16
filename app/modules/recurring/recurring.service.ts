@@ -270,7 +270,8 @@ export async function skipRecurringTransaction(
     const nextDate = getNextExecutionDate(
       transaction.occurrence,
       transaction.interval,
-      transaction.executionDate
+      transaction.executionDate,
+      false
     );
 
     await prisma.recurringTransaction.update({
