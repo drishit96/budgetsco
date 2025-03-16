@@ -27,7 +27,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Find and Replace FIREBASE_API_KEY - Using Build Variable
         run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{FIREBASE_API_KEY}#/${{ env.FIREBASE_API_KEY }}/g'' {} \;
@@ -95,7 +95,7 @@ jobs:
           retry_on: error
           command: npx playwright test --project='Chromium'
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
