@@ -1,5 +1,5 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { redirect, json } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import {
   Form,
   useLoaderData,
@@ -43,7 +43,7 @@ export let loader: LoaderFunction = async ({ request }) => {
   const oobCode = urlParams.get("oobCode");
 
   if (mode == null || oobCode == null) {
-    return json("Bad request", { status: 400 });
+    return new Response("Bad request", { status: 400 });
   }
 
   let isEmailVerified = false;
@@ -59,10 +59,10 @@ export let loader: LoaderFunction = async ({ request }) => {
     }
   }
 
-  return json({
+  return {
     mode,
     oobCode,
-  });
+  };
 };
 
 export let action: ActionFunction = async ({ request }) => {
@@ -84,7 +84,7 @@ export let action: ActionFunction = async ({ request }) => {
     }
     const sessionCookie = await getSessionCookie(idToken, userPreferences);
     trackEvent(request, EventNames.EMAIL_VERIFIED);
-    return json(
+    return Response.json(
       { isEmailVerified: true },
       {
         headers: {

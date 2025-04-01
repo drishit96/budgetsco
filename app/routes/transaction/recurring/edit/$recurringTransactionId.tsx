@@ -1,7 +1,7 @@
 import { Ripple } from "@rmwc/ripple";
 import { useEffect, useState } from "react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 
 import {
   Form,
@@ -59,7 +59,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   const { userId } = sessionData;
   if (isNullOrEmpty(params.recurringTransactionId)) {
-    return json({ transaction: null });
+    return { transaction: null };
   }
 
   const form = await request.formData();
@@ -104,13 +104,13 @@ export const action: ActionFunction = async ({ request, params }) => {
       }
       const isTransactionSaved = await editRecurringTransactionTask;
       isTransactionSaved && trackEvent(request, EventNames.RECURRING_TRANSACTION_EDITED);
-      return isTransactionSaved ? json({ data: { isTransactionSaved: true } }) : null;
+      return isTransactionSaved ? { data: { isTransactionSaved: true } } : null;
     } catch (err) {
       console.error(err);
       return null;
     }
   } else {
-    return json({ errors });
+    return { errors };
   }
 };
 
@@ -121,7 +121,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   }
 
   const { timezone } = sessionData;
-  if (isNullOrEmpty(params.recurringTransactionId)) return json({ transaction: null });
+  if (isNullOrEmpty(params.recurringTransactionId)) return { transaction: null };
 
   const recurringTransaction = await getRecurringTransaction(
     params.recurringTransactionId,
@@ -132,10 +132,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     "en-US",
     { timeZone: timezone }
   );
-  return {
+  return Response.json({
     startDate,
     recurringTransaction,
-  };
+  });
 };
 
 const transactionTypes = getAllTransactionTypes();

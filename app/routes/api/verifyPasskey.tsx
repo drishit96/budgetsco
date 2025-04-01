@@ -1,4 +1,4 @@
-import { json, type ActionFunction } from "@remix-run/node";
+import type { ActionFunction } from "@remix-run/node";
 import type { AuthenticationResponseJSON } from "@simplewebauthn/types";
 import { verifyPasskey } from "~/modules/settings/security/passkeys.service";
 import { getCustomToken, getPasskeyPartialSessionData } from "~/utils/auth.utils.server";
@@ -21,7 +21,7 @@ export let action: ActionFunction = async ({ request }) => {
 
     if (userId == null) return { isVerified: false, token: null };
     const token = await getCustomToken(userId);
-    return json({ isVerified: true, token });
+    return { isVerified: true, token };
   } catch (error) {
     logError(error);
     return { isVerified: false, token: null };

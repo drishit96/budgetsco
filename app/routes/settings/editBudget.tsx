@@ -1,7 +1,7 @@
 import type { AppContext } from "~/root";
 import TargetSetter from "~/components/TargetSetter";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { useActionData, useLoaderData, useOutletContext } from "@remix-run/react";
 import {
   addNewCustomCategories,
@@ -95,7 +95,7 @@ export let action: ActionFunction = async ({ request }) => {
           month,
           numberOfCategoriesModified: categoryBudgetMap.size.toString(),
         });
-        return json({ data: { isBudgetSaved: true } });
+        return { data: { isBudgetSaved: true } };
       }
     } else {
       if (categoryWiseErrors != null) {
@@ -107,15 +107,15 @@ export let action: ActionFunction = async ({ request }) => {
           ...categoryWiseErrors,
         };
       }
-      return json({ errors });
+      return { errors };
     }
 
-    return json({ data: { isBudgetSaved: false } });
+    return { data: { isBudgetSaved: false } };
   } catch (error: any) {
     if (error && error.totalBudget == null) {
       logError(error);
     }
-    return json({ data: { isBudgetSaved: false } });
+    return { data: { isBudgetSaved: false } };
   }
 };
 

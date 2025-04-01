@@ -1,5 +1,5 @@
-import { cert, initializeApp } from "firebase-admin/app";
-import { apps, auth } from "firebase-admin";
+import { cert, initializeApp, getApps } from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
 import { createCookie } from "@remix-run/node";
 import type { UserPreferenceResponse } from "~/modules/settings/settings.schema";
 import { authenticator } from "otplib";
@@ -7,7 +7,7 @@ import { logError } from "./logger.utils.server";
 
 function initializeFirebaseApp() {
   try {
-    if (apps.length == 0) {
+    if (getApps().length == 0) {
       initializeApp({
         credential: cert(JSON.parse(process.env.FIREBASE_ADMIN_KEY!)),
       });
@@ -89,7 +89,7 @@ export async function getSessionData(request: Request): Promise<UserSessionData 
       request.headers.get("Cookie")
     );
     if (sessionCookie == null) return null;
-    const decodedToken = await auth().verifySessionCookie(sessionCookie.session);
+    const decodedToken = await getAuth().verifySessionCookie(sessionCookie.session);
     const userPreferences = sessionCookie.prefs;
     return {
       ...userPreferences,
@@ -109,7 +109,7 @@ export async function getUserDataFromIdToken(
 ) {
   initializeFirebaseApp();
   try {
-    const decodedToken = await auth().verifyIdToken(idToken, checkRevoked);
+    const decodedToken = await getAuth().verifyIdToken(idToken, checkRevoked);
     if (decodedToken == null) return null;
     return {
       userId: decodedToken.uid,
@@ -131,7 +131,7 @@ export async function getSessionCookie(
   initializeFirebaseApp();
   const expiresIn = 60 * 60 * 24 * 5 * 1000;
 
-  const session = await auth().createSessionCookie(idToken, {
+  const session = await getAuth().createSessionCookie(idToken, {
     expiresIn,
   });
 
@@ -195,7 +195,7 @@ export async function getPasskeyPartialSessionData(request: Request) {
 export async function getCustomToken(userId: string) {
   try {
     initializeFirebaseApp();
-    return await auth().createCustomToken(userId, { isPasskeyLogin: true });
+    return await getAuth().createCustomToken(userId, { isPasskeyLogin: true });
   } catch (error) {
     logError(error);
     return null;

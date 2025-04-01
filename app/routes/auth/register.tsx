@@ -1,6 +1,6 @@
 import { Ripple } from "@rmwc/ripple";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import {
   Form,
   Link,
@@ -50,7 +50,7 @@ export const action: ActionFunction = async ({ request }) => {
     const form = await request.formData();
     const cfToken = form.get("cf-turnstile-response")?.toString();
     const isRequestFromHuman = await validateChallengeResponse(cfToken, "register");
-    if (!isRequestFromHuman) return json({ apiError: "Invalid request" });
+    if (!isRequestFromHuman) return { apiError: "Invalid request" };
 
     const idToken = form.get("idToken")?.toString();
 
@@ -60,7 +60,7 @@ export const action: ActionFunction = async ({ request }) => {
     if (user == null || user.emailId == null) return redirect("/register");
 
     const { error } = await createUser(user.userId, user.emailId);
-    if (error) return json({ errors: {}, error });
+    if (error) return { errors: {}, error };
 
     const browserTimezone = form.get("browserTimezone")?.toString() ?? "Etc/GMT";
     const browserLocale = form.get("browserLocale")?.toString() ?? "en-US";
@@ -73,7 +73,7 @@ export const action: ActionFunction = async ({ request }) => {
 
     const userPreferences = await getUserPreferences(user.userId);
     if (userPreferences == null) {
-      return json({ error: "Error saving necessary data, please try again" });
+      return { error: "Error saving necessary data, please try again" };
     }
     const sessionCookie = await getSessionCookie(idToken, userPreferences);
 
@@ -90,7 +90,7 @@ export const action: ActionFunction = async ({ request }) => {
       },
     });
   } catch (error) {
-    return json({ error: "Something went wrong, please try again" });
+    return { error: "Something went wrong, please try again" };
   }
 };
 
@@ -101,7 +101,7 @@ export let loader: LoaderFunction = async ({ request }) => {
     return redirect("/dashboard");
   }
 
-  return json({ error: "" });
+  return { error: "" };
 };
 
 export default function Register() {

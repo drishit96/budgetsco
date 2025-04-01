@@ -1,5 +1,5 @@
 import type { LoaderFunction } from "@remix-run/node";
-import { redirect, json } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { getSessionData } from "~/utils/auth.utils.server";
@@ -23,7 +23,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     return redirect("/dashboard");
   }
 
-  return json({ isEmailVerified, emailId });
+  return { isEmailVerified, emailId };
 };
 
 export default function VerifyEmail() {

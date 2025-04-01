@@ -1,7 +1,7 @@
 import type { AppContext } from "~/root";
 import TargetSetter from "~/components/TargetSetter";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { useActionData, useOutletContext } from "@remix-run/react";
 import {
   addNewCustomCategories,
@@ -30,7 +30,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     return redirect("/auth/login");
   }
 
-  return json({});
+  return {};
 };
 
 export let action: ActionFunction = async ({ request }) => {
@@ -68,12 +68,12 @@ export let action: ActionFunction = async ({ request }) => {
     if (monthTargetDetails != null && categoryWiseTargetDetails != null) {
       const categoryTotal = Decimal.sum(...categoryWiseTargetDetails.values());
       if (monthTargetDetails.budget.lessThan(categoryTotal)) {
-        return json({
+        return {
           errors: {
             totalBudget:
               "Total budget must be greater than or equal to the sum of all category budgets",
           },
-        });
+        };
       }
 
       const tasks: Promise<boolean>[] = [];
@@ -100,7 +100,7 @@ export let action: ActionFunction = async ({ request }) => {
           month,
           numberOfCategories: categoryWiseTargetDetails.size.toString(),
         });
-        return json({ data: { isBudgetSaved: true } });
+        return { data: { isBudgetSaved: true } };
       }
     } else {
       if (categoryWiseErrors != null) {
@@ -112,13 +112,13 @@ export let action: ActionFunction = async ({ request }) => {
           ...categoryWiseErrors,
         };
       }
-      return json({ errors });
+      return { errors };
     }
 
-    return json({ data: { isBudgetSaved: false } });
+    return { data: { isBudgetSaved: false } };
   } catch (error) {
     console.log(error);
-    return json({ data: { isBudgetSaved: false } });
+    return { data: { isBudgetSaved: false } };
   }
 };
 

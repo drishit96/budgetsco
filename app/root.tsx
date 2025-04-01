@@ -1,10 +1,8 @@
-import type { DataFunctionArgs, LinksFunction, TypedResponse } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import type { LinksFunction, LoaderFunctionArgs, TypedResponse } from "@remix-run/node";
 import type { ShouldRevalidateFunction } from "@remix-run/react";
 import {
   Link,
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,
@@ -16,10 +14,10 @@ import {
   useRouteError,
 } from "@remix-run/react";
 
-import styles from "./styles/app.css";
+import styles from "./styles/app.css?url";
 import Report from "./components/Report";
 import GenericError from "./components/GenericError";
-import type { ReactElement, ReactNode } from "react";
+import type { ReactElement } from "react";
 import { useEffect, useRef, useState } from "react";
 import { Spacer } from "./components/Spacer";
 import { isNotNullAndEmpty } from "./utils/text.utils";
@@ -97,22 +95,23 @@ export const ErrorBoundary: ErrorBoundaryComponent = () => {
 
 export const loader = async ({
   request,
-}: DataFunctionArgs): Promise<TypedResponse<Partial<UserSessionData>>> => {
+}: LoaderFunctionArgs): Promise<TypedResponse<Partial<UserSessionData>>> => {
   const sessionData = await getSessionData(request);
-  if (sessionData == null) return json({});
+  if (sessionData == null) return Response.json({});
   const userPreferences = await getUserPreferencesAfterTimestamp(
     sessionData.lastModified,
     sessionData.userId
   );
 
-  const headers: { [key: string]: string } = {};
   if (userPreferences != null) {
-    headers["Set-Cookie"] = await getSessionCookieWithUpdatedPreferences(
-      request,
-      userPreferences
-    );
+    const headers: Headers = new Headers({
+      "Set-Cookie": await getSessionCookieWithUpdatedPreferences(
+        request,
+        userPreferences
+      ),
+    });
 
-    return json({ ...userPreferences, updateLocalStore: true }, { headers });
+    return Response.json({ ...userPreferences, updateLocalStore: true }, { headers });
   }
   const {
     isActiveSubscription,
@@ -123,7 +122,7 @@ export const loader = async ({
     isPasskeyPresent,
     paymentGateway,
   } = sessionData;
-  return json({
+  return Response.json({
     isActiveSubscription,
     currency,
     locale,
@@ -554,7 +553,6 @@ export default function App() {
         </div>
         <ScrollRestoration />
         <Scripts />
-        <LiveReload />
       </body>
     </html>
   );

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import type { Navigation } from "@remix-run/router";
 import {
   Link,
@@ -87,7 +87,7 @@ export const action: ActionFunction = async ({ request }) => {
             });
           }
 
-          return json({ isTransactionMarkedAsDone });
+          return { isTransactionMarkedAsDone };
         }
       } else if (formName === "REFRESH_SESSION_FORM") {
         const idToken = form.get("idToken")?.toString();
@@ -96,7 +96,7 @@ export const action: ActionFunction = async ({ request }) => {
           if (preferences == null) {
             throw new Error(`userPreferences missing for userId: ${userId}`);
           }
-          return json(
+          return Response.json(
             { sessionRefreshed: true },
             {
               headers: {
@@ -109,7 +109,7 @@ export const action: ActionFunction = async ({ request }) => {
         const token = form.get("token")?.toString();
         if (isNotNullAndEmpty(token)) {
           const isTokenSaved = await saveNotificationToken(userId, token);
-          return json({ registrationTokenSaved: isTokenSaved });
+          return { registrationTokenSaved: isTokenSaved };
         }
       } else if (formName === "SKIP_TRANSACTION_FORM") {
         const transactionId = form.get("transactionId")?.toString();
@@ -123,7 +123,7 @@ export const action: ActionFunction = async ({ request }) => {
             trackEvent(request, EventNames.RECURRING_TRANSACTION_SKIPPED);
           }
 
-          return json({ isTransactionSkipped });
+          return { isTransactionSkipped };
         }
       }
     }
@@ -137,12 +137,12 @@ export const action: ActionFunction = async ({ request }) => {
       if (formName === "DELETE_RECURRING_TRANSACTION_FORM") {
         isDeleted = await deleteRecurringTransaction(userId, transactionId);
         trackEvent(request, EventNames.RECURRING_TRANSACTION_DELETED);
-        return json({ isDeleted });
+        return { isDeleted };
       }
 
       isDeleted = await removeTransaction(transactionId, userId, timezone);
       trackEvent(request, EventNames.TRANSACTION_DELETED);
-      return json({ isDeleted });
+      return { isDeleted };
     }
   }
 };
@@ -183,7 +183,7 @@ export const loader: LoaderFunction = async ({ request }) => {
       ? true
       : false;
 
-  return json(
+  return Response.json(
     {
       overDueTransactions: await overDueTransactions,
       upcomingTransactions: await upcomingTransactions,

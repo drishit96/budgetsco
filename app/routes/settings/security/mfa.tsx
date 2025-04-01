@@ -1,5 +1,5 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import type { ShouldRevalidateFunction, MetaFunction } from "@remix-run/react";
 import { Form, useActionData, useLoaderData, useOutletContext } from "@remix-run/react";
 import { useEffect } from "react";
@@ -34,24 +34,24 @@ export const action: ActionFunction = async ({ request }) => {
     await disable2FA(user.userId);
     trackEvent(request, EventNames.MFA_DISABLED);
     trackUserProfileUpdate({ request, updateType: "unset", data: ["mfa"] });
-    return json({ mfaOn: false });
+    return { mfaOn: false };
   }
 
   const form = await request.formData();
   const token = form.get("token")?.toString();
   const secret = form.get("secret")?.toString();
   if (token == null || token.length !== 6 || secret == null) {
-    return json({ error: "Invalid code" });
+    return { error: "Invalid code" };
   }
 
   const isValid = verifyAuthenticatorToken(token, secret);
-  if (!isValid) return json({ error: "Invalid code" });
+  if (!isValid) return { error: "Invalid code" };
 
   await encryptAndSaveMFASecret(user.userId, secret);
   trackEvent(request, EventNames.MFA_ENABLED);
   trackUserProfileUpdate({ request, updateType: "set", data: { mfa: "yes" } });
 
-  return json({ mfaOn: true });
+  return { mfaOn: true };
 };
 
 export const shouldRevalidate: ShouldRevalidateFunction = ({
@@ -74,8 +74,8 @@ export const loader: LoaderFunction = async ({ request }) => {
     const { isEmailVerified, emailId, isMFAOn } = sessionData;
     if (!isEmailVerified || emailId == null) return redirect("/verifyEmail");
 
-    if (isMFAOn) return json({ isMFAOn: true });
-    return json(await generateAuthenticatorSecret(emailId));
+    if (isMFAOn) return { isMFAOn: true };
+    return await generateAuthenticatorSecret(emailId);
   } catch (error) {
     logError(error);
   }

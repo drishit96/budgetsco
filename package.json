@@ -4,26 +4,27 @@
   "description": "",
   "license": "",
   "sideEffects": false,
+  "type": "module",
   "scripts": {
     "postinstall": "npx prisma generate",
-    "build": "npm run build:css && npm run build:worker && remix build",
+    "build": "npm run build:css && npm run build:worker && remix vite:build",
     "build:css": "tailwindcss -m -i ./styles/app.css -o app/styles/app.css",
     "build:worker": "esbuild ./app/entry.worker.ts --outfile=./public/entry.worker.js --minify --bundle --format=esm --define:process.env.NODE_ENV='\"production\"'",
-    "deploy": "cp ./app/lib/prod.ui.config.ts ./app/lib/ui.config.ts && npm uninstall @remix-run/serve && DEPLOYMENT_TARGET=flyio npm run build && fly deploy --remote-only && npm install @remix-run/serve",
+    "deploy": "cp ./app/lib/prod.ui.config.ts ./app/lib/ui.config.ts && DEPLOYMENT_TARGET=flyio npm run build && fly deploy --remote-only",
     "stage-deploy": "cp ./app/lib/test.ui.config.ts ./app/lib/ui.config.ts && NODE_ENV=production DEPLOYMENT_TARGET=vercel npm run build && vercel deploy --prod",
-    "dev": "cp ./app/lib/test.ui.config.ts ./app/lib/ui.config.ts && concurrently \"npm run dev:css\" \"npm run dev:worker\" \"remix dev\"",
+    "dev": "cp ./app/lib/test.ui.config.ts ./app/lib/ui.config.ts && concurrently \"npm run dev:css\" \"npm run dev:worker\" \"remix vite:dev\"",
     "dev:css": "tailwindcss -w -i ./styles/app.css -o app/styles/app.css",
     "dev:worker": "esbuild ./app/entry.worker.ts --outfile=./public/entry.worker.js --bundle --format=esm --define:process.env.NODE_ENV='\"development\"' --watch",
-    "start": "cross-env NODE_ENV=production node ./server.js",
-    "testserver": "concurrently \"npm run dev:css\" \"npm run dev:worker\" \"remix dev\""
+    "start": "cross-env NODE_ENV=production node --enable-source-maps ./server.js",
+    "testserver": "concurrently \"npm run dev:css\" \"npm run dev:worker\" \"remix vite:dev\""
   },
   "dependencies": {
     "@formkit/auto-animate": "^0.8.1",
     "@googleapis/androidpublisher": "^4.0.0",
     "@prisma/client": "^5.5.2",
-    "@remix-run/express": "2.2.0",
-    "@remix-run/node": "2.2.0",
-    "@remix-run/react": "2.2.0",
+    "@remix-run/express": "^2.16.2",
+    "@remix-run/node": "^2.16.2",
+    "@remix-run/react": "^2.16.2",
     "@remix-run/serve": "^2.10.2",
     "@remix-run/v1-route-convention": "^0.1.1",
     "@rmwc/dialog": "^7.0.3",
@@ -49,15 +50,15 @@
     "otplib": "^12.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "recharts": "^2.9.3",
+    "recharts": "^v3.0.0-alpha.9",
     "stripe": "12.6.0",
     "workbox-background-sync": "^7.0.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@playwright/test": "^1.38.1",
-    "@remix-run/dev": "2.2.0",
-    "@remix-run/eslint-config": "2.2.0",
+    "@remix-run/dev": "^2.16.2",
+    "@remix-run/route-config": "^2.16.2",
     "@simplewebauthn/types": "^10.0.0",
     "@tailwindcss/forms": "^0.5.2",
     "@types/lodash.escaperegexp": "^4.1.7",
@@ -71,8 +72,11 @@
     "npm-run-all": "^4.1.5",
     "postcss": "^8.4.13",
     "prisma": "^5.5.2",
+    "rollup-plugin-visualizer": "^5.14.0",
     "tailwindcss": "^3.3.5",
-    "typescript": "^5.1.3"
+    "typescript": "^5.1.3",
+    "vite": "^6.2.3",
+    "vite-tsconfig-paths": "^5.1.4"
   },
   "engines": {
     "node": "20.x"

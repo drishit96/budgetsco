@@ -1,5 +1,5 @@
 import type { LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { Link, useLoaderData, useOutletContext, useRouteError } from "@remix-run/react";
 import { getSessionData } from "~/utils/auth.utils.server";
 import { Spacer } from "~/components/Spacer";
@@ -46,7 +46,7 @@ export let loader: LoaderFunction = async ({ request }) => {
     const { userId, timezone } = sessionData;
     const reportsData = await getThisMonthReport(userId, timezone);
 
-    return json(reportsData, {
+    return Response.json(reportsData, {
       status: 200,
       headers: {
         "Cache-Control": `private, max-age=${5}`,

@@ -1,5 +1,5 @@
 import type { LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { Link, useLoaderData, useNavigation, useOutletContext } from "@remix-run/react";
 import { Spacer } from "~/components/Spacer";
 import { getSessionData } from "~/utils/auth.utils.server";
@@ -47,7 +47,7 @@ export let loader: LoaderFunction = async ({ request }) => {
       endMonth && endYear ? `${endYear}-${endMonth.padStart(2, "0")}` : undefined
     );
 
-    return json(trendingReport);
+    return Response.json(trendingReport);
   } catch (error) {
     logError(error);
     throw error;

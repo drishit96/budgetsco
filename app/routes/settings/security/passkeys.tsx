@@ -1,5 +1,5 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import {
   useActionData,
   useLoaderData,
@@ -44,43 +44,43 @@ export const action: ActionFunction = async ({ request }) => {
           registrationResponseJSON
         ) as RegistrationResponseJSON;
         const isVerified = await verifyRegistration(userId, registrationResponse);
-        return json({
+        return {
           formName,
           success: isVerified,
           error: isVerified ? null : "Invalid request",
-        });
+        };
       }
     } else if (formName === "SAVE_PASSKEY_NAME") {
       const passkeyId = form.get("passkeyId")?.toString();
       const passkeyName = form.get("passkeyName")?.toString();
       if (isNotNullAndEmpty(passkeyId) && isNotNullAndEmpty(passkeyName)) {
         const success = await updatePasskeyDisplayName(userId, passkeyId, passkeyName);
-        return json({
+        return {
           formName,
           success,
           error: success ? null : "Something went wrong",
-        });
+        };
       }
     } else if (formName === "DELETE_PASSKEY") {
       if (request.method !== "DELETE") {
-        return json({ formName, success: false, error: "Invalid request" });
+        return { formName, success: false, error: "Invalid request" };
       }
 
       const passkeyId = form.get("passkeyId")?.toString();
       if (isNotNullAndEmpty(passkeyId)) {
         const isPasskeyDeleted = await deletePasskey(userId, passkeyId);
-        return json({
+        return {
           formName,
           success: isPasskeyDeleted,
           error: isPasskeyDeleted ? null : "Passkey not found",
-        });
+        };
       }
     }
 
-    return json({ formName, success: false, error: "Invalid request" });
+    return { formName, success: false, error: "Invalid request" };
   } catch (error) {
     logError(error);
-    return json({ error: "Something went wrong. Please try again" });
+    return { error: "Something went wrong. Please try again" };
   }
 };
 
@@ -91,7 +91,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   }
 
   const passkeys = await getAllPasskeys(sessionData.userId);
-  return json({ passkeys });
+  return { passkeys };
 };
 
 export type PasskeyResponse = {
