@@ -43,7 +43,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     return redirect("/settings/createBudget");
   }
 
-  return budgetPerCategoryThisMonth;
+  return Response.json(budgetPerCategoryThisMonth);
 };
 
 export let action: ActionFunction = async ({ request }) => {
