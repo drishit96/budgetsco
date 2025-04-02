@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ResponsiveContainer, PieChart, Pie, Cell, Label, Tooltip } from "recharts";
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
 import type { Color, ColorMap } from "~/utils/colors.utils";
 import { CHART_COLOR_MAP } from "~/utils/colors.utils";
 import type { Currency } from "~/utils/number.utils";
@@ -33,6 +33,22 @@ export default function PieChartCard({
   colHeaders: string[];
 }) {
   const [chartView, setChartView] = useState(true);
+
+  const renderCenterLabel = () => {
+    return (
+      <text
+        x="50%"
+        y="50%"
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fontSize={28}
+        fill="var(--text-color-primary-dark)"
+      >
+        {formatToCurrencyCompact(total, locale, currency)}
+      </text>
+    );
+  };
+
   return (
     <>
       <div className="flex">
@@ -75,15 +91,8 @@ export default function PieChartCard({
                         }
                       />
                     ))}
-                    <Label
-                      width={30}
-                      position="center"
-                      fontSize={28}
-                      fill="var(--text-color-primary-dark)"
-                    >
-                      {formatToCurrencyCompact(total, locale, currency)}
-                    </Label>
                   </Pie>
+                  {renderCenterLabel()}
                   <Tooltip
                     contentStyle={{
                       backgroundColor: "var(--bg-color)",

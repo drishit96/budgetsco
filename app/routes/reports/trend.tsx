@@ -1,5 +1,5 @@
 import type { LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import {
   Link,
   Outlet,
@@ -52,12 +52,12 @@ export let loader: LoaderFunction = async ({ request }) => {
     const startDate = parseDate(startMonth);
     const endDate = parseDate(endMonth);
 
-    return json({
+    return {
       startMonth: startDate.getMonth() + 1,
       startYear: startDate.getFullYear(),
       endMonth: endDate.getMonth() + 1,
       endYear: endDate.getFullYear(),
-    });
+    };
   } catch (error) {
     logError(error);
     throw error;

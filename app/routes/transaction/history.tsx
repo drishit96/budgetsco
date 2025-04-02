@@ -3,7 +3,7 @@ import { Ripple } from "@rmwc/ripple";
 import { sub, add } from "date-fns";
 import { useEffect, useState } from "react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import type { ShouldRevalidateFunction, MetaFunction } from "@remix-run/react";
 import {
   useNavigation,
@@ -53,9 +53,9 @@ export let action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
   const transactionId = form.get("transactionId")?.toString();
   if (request.method !== "DELETE" || transactionId == null) return null;
-  return json({
+  return {
     isDeleted: await removeTransaction(transactionId, userId, timezone),
-  });
+  };
 };
 
 export let loader: LoaderFunction = async ({ request }): Promise<any> => {
@@ -78,7 +78,7 @@ export let loader: LoaderFunction = async ({ request }): Promise<any> => {
 
   const currentMonth = reqMonth ? parseDate(reqMonth) : getFirstDateOfThisMonth(timezone);
 
-  return json(
+  return Response.json(
     {
       types,
       categories,

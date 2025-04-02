@@ -1,10 +1,9 @@
 import type { NotificationToken } from "@prisma/client";
 import type { LoaderFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
 import { subHours } from "date-fns";
 import { initializeApp, getApps, cert } from "firebase-admin/app";
 import { getMessaging } from "firebase-admin/messaging";
-import type { Message } from "firebase-admin/lib/messaging/messaging-api";
+import type { Message } from "firebase-admin/messaging";
 import {
   getDueTransactionCountPerUser,
   markAsNotified,
@@ -19,7 +18,7 @@ export let loader: LoaderFunction = async (): Promise<any> => {
     const oneHourAgo = subHours(dateNow, 1);
     const dueTransactions = await getDueTransactionCountPerUser(oneHourAgo, dateNow);
     if (dueTransactions == null || dueTransactions.length == 0) {
-      return json({ done: true });
+      return { done: true };
     }
 
     const userIdDueTransactionCountMap = new Map<string, number>();
@@ -33,7 +32,7 @@ export let loader: LoaderFunction = async (): Promise<any> => {
       dueTransactions.map((m) => m.userId)
     );
     if (notificationTokens == null || notificationTokens.length == 0) {
-      return json({ noTokens: true });
+      return { noTokens: true };
     }
 
     if (getApps().length == 0) {
@@ -49,10 +48,10 @@ export let loader: LoaderFunction = async (): Promise<any> => {
       dateNow
     );
 
-    return json({ notificationsSent });
+    return { notificationsSent };
   } catch (error) {
     logError(error);
-    return json({ error });
+    return { error };
   }
 };
 

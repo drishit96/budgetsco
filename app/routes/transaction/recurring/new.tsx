@@ -1,7 +1,7 @@
 import { Ripple } from "@rmwc/ripple";
 import { useEffect } from "react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import {
   Form,
   useActionData,
@@ -67,10 +67,10 @@ export let action: ActionFunction = async ({ request }) => {
     if (startDateError) {
       recurringTransaction.errors.startDate = "Please select a valid date";
     }
-    return json({
+    return {
       data: { ...recurringTransactionInput, startDate },
       errors: recurringTransaction.errors,
-    });
+    };
   } else {
     const isRecurringTransactionSaved = await createNewRecurringTransaction(
       userId,
@@ -82,7 +82,7 @@ export let action: ActionFunction = async ({ request }) => {
       occurrence: recurringTransaction.transaction.occurrence,
       interval: recurringTransaction.transaction.interval.toString(),
     });
-    return json({ isRecurringTransactionSaved });
+    return { isRecurringTransactionSaved };
   }
 };
 
@@ -103,7 +103,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   const startDate = new Date().toLocaleString("en-US", { timeZone: timezone });
 
-  return json({ amount, category, type, paymentMode, description, startDate });
+  return { amount, category, type, paymentMode, description, startDate };
 };
 
 const transactionTypes = getAllTransactionTypes();

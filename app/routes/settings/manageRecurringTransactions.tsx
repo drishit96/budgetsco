@@ -1,6 +1,6 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { useLoaderData, useNavigation } from "@remix-run/react";
 import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import type { Navigation } from "@remix-run/router";
@@ -38,9 +38,9 @@ export let action: ActionFunction = async ({ request }) => {
 
       const formName = form.get("formName")?.toString();
       if (formName === "DELETE_RECURRING_TRANSACTION_FORM") {
-        return json({
+        return {
           isDeleted: await deleteRecurringTransaction(userId, transactionId),
-        });
+        };
       }
     }
   }
@@ -54,7 +54,7 @@ export let loader: LoaderFunction = async ({ request }): Promise<any> => {
 
   const recurringTransactions = await getAllRecurringTransactions(sessionData.userId);
 
-  return json({ recurringTransactions });
+  return Response.json({ recurringTransactions });
 };
 
 function renderRecurringTransactions(

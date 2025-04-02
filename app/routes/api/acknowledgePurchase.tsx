@@ -1,5 +1,5 @@
 import type { ActionFunction } from "@remix-run/node";
-import { redirect, json } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { createGPBSubscription } from "~/modules/subscriptions/gpb.subscriptions.service";
 import { getUserIdFromSession } from "~/utils/auth.utils.server";
 import { isNullOrEmpty } from "~/utils/text.utils";
@@ -14,7 +14,7 @@ export let action: ActionFunction = async ({ request }) => {
     const purchaseToken = body.purchaseToken;
 
     if (isNullOrEmpty(subscriptionId) || isNullOrEmpty(purchaseToken)) {
-      return json({ acknowledged: false });
+      return { acknowledged: false };
     }
 
     const acknowledged = await createGPBSubscription(
@@ -23,8 +23,8 @@ export let action: ActionFunction = async ({ request }) => {
       purchaseToken
     );
 
-    return json({ acknowledged });
+    return { acknowledged };
   } catch (error) {
-    return json({ acknowledged: false });
+    return { acknowledged: false };
   }
 };

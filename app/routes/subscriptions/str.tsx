@@ -1,5 +1,5 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { redirect, json } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { useOutletContext, useLoaderData } from "@remix-run/react";
 import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import { useEffect } from "react";
@@ -24,7 +24,7 @@ export const action: ActionFunction = async ({ request }) => {
   const session = await getSessionData(request);
   if (session == null) return redirect("/auth/login");
 
-  return json({ done: true });
+  return { done: true };
 };
 
 export let loader: LoaderFunction = async ({ request }) => {
@@ -88,7 +88,7 @@ export let loader: LoaderFunction = async ({ request }) => {
     };
   } catch (error) {
     logError(error);
-    return json({ error: "Something went wrong" });
+    return { error: "Something went wrong" };
   }
 };
 

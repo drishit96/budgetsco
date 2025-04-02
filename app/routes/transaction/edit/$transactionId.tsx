@@ -2,7 +2,7 @@ import type { Transaction } from "@prisma/client";
 import { Ripple } from "@rmwc/ripple";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 
 import {
   Form,
@@ -69,7 +69,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   const { userId, timezone } = sessionData;
-  if (isNullOrEmpty(params.transactionId)) return json({ transaction: null });
+  if (isNullOrEmpty(params.transactionId)) return { transaction: null };
 
   const form = await request.formData();
   const categoriesString = form.get("categories")?.toString();
@@ -105,14 +105,14 @@ export const action: ActionFunction = async ({ request, params }) => {
       const isTransactionSaved = await editTransactionTask;
       isTransactionSaved &&
         trackEvent(request, EventNames.TRANSACTION_EDITED, { type: transaction.type });
-      return isTransactionSaved ? json({ data: { isTransactionSaved: true } }) : null;
+      return isTransactionSaved ? { data: { isTransactionSaved: true } } : null;
     } catch (err) {
       console.error(err);
       logError(err);
       return null;
     }
   } else {
-    return json({ errors });
+    return { errors };
   }
 };
 
@@ -124,19 +124,19 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   const { userId, timezone } = sessionData;
 
-  if (isNullOrEmpty(params.transactionId)) return json({ transaction: null });
+  if (isNullOrEmpty(params.transactionId)) return { transaction: null };
 
   const transaction = await getTransaction(params.transactionId, sessionData.userId);
-  if (transaction == null) return json({ transaction: null });
+  if (transaction == null) return { transaction: null };
 
   const monthData = await getMonthlyTarget(userId, transaction.createdAt);
-  return {
+  return Response.json({
     monthData,
     transaction,
     isPastMonth:
       formatDate_YYYY_MM_DD(getFirstDateOfMonth(transaction.createdAt)) !==
       formatDate_YYYY_MM_DD(getFirstDateOfThisMonth(timezone)),
-  };
+  });
 };
 
 const transactionTypes = getAllTransactionTypes();

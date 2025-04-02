@@ -1,7 +1,7 @@
 import { Ripple } from "@rmwc/ripple";
 import { useEffect, useState } from "react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { Form, Link, useLoaderData, useOutletContext, useSubmit } from "@remix-run/react";
 import type { AppContext } from "~/root";
 import {
@@ -38,7 +38,7 @@ export let action: ActionFunction = async ({ request }) => {
     });
   }
 
-  return json({});
+  return {};
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -48,7 +48,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   }
 
   const { emailId } = sessionData;
-  return json({ emailId });
+  return { emailId };
 };
 
 export default function Settings() {

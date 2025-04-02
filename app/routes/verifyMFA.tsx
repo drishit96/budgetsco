@@ -1,5 +1,5 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import type { MetaFunction } from "@remix-run/react";
 import { Form, useActionData, useNavigation, useOutletContext } from "@remix-run/react";
 import { useEffect, useState } from "react";
@@ -46,11 +46,11 @@ export const action: ActionFunction = async ({ request }) => {
 
   const form = await request.formData();
   const otp = form.get("otp")?.toString();
-  if (isNullOrEmpty(otp)) return json({ error: "Invalid code" });
+  if (isNullOrEmpty(otp)) return { error: "Invalid code" };
 
   const { userId, idToken } = partialSessionData;
   const isValidToken = await verify2FAToken(userId, otp);
-  if (isValidToken == false) return json({ error: "Invalid code" });
+  if (isValidToken == false) return { error: "Invalid code" };
   trackEvent(request, EventNames.MFA_VALID);
 
   const tasks = [];
@@ -72,7 +72,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   trackEvent(request, EventNames.LOGGED_IN, undefined, userId);
-  return json(
+  return Response.json(
     {
       customCategories: await getCustomCategoriesTask,
       currency: userPreferences?.currency,

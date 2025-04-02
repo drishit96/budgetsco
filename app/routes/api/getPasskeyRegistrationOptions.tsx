@@ -1,5 +1,5 @@
 import type { LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { getRegistrationOptions } from "~/modules/settings/security/passkeys.service";
 import { getSessionData } from "~/utils/auth.utils.server";
 
@@ -10,5 +10,5 @@ export let loader: LoaderFunction = async ({ request }) => {
   }
 
   const { userId, emailId } = sessionData;
-  return json(await getRegistrationOptions(userId, emailId));
+  return Response.json(await getRegistrationOptions(userId, emailId));
 };

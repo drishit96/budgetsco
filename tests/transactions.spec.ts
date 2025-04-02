@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test.describe.serial("transactionCrudGroup", () => {
   test("can create transaction", async ({ page }) => {
-    await page.goto("http://127.0.0.1:3000/dashboard");
+    await page.goto("http://localhost:3000/dashboard");
     const existingTransactionCount = await page
       .locator("[data-test-id=more-Business-30]")
       .count();
@@ -23,7 +23,7 @@ test.describe.serial("transactionCrudGroup", () => {
   });
 
   test("can edit transaction", async ({ page }) => {
-    await page.goto("http://127.0.0.1:3000/dashboard");
+    await page.goto("http://localhost:3000/dashboard");
     const existingTransactionCount = await page
       .locator("[data-test-id=more-Business-30]")
       .count();
@@ -40,7 +40,7 @@ test.describe.serial("transactionCrudGroup", () => {
   });
 
   test("can delete transaction", async ({ page }) => {
-    await page.goto("http://127.0.0.1:3000/dashboard");
+    await page.goto("http://localhost:3000/dashboard");
     const existingTransactionCount = await page
       .locator("[data-test-id=more-Business-50]")
       .count();

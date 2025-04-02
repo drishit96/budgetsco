@@ -1,5 +1,6 @@
 import type { Event } from "mixpanel";
-import { init } from "mixpanel";
+import pkg from "mixpanel";
+const { init } = pkg;
 import { getSessionData } from "./auth.utils.server";
 import { logError } from "./logger.utils.server";
 

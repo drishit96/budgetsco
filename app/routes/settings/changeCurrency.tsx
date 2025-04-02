@@ -1,7 +1,7 @@
 import { Ripple } from "@rmwc/ripple";
 import { useEffect, useState } from "react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import {
   Form,
   useActionData,
@@ -47,19 +47,19 @@ export const action: ActionFunction = async ({ request }) => {
 
   const currentUserPreferences = await getUserPreferences(user.userId);
   if (currentUserPreferences == null)
-    return json({
+    return {
       data: {
         errors: { system: "Incorrect system state, please contact support" },
       },
-    });
+    };
 
-  if (isNullOrEmpty(currency)) return json({ data: { isCurrencySaved: true } });
+  if (isNullOrEmpty(currency)) return { data: { isCurrencySaved: true } };
 
   const userPreferenceInput = parseCurrencyPreferenceInput({ currency });
 
   let lastModified = 0;
   if (userPreferenceInput.errors) {
-    return json({ errors: userPreferenceInput.errors });
+    return { errors: userPreferenceInput.errors };
   } else {
     lastModified = await updateCurrencyPreference(user.userId, currency);
     trackEvent(request, EventNames.CURRENCY_CHANGED, {
@@ -69,9 +69,9 @@ export const action: ActionFunction = async ({ request }) => {
     trackUserProfileUpdate({ request, updateType: "set", data: { currency } });
   }
 
-  return json({
+  return {
     data: { isCurrencySaved: true, newCurrency: currency, lastModified },
-  });
+  };
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -85,7 +85,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     currency = (await getUserPreferences(userId))?.currency as string | null;
   }
 
-  return json({ currency });
+  return { currency };
 };
 
 export default function ChangeCurrency() {

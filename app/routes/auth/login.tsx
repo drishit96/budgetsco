@@ -1,6 +1,6 @@
 import { Ripple } from "@rmwc/ripple";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { data, redirect } from "@remix-run/node";
 import {
   Form,
   Link,
@@ -72,7 +72,7 @@ export const action: ActionFunction = async ({ request }) => {
     if (!user.isPasskeyLogin) {
       const cfToken = form.get("cf-turnstile-response")?.toString();
       const isRequestFromHuman = await validateChallengeResponse(cfToken, "login");
-      if (!isRequestFromHuman) return json({ apiError: "Invalid request" });
+      if (!isRequestFromHuman) return { apiError: "Invalid request" };
     }
 
     const userPreferences = await getUserPreferences(user.userId);
@@ -102,7 +102,7 @@ export const action: ActionFunction = async ({ request }) => {
     await Promise.allSettled(tasks);
     trackEvent(request, EventNames.LOGGED_IN, undefined, user.userId);
 
-    return json(
+    return data(
       {
         idToken,
         customCategories: await getCustomCategoriesTask,
@@ -118,7 +118,7 @@ export const action: ActionFunction = async ({ request }) => {
     );
   } catch (error) {
     console.log(error);
-    return json({ apiError: "Something went wrong, please try again" });
+    return { apiError: "Something went wrong, please try again" };
   }
 };
 
@@ -134,7 +134,7 @@ export let loader: LoaderFunction = async ({ request }) => {
     return redirect("/verifyMFA");
   }
 
-  return json({ apiError: "" });
+  return { apiError: "" };
 };
 
 export default function Login() {
