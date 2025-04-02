@@ -6,7 +6,6 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "postinstall": "npx prisma generate",
     "build": "npm run build:css && npm run build:worker && remix vite:build",
     "build:css": "tailwindcss -m -i ./styles/app.css -o app/styles/app.css",
     "build:worker": "esbuild ./app/entry.worker.ts --outfile=./public/entry.worker.js --minify --bundle --format=esm --define:process.env.NODE_ENV='\"production\"'",
