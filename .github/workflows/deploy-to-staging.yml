@@ -5,8 +5,9 @@ on:
     types:
       - published
   push:
-    branches:
-      - main
+    branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 env:
