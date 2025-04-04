@@ -1,0 +1,66 @@
+name: "Deploy to prod"
+
+on:
+  release:
+    types:
+      - published
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  vercel:
+    runs-on: ubuntu-latest
+    environment: production
+    name: "Deploy to prod"
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: https://registry.npmjs.org/
+
+      - name: Find and Replace FIREBASE_API_KEY - Using Build Variable
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{FIREBASE_API_KEY}#/${{ vars.FIREBASE_API_KEY }}/g'' {} \;
+
+      - name: Find and Replace FIREBASE_AUTH_DOMAIN - Using Build Variable
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{FIREBASE_AUTH_DOMAIN}#/${{ vars.FIREBASE_AUTH_DOMAIN }}/g'' {} \;
+
+      - name: Find and Replace FIREBASE_PROJECT_ID - Using Build Variable
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{FIREBASE_PROJECT_ID}#/${{ vars.FIREBASE_PROJECT_ID }}/g'' {} \;
+
+      - name: Find and Replace FIREBASE_STORAGE_BUCKET - Using Build Variable
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{FIREBASE_STORAGE_BUCKET}#/${{ vars.FIREBASE_STORAGE_BUCKET }}/g'' {} \;
+
+      - name: Find and Replace FIREBASE_MESSAGING_SENDER_ID - Using Build Variable
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{FIREBASE_MESSAGING_SENDER_ID}#/${{ vars.FIREBASE_MESSAGING_SENDER_ID }}/g'' {} \;
+
+      - name: Find and Replace FIREBASE_APP_ID - Using Build Variable
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{FIREBASE_APP_ID}#/${{ vars.FIREBASE_APP_ID }}/g'' {} \;
+
+      - name: Find and Replace VAPID_KEY - Using Build Variable
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{VAPID_KEY}#/${{ vars.VAPID_KEY }}/g'' {} \;
+
+      - name: Find and Replace STR_PRICING_TABLE_ID - Using Build Variable
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{STR_PRICING_TABLE_ID}#/${{ vars.STR_PRICING_TABLE_ID }}/g'' {} \;
+
+      - name: Find and Replace STR_PUBLISHABLE_KEY - Using Build Variable
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{STR_PUBLISHABLE_KEY}#/${{ vars.STR_PUBLISHABLE_KEY }}/g'' {} \;
+
+      - name: Find and Replace TURNSTILE_SITE_KEY - Using Build Variable
+        run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{TURNSTILE_SITE_KEY}#/${{ vars.TURNSTILE_SITE_KEY }}/g'' {} \;
+
+      - name: "Install packages"
+        run: npm install --production=false --legacy-peer-deps
+
+      - name: "Build"
+        run: DEPLOYMENT_TARGET=flyio npm run build
+
+      - name: "Deploy to Fly.io"
+        uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: "Run Fly.io Deploy"
+        run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
