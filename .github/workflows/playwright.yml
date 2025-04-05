@@ -63,10 +63,10 @@ jobs:
         run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{UI_ENV}#/test/g'' {} \;
 
       - name: Find and Replace TEST_LOGIN_USERNAME - Using Secret
-        run: find -name "auth.setup.ts" -type f -exec sed -i ''s/#{TEST_LOGIN_USERNAME}#/${{ secrets.TEST_LOGIN_USERNAME }}/g'' {} \;
+        run: find -name "global-setup.ts" -type f -exec sed -i ''s/#{TEST_LOGIN_USERNAME}#/${{ secrets.TEST_LOGIN_USERNAME }}/g'' {} \;
 
       - name: Find and Replace TEST_LOGIN_PASSWORD - Using Secret
-        run: find -name "auth.setup.ts" -type f -exec sed -i ''s/#{TEST_LOGIN_PASSWORD}#/${{ secrets.TEST_LOGIN_PASSWORD }}/g'' {} \;
+        run: find -name "global-setup.ts" -type f -exec sed -i ''s/#{TEST_LOGIN_PASSWORD}#/${{ secrets.TEST_LOGIN_PASSWORD }}/g'' {} \;
 
       - name: Create .env file with necessary values for testing
         run: |
