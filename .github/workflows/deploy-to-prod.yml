@@ -51,12 +51,6 @@ jobs:
       - name: Find and Replace TURNSTILE_SITE_KEY - Using Build Variable
         run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{TURNSTILE_SITE_KEY}#/${{ vars.TURNSTILE_SITE_KEY }}/g'' {} \;
 
-      - name: "Install packages"
-        run: npm install --production=false --legacy-peer-deps
-
-      - name: "Build"
-        run: DEPLOYMENT_TARGET=flyio npm run build
-
       - name: "Deploy to Fly.io"
         uses: superfly/flyctl-actions/setup-flyctl@master
 
