@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test("can edit budget", async ({ page }) => {
   await page.goto("http://localhost:3000/dashboard");
+  await page.waitForTimeout(500);
   await page.getByRole("link", { name: "Settings" }).click();
   await page.getByRole("link", { name: "Edit Budget" }).click();
 
@@ -37,6 +38,7 @@ test("can edit budget", async ({ page }) => {
 
 test("can change currency", async ({ page }) => {
   await page.goto("http://localhost:3000/dashboard");
+  await page.waitForTimeout(500);
   await page.getByRole("link", { name: "Settings" }).click();
   await page.getByRole("link", { name: "Change currency" }).click();
   await page.locator('input[name="currencyToShow"]').fill("USD");
