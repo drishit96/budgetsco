@@ -441,7 +441,10 @@ export default function Index() {
         </div>
 
         {overDueTransactions && overDueTransactions.length > 0 && (
-          <div className="p-2 rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-3 bg-urgent">
+          <div
+            className="p-2 rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-3 bg-urgent"
+            data-test-id="section-overdue-transactions"
+          >
             <p className="text-lg text-center text-urgent p-1 font-bold">Overdue</p>
             <Spacer size={1} />
             <ul ref={listParent}>
@@ -511,7 +514,10 @@ export default function Index() {
         </div>
 
         {upcomingTransactions && upcomingTransactions.length > 0 && (
-          <div className="bg-important p-2 rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-2">
+          <div
+            className="bg-important p-2 rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-2"
+            data-test-id="section-upcoming-transactions"
+          >
             <p className="text-lg text-center text-important p-1 font-bold">Upcoming</p>
             <Spacer size={1} />
             <ul ref={listParent}>
@@ -526,7 +532,10 @@ export default function Index() {
         )}
 
         {transactions && (
-          <div className="p-2 rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-3 bg-elevated-10">
+          <div
+            className="p-2 rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-3 bg-elevated-10"
+            data-test-id="section-recent-transactions"
+          >
             <p className="text-lg text-center text-primary p-1 font-bold">
               Recent transactions
             </p>

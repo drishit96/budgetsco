@@ -5,7 +5,7 @@ import { Form, Link, useOutletContext, useSubmit } from "@remix-run/react";
 import type { RecurringTransactionResponse } from "~/modules/recurring/recurring.schema";
 import type { AppContext } from "~/root";
 import { getTransactionColor } from "~/utils/colors.utils";
-import { formatDate_DD_MMMM_YYYY_hh_mm_aa } from "~/utils/date.utils";
+import { formatDate_DD_MMMM_YYYY } from "~/utils/date.utils";
 import { formatNumber } from "~/utils/number.utils";
 import CheckIcon from "./icons/CheckIcon";
 import InfoIcon from "./icons/InfoIcon";
@@ -13,6 +13,7 @@ import { Spacer } from "./Spacer";
 import TrashIcon from "./icons/TrashIcon";
 import EditIcon from "./icons/EditIcon";
 import SkipIcon from "./icons/SkipIcon";
+import ListItem from "./ListItem";
 
 export function RecurringTransaction({
   transaction,
@@ -31,7 +32,6 @@ export function RecurringTransaction({
   expandedIndex?: number;
   setExpandedIndex: React.Dispatch<React.SetStateAction<number | undefined>>;
 }) {
-  const [listItemParent] = useAutoAnimate<HTMLDivElement>();
   const context = useOutletContext<AppContext>();
   const submit = useSubmit();
   const isTransactionUpdateInProgress =
@@ -49,47 +49,48 @@ export function RecurringTransaction({
     navigation.formData?.get("formName") === "SKIP_TRANSACTION_FORM";
 
   return (
-    <div ref={listItemParent}>
-      <Ripple>
-        <button
-          className={`w-full bg-base border-primary focus-border p-2 rounded-md 
-          ${hideDivider ? "" : "border-b"} 
-          ${expandedIndex === index ? "border-t border-l border-r rounded-b-none" : ""}`}
-          onClick={() => {
-            setExpandedIndex((prevIndex) => (prevIndex === index ? undefined : index));
-          }}
-        >
-          <div className="flex flex-col">
-            <div className="flex">
-              <span className="font-bold">{transaction.category}</span>
-              <span className="flex-grow"></span>
-              <span className={getTransactionColor(transaction.type) + " font-bold"}>
-                {transaction.type === "income" ? "+" : "-"}
-                {formatNumber(transaction.amount.toString(), context.userPreferredLocale)}
-              </span>
-            </div>
-
-            {transaction.description && (
-              <div>
-                <Spacer size={1} />
-                <span className="flex gap-2 bg-base">
-                  <InfoIcon size={24} />
-                  <span className="text-primary">{transaction.description}</span>
-                </span>
-              </div>
-            )}
-
-            <Spacer size={1} />
-            <div className="flex">
-              <span className="text-gray-500">
-                {formatDate_DD_MMMM_YYYY_hh_mm_aa(new Date(transaction.executionDate))}
-              </span>
-            </div>
+    <ListItem
+      dataTestId={`more-${transaction.category.split(" ").join("")}-${
+        transaction.amount
+      }`}
+      hideDivider={hideDivider}
+      index={index}
+      expandedIndex={expandedIndex}
+      setExpandedIndex={setExpandedIndex}
+      content={
+        <div className="flex flex-col">
+          <div className="flex">
+            <span className="font-bold">{transaction.category}</span>
+            <span className="flex-grow"></span>
+            <span className={getTransactionColor(transaction.type) + " font-bold"}>
+              {transaction.type === "income" ? "+" : "-"}
+              {formatNumber(transaction.amount.toString(), context.userPreferredLocale)}
+            </span>
           </div>
-        </button>
-      </Ripple>
 
-      {expandedIndex === index && (
+          {transaction.description && (
+            <div>
+              <Spacer size={1} />
+              <span className="flex gap-2 bg-base">
+                <InfoIcon size={24} />
+                <span className="text-primary">{transaction.description}</span>
+              </span>
+            </div>
+          )}
+
+          <Spacer size={1} />
+          <div className="flex">
+            <span className="text-gray-500">
+              {formatDate_DD_MMMM_YYYY(new Date(transaction.executionDate))}
+            </span>
+            <span className="flex-grow"></span>
+            <span className="text-gray-500">
+              Every {transaction.interval + " " + transaction.occurrence + "(s)"}
+            </span>
+          </div>
+        </div>
+      }
+      expandedContent={
         <div className="w-full flex border-b border-t border-primary rounded-b-md bg-base">
           {!manageView && (
             <Form
@@ -194,7 +195,7 @@ export function RecurringTransaction({
             </Ripple>
           </Form>
         </div>
-      )}
-    </div>
+      }
+    />
   );
 }
