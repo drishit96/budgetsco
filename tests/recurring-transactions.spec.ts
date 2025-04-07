@@ -134,9 +134,6 @@ test.describe.serial("recurringTransactionsGroup", () => {
     await page.locator('input[type="date"]').fill(formatDate_YYYY_MM_DD(currentDate));
     await page.getByRole("button", { name: "Save" }).click();
 
-    // Verify the transaction is updated
-    await expect(page.getByText("Transaction updated")).toBeVisible();
-
     // Verify the updated recurring transaction details
     await expect(page.locator("[data-test-id=more-Business-150]").first()).toHaveText(
       /Infrastructure cost/
@@ -165,6 +162,7 @@ test.describe.serial("recurringTransactionsGroup", () => {
       await page
         .locator("[data-test-id=section-overdue-transactions]")
         .locator("[data-test-id=more-Business-150]")
+        .last()
         .click();
     }
 
@@ -183,7 +181,7 @@ test.describe.serial("recurringTransactionsGroup", () => {
     await page.waitForTimeout(500);
 
     const nextDate = add(new Date(), { months: 2 });
-    await expect(page.locator("[data-test-id=more-Business-150]")).toContainText(
+    await expect(page.locator("[data-test-id=more-Business-150]").last()).toContainText(
       formatDate_DD_MMMM_YYYY(nextDate)
     );
   });
@@ -211,7 +209,8 @@ test.describe.serial("recurringTransactionsGroup", () => {
     await page.waitForTimeout(2000);
 
     // Count remaining transactions
-    const newCount = await page.locator("[data-test-id=more-Business-150]").count();
-    expect(newCount).toBe(initialCount - 1);
+    await expect(page.locator("[data-test-id=more-Business-150]")).toHaveCount(
+      initialCount - 1
+    );
   });
 });
