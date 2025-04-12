@@ -1,5 +1,5 @@
 import type { ActionFunction } from "@remix-run/node";
-import type { AuthenticationResponseJSON } from "@simplewebauthn/types";
+import type { AuthenticationResponseJSON } from "@simplewebauthn/server";
 import { verifyPasskey } from "~/modules/settings/security/passkeys.service";
 import { getCustomToken, getPasskeyPartialSessionData } from "~/utils/auth.utils.server";
 import { logError } from "~/utils/logger.utils.server";

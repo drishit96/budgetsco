@@ -47,7 +47,7 @@ import Turnstile from "~/components/Turnstile";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
 import { UI_ENV } from "~/lib/ui.config";
-import type { AuthenticationResponseJSON } from "@simplewebauthn/types";
+import type { AuthenticationResponseJSON } from "@simplewebauthn/server";
 import { browserSupportsWebAuthn, startAuthentication } from "@simplewebauthn/browser";
 
 export const meta: MetaFunction = ({ matches }) => {
@@ -246,7 +246,7 @@ export default function Login() {
     let authResponse: AuthenticationResponseJSON | null = null;
     try {
       const authenticationOptions = await resp.json();
-      authResponse = await startAuthentication(authenticationOptions);
+      authResponse = await startAuthentication({ optionsJSON: authenticationOptions });
     } catch (error: any) {
       console.log(error);
       setIsPasskeyLoginInProgress(false);
