@@ -9,7 +9,7 @@ import {
 } from "@remix-run/react";
 import { Ripple } from "@rmwc/ripple";
 import { startRegistration } from "@simplewebauthn/browser";
-import type { RegistrationResponseJSON } from "@simplewebauthn/types";
+import type { RegistrationResponseJSON } from "@simplewebauthn/server";
 import { useEffect, useState } from "react";
 import { ErrorText } from "~/components/ErrorText";
 import AddIcon from "~/components/icons/AddIcon";
@@ -159,7 +159,7 @@ export default function Passkeys() {
     let authResponse: RegistrationResponseJSON | null = null;
     try {
       const registrationOptions = await resp.json();
-      authResponse = await startRegistration(registrationOptions);
+      authResponse = await startRegistration({ optionsJSON: registrationOptions });
     } catch (error: any) {
       if (error.name === "InvalidStateError") {
         setErrorValue("Authenticator is probably already registered");

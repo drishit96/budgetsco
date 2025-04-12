@@ -7,7 +7,7 @@ import {
 import type {
   AuthenticationResponseJSON,
   RegistrationResponseJSON,
-} from "@simplewebauthn/types";
+} from "@simplewebauthn/server";
 import { randomUUID } from "crypto";
 import { logError } from "~/utils/logger.utils.server";
 import { isNullOrEmpty } from "~/utils/text.utils";
@@ -178,27 +178,22 @@ export async function verifyRegistration(userId: string, body: RegistrationRespo
     const { registrationInfo } = verification;
     if (registrationInfo == null) return false;
 
-    const {
-      credentialID,
-      credentialPublicKey,
-      credentialDeviceType,
-      credentialBackedUp,
-    } = registrationInfo;
+    const { credential, credentialDeviceType, credentialBackedUp } = registrationInfo;
 
     const passkey = {
       userId,
       webAuthnUserID,
-      id: credentialID,
-      publicKey: Buffer.from(credentialPublicKey),
+      id: credential.id,
+      publicKey: Buffer.from(credential.publicKey),
       deviceType: credentialDeviceType,
       backedUp: credentialBackedUp,
       createdAt: Date.now(),
     };
 
     const passkeyTransports =
-      body.response.transports?.map((t) => ({
+      credential.transports?.map((t) => ({
         transport: t.toString(),
-        id: credentialID,
+        id: credential.id,
       })) ?? [];
 
     await Promise.allSettled([
@@ -266,9 +261,9 @@ export async function verifyPasskey(
       expectedChallenge: challenge,
       expectedOrigin: origin,
       expectedRPID: RP_ID,
-      authenticator: {
-        credentialID: passkey.id,
-        credentialPublicKey: passkey.publicKey,
+      credential: {
+        id: passkey.id,
+        publicKey: passkey.publicKey,
         counter: 0,
         transports: passkey.transports.map(
           (t) => t.transport
