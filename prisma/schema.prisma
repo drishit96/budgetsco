@@ -188,7 +188,7 @@ model Passkey {
 model PasskeyTransport {
   id            String
   transport     String
-  passkey       Passkey @relation(fields: [id], references: [id])
+  passkey       Passkey @relation(fields: [id], references: [id], onDelete: Cascade)
 
   @@id([id, transport])
 }

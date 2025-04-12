@@ -82,16 +82,10 @@ export async function updatePasskeyDisplayName(
 
 export async function deletePasskey(userId: string, passkeyId: string) {
   try {
-    const deletedPasskey = await prisma.passkey.delete({
+    await prisma.passkey.delete({
       where: {
         id: passkeyId,
         userId,
-      },
-    });
-    if (deletePasskey == null) return false;
-    await prisma.passkeyTransport.deleteMany({
-      where: {
-        id: deletedPasskey.id,
       },
     });
 
