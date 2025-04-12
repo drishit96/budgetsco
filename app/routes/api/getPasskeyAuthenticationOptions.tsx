@@ -3,7 +3,6 @@ import { getAuthenticationOptions } from "~/modules/settings/security/passkeys.s
 import { validateChallengeResponse } from "~/modules/user/user.service";
 import { getPasskeyPartialSessionCookie } from "~/utils/auth.utils.server";
 import { logError } from "~/utils/logger.utils.server";
-import { data } from "@remix-run/node";
 
 export let action: ActionFunction = async ({ request }) => {
   try {
@@ -18,7 +17,7 @@ export let action: ActionFunction = async ({ request }) => {
     if (options == null) return { apiError: "Invalid request" };
     const { webAuthnUserID, authenticationOptions } = options;
 
-    return data(authenticationOptions, {
+    return Response.json(authenticationOptions, {
       headers: {
         "Set-Cookie": await getPasskeyPartialSessionCookie(webAuthnUserID),
       },
