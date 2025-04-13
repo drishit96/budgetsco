@@ -495,7 +495,7 @@ export default function App() {
 
         <div ref={snackBarRef} className="invisible fixed w-full bottom-24 z-30">
           <div className="flex justify-center ml-2 mr-2">
-            <div className="sm:w-3/4 p-3 mb-3 max-w-max rounded bg-gray-700 text-center text-white">
+            <div className="sm:w-3/4 p-3 mb-3 max-w-max rounded-sm bg-gray-700 text-center text-white">
               {snackBarMsg}
             </div>
           </div>

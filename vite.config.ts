@@ -2,6 +2,7 @@ import { vitePlugin as remix } from "@remix-run/dev";
 import { createRoutesFromFolders } from "@remix-run/v1-route-convention";
 import { defineConfig, UserConfig } from "vite";
 import { visualizer } from "rollup-plugin-visualizer";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig(async (): Promise<UserConfig> => {
   const tsconfigPaths = (await import("vite-tsconfig-paths")).default;
@@ -24,6 +25,7 @@ export default defineConfig(async (): Promise<UserConfig> => {
           v3_singleFetch: true,
         },
       }),
+      tailwindcss(),
       tsconfigPaths(),
       visualizer({ emitFile: true }),
     ],

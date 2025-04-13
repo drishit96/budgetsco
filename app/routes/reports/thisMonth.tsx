@@ -241,7 +241,7 @@ export default function ThisMonthReport() {
                             reportsPageContext.userPreferredCurrency
                           )}
                         </p>
-                        <span className="flex-grow"></span>
+                        <span className="grow"></span>
                         <p className="text-primary">
                           {getBudgetLeftText(
                             categoryExpense.budget,

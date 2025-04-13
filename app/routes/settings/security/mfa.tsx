@@ -123,7 +123,7 @@ export default function MFA() {
                 <span className="pl-2 pr-2 pt-1 pb-1 rounded-md border border-accent bg-accent text-accent text-sm font-bold">
                   Enabled
                 </span>
-                <span className="flex-grow"></span>
+                <span className="grow"></span>
                 <Form method="DELETE">
                   <button className="btn-secondary-sm border-red-900 text-urgent focus:ring-red-900">
                     Disable 2FA

@@ -119,7 +119,7 @@ export default function Banner({
               </span>
               <InlineSpacer size={1} />
               <span>{message}</span>
-              {/* <span className="flex-grow"></span> */}
+              {/* <span className="grow"></span> */}
             </div>
           </div>
           <Spacer />

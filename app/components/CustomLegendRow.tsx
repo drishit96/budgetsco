@@ -19,7 +19,7 @@ export default function CustomLegendRow({
         ${getBackgroundDarkColor(color)}`}
       ></div>
       <span className="text-primary-dark">{name}</span>
-      <span className="flex-grow"></span>
+      <span className="grow"></span>
       <span className="text-primary whitespace-nowrap tabular-nums">
         {value} {percentage != null ? `(${percentage}%)` : ""}
       </span>

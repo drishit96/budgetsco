@@ -150,7 +150,7 @@ export default function CompareReport() {
 
                   <div className="flex">
                     <p className="text-primary">{format_MMM_YYYY(month - 1, year)}</p>
-                    <span className="flex-grow"></span>
+                    <span className="grow"></span>
                     <p className="text-primary">
                       {formatToCurrency(
                         categoryExpense.amount,
@@ -180,7 +180,7 @@ export default function CompareReport() {
                     <p className="text-primary">
                       {format_MMMM_YYYY(compareToMonth - 1, compareToYear)}
                     </p>
-                    <span className="flex-grow"></span>
+                    <span className="grow"></span>
                     <p className="text-primary">
                       {formatToCurrency(
                         categoryExpense.amountForCompareToMonth,

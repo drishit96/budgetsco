@@ -1,10 +1,79 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-@font-face {
-  font-family: "Inter";
-  src: url("/fonts/Inter.woff2") format("woff2");
+@config '../tailwind.config.js';
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility print-color-adjust {
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+@utility btn-primary {
+  @apply bg-emerald-700 text-white rounded-lg p-3 pl-4 pr-4 select-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-700;
+}
+
+@utility btn-primary-sm {
+  @apply bg-emerald-700 text-white rounded-lg p-1 pl-2 pr-2 select-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-700;
+}
+
+@utility btn-secondary {
+  @apply bg-background text-accent border border-accent rounded-lg p-2 pl-4 pr-4 select-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-700;
+}
+
+@utility btn-secondary-sm {
+  @apply bg-background text-accent border border-accent rounded-lg p-1 pl-2 pr-2 select-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-700;
+}
+
+@utility input {
+  @apply border border-primary bg-base text-primary rounded-md p-2 text-lg focus:border-emerald-700 focus:ring-1 focus:ring-emerald-700 focus:outline-hidden;
+}
+
+@utility radio {
+  @apply bg-base focus:ring-emerald-600 h-4 w-4 text-emerald-700;
+}
+
+@utility checkbox {
+  @apply bg-base focus:ring-emerald-600 h-4 w-4 text-emerald-700 rounded-xs;
+}
+
+@utility select {
+  @apply border-primary bg-base text-primary focus:border-emerald-700 focus:ring-emerald-700 focus:outline-hidden rounded-lg;
+}
+
+@utility focus-border {
+  @apply focus:border focus:border-gray-700;
+}
+
+@utility focus-ring {
+  @apply focus:rounded-md focus:ring-1 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-700;
+}
+
+@utility link-green {
+  @apply text-accent underline underline-offset-2;
+}
+
+@layer utilities {
+  @font-face {
+    font-family: 'Inter';
+    src: url('/fonts/Inter.woff2') format('woff2');
+  }
 }
 
 @layer components {
@@ -16,55 +85,6 @@
   button,
   a {
     -webkit-tap-highlight-color: transparent;
-  }
-
-  .print-color-adjust {
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
-  }
-
-  .btn-primary {
-    @apply bg-emerald-700 text-white rounded-lg p-3 pl-4 pr-4 select-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-700;
-  }
-
-  .btn-primary-sm {
-    @apply bg-emerald-700 text-white rounded-lg p-1 pl-2 pr-2 select-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-700;
-  }
-
-  .btn-secondary {
-    @apply bg-background text-accent border border-accent rounded-lg p-2 pl-4 pr-4 select-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-700;
-  }
-
-  .btn-secondary-sm {
-    @apply bg-background text-accent border border-accent rounded-lg p-1 pl-2 pr-2 select-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-700;
-  }
-
-  .input {
-    @apply border border-primary bg-base text-primary rounded-md p-2 text-lg focus:border-emerald-700 focus:ring-1 focus:ring-emerald-700 focus:outline-none;
-  }
-
-  .radio {
-    @apply bg-base focus:ring-emerald-600 h-4 w-4 text-emerald-700;
-  }
-
-  .checkbox {
-    @apply bg-base focus:ring-emerald-600 h-4 w-4 text-emerald-700 rounded-sm;
-  }
-
-  .select {
-    @apply border-primary bg-base text-primary focus:border-emerald-700 focus:ring-emerald-700 focus:outline-none rounded-lg;
-  }
-
-  .focus-border {
-    @apply focus:border focus:border-gray-700;
-  }
-
-  .focus-ring {
-    @apply focus:rounded-md focus:ring-1 focus:ring-offset-2 focus:ring-offset-background focus:ring-emerald-700;
-  }
-
-  .link-green {
-    @apply text-accent underline underline-offset-2;
   }
 }
 

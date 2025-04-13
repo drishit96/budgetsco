@@ -61,7 +61,7 @@ export function RecurringTransaction({
         <div className="flex flex-col">
           <div className="flex">
             <span className="font-bold">{transaction.category}</span>
-            <span className="flex-grow"></span>
+            <span className="grow"></span>
             <span className={getTransactionColor(transaction.type) + " font-bold"}>
               {transaction.type === "income" ? "+" : "-"}
               {formatNumber(transaction.amount.toString(), context.userPreferredLocale)}
@@ -83,7 +83,7 @@ export function RecurringTransaction({
             <span className="text-gray-500">
               {formatDate_DD_MMMM_YYYY(new Date(transaction.executionDate))}
             </span>
-            <span className="flex-grow"></span>
+            <span className="grow"></span>
             <span className="text-gray-500">
               Every {transaction.interval + " " + transaction.occurrence + "(s)"}
             </span>
