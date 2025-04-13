@@ -1,5 +1,5 @@
-import { cert, initializeApp } from "firebase-admin/app";
-import { apps, auth } from "firebase-admin";
+import { cert, initializeApp, getApps } from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
 import { createCookie } from "@remix-run/node";
 import type { UserPreferenceResponse } from "~/modules/settings/settings.schema";
 import { authenticator } from "otplib";
@@ -7,7 +7,7 @@ import { logError } from "./logger.utils.server";
 
 function initializeFirebaseApp() {
   try {
-    if (apps.length == 0) {
+    if (getApps().length == 0) {
       initializeApp({
         credential: cert(JSON.parse(process.env.FIREBASE_ADMIN_KEY!)),
       });
@@ -55,6 +55,18 @@ export function getPartialSessionCookieBuilder() {
   });
 }
 
+export function getPasskeyPartialSessionCookieBuilder() {
+  return createCookie("__passkey_partial_session", {
+    expires: new Date(Date.now() + 90_000),
+    httpOnly: true,
+    maxAge: 90,
+    path: "/",
+    sameSite: "strict",
+    secrets: [process.env.COOKIE_SECRET!],
+    secure: true,
+  });
+}
+
 type SessionCookie = {
   session: string;
   prefs: UserPreferenceResponse;
@@ -77,7 +89,7 @@ export async function getSessionData(request: Request): Promise<UserSessionData 
       request.headers.get("Cookie")
     );
     if (sessionCookie == null) return null;
-    const decodedToken = await auth().verifySessionCookie(sessionCookie.session);
+    const decodedToken = await getAuth().verifySessionCookie(sessionCookie.session);
     const userPreferences = sessionCookie.prefs;
     return {
       ...userPreferences,
@@ -97,13 +109,14 @@ export async function getUserDataFromIdToken(
 ) {
   initializeFirebaseApp();
   try {
-    const decodedToken = await auth().verifyIdToken(idToken, checkRevoked);
+    const decodedToken = await getAuth().verifyIdToken(idToken, checkRevoked);
     if (decodedToken == null) return null;
     return {
       userId: decodedToken.uid,
       emailId: decodedToken.email,
       isEmailVerified: decodedToken.email_verified,
       tokenExpiry: decodedToken.exp,
+      isPasskeyLogin: decodedToken.isPasskeyLogin,
     };
   } catch (error) {
     console.log(error);
@@ -118,7 +131,7 @@ export async function getSessionCookie(
   initializeFirebaseApp();
   const expiresIn = 60 * 60 * 24 * 5 * 1000;
 
-  const session = await auth().createSessionCookie(idToken, {
+  const session = await getAuth().createSessionCookie(idToken, {
     expiresIn,
   });
 
@@ -161,6 +174,32 @@ export async function getPartialSessionCookie(userId: string, idToken: string) {
     userId,
     idToken,
   });
+}
+
+export async function getPasskeyPartialSessionCookie(webAuthnUserID: string) {
+  return getPasskeyPartialSessionCookieBuilder().serialize({
+    webAuthnUserID,
+  });
+}
+
+export async function getPasskeyPartialSessionData(request: Request) {
+  try {
+    const partialSessionCookie: { webAuthnUserID: string } =
+      await getPasskeyPartialSessionCookieBuilder().parse(request.headers.get("Cookie"));
+    return partialSessionCookie;
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function getCustomToken(userId: string) {
+  try {
+    initializeFirebaseApp();
+    return await getAuth().createCustomToken(userId, { isPasskeyLogin: true });
+  } catch (error) {
+    logError(error);
+    return null;
+  }
 }
 
 export async function getPartialSessionData(request: Request) {

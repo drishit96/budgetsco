@@ -23,6 +23,7 @@ export default function MonthYearSelector({
   submitAction,
   isSubscriptionRequired,
   context,
+  onSubmit,
 }: {
   startMonth: number;
   startYear: number;
@@ -32,6 +33,7 @@ export default function MonthYearSelector({
   submitAction: string;
   isSubscriptionRequired: boolean;
   context: AppContext;
+  onSubmit?: () => void;
 }) {
   const [compareSettingContainer] = useAutoAnimate<HTMLDivElement>();
   const [showCompareSettingButton, setShowCompareSettingButton] = useState(true);
@@ -45,7 +47,11 @@ export default function MonthYearSelector({
     }
   }, []);
   return (
-    <Form replace method="GET" className="lg:flex lg:justify-center flex-grow">
+    <Form
+      replace
+      method="GET"
+      className="lg:flex lg:justify-center flex-grow bg-elevated-10 p-3 rounded-lg"
+    >
       {showCompareSettingButton && (
         <div className="flex w-full">
           <Ripple>
@@ -155,6 +161,7 @@ export default function MonthYearSelector({
                     className="btn-secondary w-full whitespace-nowrap"
                     onClick={(e) => {
                       e.preventDefault();
+                      typeof onSubmit === "function" && onSubmit();
                       isMobileDevice() && setShowCompareSetting(false);
                       submit(e.currentTarget, {
                         method: "GET",

@@ -1,6 +1,5 @@
 /// <reference lib="WebWorker" />
 
-import { json } from "@remix-run/server-runtime";
 import type { FirebaseApp } from "firebase/app";
 import { initializeApp } from "firebase/app";
 import { getMessaging, onBackgroundMessage } from "firebase/messaging/sw";
@@ -139,7 +138,7 @@ async function handleFetch(event: FetchEvent): Promise<Response> {
         return response;
       }
 
-      return json({ message: "Network Error" });
+      return Response.json({ message: "Network Error" });
     }
   }
 
@@ -249,11 +248,11 @@ try {
   const messaging = getMessaging(app);
   onBackgroundMessage(messaging, (payload) => {
     const notificationTitle = payload.data?.title;
-    const notificationOptions: NotificationOptions = {
+    const notificationOptions = {
       body: payload.data?.body,
       icon: "/icons/budgetsco_192x192_v1.png",
       actions: [{ title: "Open app", action: "open_app" }],
-    };
+    } as NotificationOptions;
 
     if (notificationTitle) {
       self.registration

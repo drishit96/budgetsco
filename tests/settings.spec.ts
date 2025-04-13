@@ -1,7 +1,8 @@
 import { test, expect } from "@playwright/test";
 
 test("can edit budget", async ({ page }) => {
-  await page.goto("http://127.0.0.1:3000/dashboard");
+  await page.goto("http://localhost:3000/dashboard");
+  await page.waitForTimeout(500);
   await page.getByRole("link", { name: "Settings" }).click();
   await page.getByRole("link", { name: "Edit Budget" }).click();
 
@@ -16,7 +17,7 @@ test("can edit budget", async ({ page }) => {
   }
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByText("Budget saved")).toBeVisible();
-  await page.goto("http://127.0.0.1:3000/settings/list");
+  await page.goto("http://localhost:3000/settings/list");
   await page.getByRole("link", { name: "Dashboard" }).click();
   await page.waitForURL("**/dashboard");
   await expect(page.getByText("10K").first()).toBeVisible();
@@ -28,7 +29,7 @@ test("can edit budget", async ({ page }) => {
   await page.locator("#btn-deleteCategoryBudget4").click();
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByText("Budget saved")).toBeVisible();
-  await page.goto("http://127.0.0.1:3000/settings/list");
+  await page.goto("http://localhost:3000/settings/list");
 
   await page.getByRole("link", { name: "Dashboard" }).click();
   await page.waitForURL("**/dashboard");
@@ -36,7 +37,8 @@ test("can edit budget", async ({ page }) => {
 });
 
 test("can change currency", async ({ page }) => {
-  await page.goto("http://127.0.0.1:3000/dashboard");
+  await page.goto("http://localhost:3000/dashboard");
+  await page.waitForTimeout(500);
   await page.getByRole("link", { name: "Settings" }).click();
   await page.getByRole("link", { name: "Change currency" }).click();
   await page.locator('input[name="currencyToShow"]').fill("USD");
@@ -47,7 +49,7 @@ test("can change currency", async ({ page }) => {
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByText("Currency updated")).toBeVisible();
 
-  await page.goto("http://127.0.0.1:3000/dashboard");
+  await page.goto("http://localhost:3000/dashboard");
   await expect(page.getByText("$").first()).toBeVisible();
   await expect(page.getByText("₹").first()).not.toBeVisible();
 
@@ -62,7 +64,7 @@ test("can change currency", async ({ page }) => {
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByText("Currency updated")).toBeVisible();
 
-  await page.goto("http://127.0.0.1:3000/dashboard");
+  await page.goto("http://localhost:3000/dashboard");
   await expect(page.getByText("$").first()).not.toBeVisible();
   await expect(page.getByText("₹").first()).toBeVisible();
 });

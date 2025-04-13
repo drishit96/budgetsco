@@ -1,6 +1,6 @@
 import { Ripple } from "@rmwc/ripple";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import {
   Form,
   Link,
@@ -48,8 +48,9 @@ export const meta: MetaFunction = ({ matches }) => {
 export const action: ActionFunction = async ({ request }) => {
   try {
     const form = await request.formData();
-    const isRequestFromHuman = await validateChallengeResponse(form, "register");
-    if (!isRequestFromHuman) return json({ apiError: "Invalid request" });
+    const cfToken = form.get("cf-turnstile-response")?.toString();
+    const isRequestFromHuman = await validateChallengeResponse(cfToken, "register");
+    if (!isRequestFromHuman) return { apiError: "Invalid request" };
 
     const idToken = form.get("idToken")?.toString();
 
@@ -59,7 +60,7 @@ export const action: ActionFunction = async ({ request }) => {
     if (user == null || user.emailId == null) return redirect("/register");
 
     const { error } = await createUser(user.userId, user.emailId);
-    if (error) return json({ errors: {}, error });
+    if (error) return { errors: {}, error };
 
     const browserTimezone = form.get("browserTimezone")?.toString() ?? "Etc/GMT";
     const browserLocale = form.get("browserLocale")?.toString() ?? "en-US";
@@ -72,7 +73,7 @@ export const action: ActionFunction = async ({ request }) => {
 
     const userPreferences = await getUserPreferences(user.userId);
     if (userPreferences == null) {
-      return json({ error: "Error saving necessary data, please try again" });
+      return { error: "Error saving necessary data, please try again" };
     }
     const sessionCookie = await getSessionCookie(idToken, userPreferences);
 
@@ -89,7 +90,7 @@ export const action: ActionFunction = async ({ request }) => {
       },
     });
   } catch (error) {
-    return json({ error: "Something went wrong, please try again" });
+    return { error: "Something went wrong, please try again" };
   }
 };
 
@@ -100,7 +101,7 @@ export let loader: LoaderFunction = async ({ request }) => {
     return redirect("/dashboard");
   }
 
-  return json({ error: "" });
+  return { error: "" };
 };
 
 export default function Register() {
@@ -114,6 +115,7 @@ export default function Register() {
   }>({});
   const submit = useSubmit();
 
+  const [turnstileToken, setTurnstileToken] = useState("");
   const [emailId, setEmailId] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -146,9 +148,7 @@ export default function Register() {
       return;
     }
 
-    const challengeResponse =
-      (window.turnstile && window.turnstile.getResponse(window.turnstileWidgetId)) ?? "";
-    if (!challengeResponse) {
+    if (!turnstileToken) {
       setErrors((prev) => ({
         ...prev,
         confirmPassword: "Invalid request",
@@ -162,7 +162,7 @@ export default function Register() {
       form.set("idToken", idToken);
       form.set("browserTimezone", Intl.DateTimeFormat().resolvedOptions().timeZone);
       form.set("browserLocale", navigator.language);
-      form.set("cf-turnstile-response", challengeResponse);
+      form.set("cf-turnstile-response", turnstileToken);
 
       const isNotificationsSupported = await isNotificationSupported();
       if (isNotificationsSupported && Notification.permission === "granted") {
@@ -250,7 +250,7 @@ export default function Register() {
               value={Intl.DateTimeFormat().resolvedOptions().timeZone}
             />
 
-            <Turnstile action="register" />
+            <Turnstile action="register" onNewToken={setTurnstileToken} />
 
             <Spacer />
             <Ripple>

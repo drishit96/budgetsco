@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import {
   Form,
   useActionData,
@@ -32,15 +32,15 @@ export const action: ActionFunction = async ({ request }) => {
   const formName = form.get("formName")?.toString();
   if (formName === "COLLECT_ANALYTICS") {
     const collectAnalytics = form.get("collectAnalytics")?.toString() === "true";
-    if (collectAnalytics == null) return json({ isCollectAnalyticsSaved: false });
+    if (collectAnalytics == null) return { isCollectAnalyticsSaved: false };
 
     const currentUserPreferences = await getUserPreferences(user.userId);
     if (currentUserPreferences == null)
-      return json({
+      return {
         data: {
           errors: { system: "Incorrect system state, please contact support" },
         },
-      });
+      };
 
     let lastModified = 0;
     if (collectAnalytics) {
@@ -61,12 +61,12 @@ export const action: ActionFunction = async ({ request }) => {
         });
     }
 
-    return json({
+    return {
       data: { isCollectAnalyticsSaved: lastModified > 0, collectAnalytics },
-    });
+    };
   }
 
-  return json({});
+  return {};
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -74,7 +74,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   if (userId == null) return redirect("/auth/login");
 
   const collectAnalytics = (await getUserPreferences(userId))?.collectAnalytics ?? true;
-  return json({ collectAnalytics });
+  return { collectAnalytics };
 };
 
 export default function Profile() {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import type { Navigation } from "@remix-run/router";
 import {
   Link,
@@ -30,6 +30,7 @@ import {
   getOverDueTransactions,
   getUpcomingTransactions,
   markTransactionAsDone,
+  skipRecurringTransaction,
 } from "~/modules/recurring/recurring.service";
 import type { RecurringTransactionsResponse } from "~/modules/recurring/recurring.schema";
 import { RecurringTransaction } from "~/components/RecurringTransaction";
@@ -86,7 +87,7 @@ export const action: ActionFunction = async ({ request }) => {
             });
           }
 
-          return json({ isTransactionMarkedAsDone });
+          return { isTransactionMarkedAsDone };
         }
       } else if (formName === "REFRESH_SESSION_FORM") {
         const idToken = form.get("idToken")?.toString();
@@ -95,7 +96,7 @@ export const action: ActionFunction = async ({ request }) => {
           if (preferences == null) {
             throw new Error(`userPreferences missing for userId: ${userId}`);
           }
-          return json(
+          return Response.json(
             { sessionRefreshed: true },
             {
               headers: {
@@ -108,7 +109,21 @@ export const action: ActionFunction = async ({ request }) => {
         const token = form.get("token")?.toString();
         if (isNotNullAndEmpty(token)) {
           const isTokenSaved = await saveNotificationToken(userId, token);
-          return json({ registrationTokenSaved: isTokenSaved });
+          return { registrationTokenSaved: isTokenSaved };
+        }
+      } else if (formName === "SKIP_TRANSACTION_FORM") {
+        const transactionId = form.get("transactionId")?.toString();
+        if (isNotNullAndEmpty(transactionId)) {
+          const isTransactionSkipped = await skipRecurringTransaction(
+            userId,
+            transactionId
+          );
+
+          if (isTransactionSkipped) {
+            trackEvent(request, EventNames.RECURRING_TRANSACTION_SKIPPED);
+          }
+
+          return { isTransactionSkipped };
         }
       }
     }
@@ -122,12 +137,12 @@ export const action: ActionFunction = async ({ request }) => {
       if (formName === "DELETE_RECURRING_TRANSACTION_FORM") {
         isDeleted = await deleteRecurringTransaction(userId, transactionId);
         trackEvent(request, EventNames.RECURRING_TRANSACTION_DELETED);
-        return json({ isDeleted });
+        return { isDeleted };
       }
 
       isDeleted = await removeTransaction(transactionId, userId, timezone);
       trackEvent(request, EventNames.TRANSACTION_DELETED);
-      return json({ isDeleted });
+      return { isDeleted };
     }
   }
 };
@@ -168,7 +183,7 @@ export const loader: LoaderFunction = async ({ request }) => {
       ? true
       : false;
 
-  return json(
+  return Response.json(
     {
       overDueTransactions: await overDueTransactions,
       upcomingTransactions: await upcomingTransactions,
@@ -356,13 +371,13 @@ export default function Index() {
           ref={bannerParent}
           className="flex flex-wrap items-center space-y-1 w-full md:w-3/4 lg:w-2/3 xl:w-1/2"
         >
-          {!context.isMFAOn && (
+          {!context.isMFAOn && !context.isPasskeyPresent && (
             <Banner
               type="important"
-              message={`Enable two factor authentication (2FA) to add an additional layer of security to your account by requiring more than just a password to sign in. (You can always enable it from settings)`}
+              message={`Add a passkey to avoid the need to remember your password. Or enable two factor authentication (2FA) to add an additional layer of security to your account by requiring more than just a password to sign in. (You can always enable it from settings)`}
               showLink
-              link="/settings/security/mfa"
-              linkText="Set up 2FA"
+              link="/settings/security/list"
+              linkText="Set up passkey or 2FA"
               allowDismiss={false}
               allowPermanentDismiss={true}
               permanentDismissSettingName={"show2FASuggestion"}
@@ -426,7 +441,10 @@ export default function Index() {
         </div>
 
         {overDueTransactions && overDueTransactions.length > 0 && (
-          <div className="p-2 rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-3 bg-urgent">
+          <div
+            className="p-2 rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-3 bg-urgent"
+            data-test-id="section-overdue-transactions"
+          >
             <p className="text-lg text-center text-urgent p-1 font-bold">Overdue</p>
             <Spacer size={1} />
             <ul ref={listParent}>
@@ -496,7 +514,10 @@ export default function Index() {
         </div>
 
         {upcomingTransactions && upcomingTransactions.length > 0 && (
-          <div className="bg-important p-2 rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-2">
+          <div
+            className="bg-important p-2 rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-2"
+            data-test-id="section-upcoming-transactions"
+          >
             <p className="text-lg text-center text-important p-1 font-bold">Upcoming</p>
             <Spacer size={1} />
             <ul ref={listParent}>
@@ -511,7 +532,10 @@ export default function Index() {
         )}
 
         {transactions && (
-          <div className="p-2 rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-3 bg-elevated-10">
+          <div
+            className="p-2 rounded-md w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-3 bg-elevated-10"
+            data-test-id="section-recent-transactions"
+          >
             <p className="text-lg text-center text-primary p-1 font-bold">
               Recent transactions
             </p>

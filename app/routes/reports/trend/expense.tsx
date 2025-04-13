@@ -1,5 +1,5 @@
 import type { LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { Link, useLoaderData, useNavigation, useOutletContext } from "@remix-run/react";
 import { Spacer } from "~/components/Spacer";
 import { getSessionData } from "~/utils/auth.utils.server";
@@ -43,7 +43,7 @@ export let loader: LoaderFunction = async ({ request }) => {
       endMonth && endYear ? `${endYear}-${endMonth.padStart(2, "0")}` : undefined
     );
 
-    return json(trendingReport);
+    return Response.json(trendingReport);
   } catch (error) {
     logError(error);
     throw error;
@@ -58,10 +58,10 @@ export default function ExpenseTrendReport() {
   const trendingReportContext = useOutletContext<TrendingReportContext>();
 
   const expenseDistribution = Object.entries(categoryExpensesByCategory)
-    .map(([category, categoryExpenses]) => {
+    .map(([category, expensePerDate]) => {
       return {
         name: category.toString(),
-        value: sum(categoryExpenses.map((c) => c.expense)),
+        value: sum(expensePerDate.map((c) => c.expense)),
       };
     })
     .sort((a, b) => (calculate(b.value).minus(a.value).gt(0) ? 1 : -1));

@@ -9,6 +9,7 @@ import {
   sendEmailVerification,
   sendPasswordResetEmail,
   setPersistence,
+  signInWithCustomToken,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { firebaseConfig, VAPID_KEY } from "~/lib/ui.config";
@@ -44,6 +45,16 @@ export async function signInUser(email: string, password: string) {
       password
     );
 
+    const idToken = await userCredential.user.getIdToken();
+    return { idToken };
+  } catch (error: any) {
+    return { error: error?.code as string };
+  }
+}
+
+export async function signInUserWithCustomToken(token: string) {
+  try {
+    const userCredential = await signInWithCustomToken(getClientAuth(), token);
     const idToken = await userCredential.user.getIdToken();
     return { idToken };
   } catch (error: any) {

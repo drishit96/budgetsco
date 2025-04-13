@@ -1,5 +1,5 @@
 import type { LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { getPreviousMonthBudgetPerCategory } from "~/modules/reports/reports.service";
 import { getSessionData } from "~/utils/auth.utils.server";
 
@@ -10,11 +10,8 @@ export let loader: LoaderFunction = async ({ request }): Promise<any> => {
   }
 
   const { userId, timezone } = sessionData;
-  const budgetPerCategoryList = await getPreviousMonthBudgetPerCategory(
-    userId,
-    timezone
-  );
-  return json(
+  const budgetPerCategoryList = await getPreviousMonthBudgetPerCategory(userId, timezone);
+  return Response.json(
     budgetPerCategoryList.map((c) => {
       return { ...c, index: c.category };
     })

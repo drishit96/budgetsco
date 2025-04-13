@@ -428,15 +428,13 @@ export function syncNewCustomCategoriesToLocalStorage(
       ? JSON.parse(existingCategoriesString)
       : [];
 
-    const presetCategoriesMap = new Map<string, boolean>();
-    presetCategories.forEach((category) => presetCategoriesMap.set(category, true));
-    const existingCategoriesMap = new Map<string, boolean>();
-    existingCategories.forEach((category) => existingCategoriesMap.set(category, true));
+    const presetCategoriesSet = new Set<string>(presetCategories);
+    const existingCategoriesSet = new Set<string>(existingCategories);
 
     const customCategories: string[] = [];
     for (let category of categories) {
       category = category.trim();
-      if (!presetCategoriesMap.has(category) && !existingCategoriesMap.has(category)) {
+      if (!presetCategoriesSet.has(category) && !existingCategoriesSet.has(category)) {
         customCategories.push(category);
       }
     }

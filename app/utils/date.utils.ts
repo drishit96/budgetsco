@@ -159,21 +159,28 @@ export function getListOfMinutes() {
 export function getNextExecutionDate(
   occurrence: string,
   interval: number,
-  previousDate?: Date
+  previousDate?: Date,
+  includeDiffWithCurrentDate: boolean = true
 ) {
   let executionDate = previousDate || new Date();
   if (occurrence === "day") {
-    const diff = Math.abs(differenceInDays(new Date(), executionDate));
+    const diff = includeDiffWithCurrentDate
+      ? Math.abs(differenceInDays(new Date(), executionDate))
+      : 0;
     executionDate = add(executionDate, {
       days: diff + interval,
     });
   } else if (occurrence === "month") {
-    const diff = Math.abs(differenceInMonths(new Date(), executionDate));
+    const diff = includeDiffWithCurrentDate
+      ? Math.abs(differenceInMonths(new Date(), executionDate))
+      : 0;
     executionDate = add(executionDate, {
       months: diff + interval,
     });
   } else if (occurrence === "year") {
-    const diff = Math.abs(differenceInYears(new Date(), executionDate));
+    const diff = includeDiffWithCurrentDate
+      ? Math.abs(differenceInYears(new Date(), executionDate))
+      : 0;
     executionDate = add(executionDate, {
       years: diff + interval,
     });

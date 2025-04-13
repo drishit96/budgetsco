@@ -1,10 +1,8 @@
-import type { DataFunctionArgs, LinksFunction, TypedResponse } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import type { LinksFunction, LoaderFunctionArgs, TypedResponse } from "@remix-run/node";
 import type { ShouldRevalidateFunction } from "@remix-run/react";
 import {
   Link,
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,
@@ -16,7 +14,7 @@ import {
   useRouteError,
 } from "@remix-run/react";
 
-import styles from "./styles/app.css";
+import styles from "./styles/app.css?url";
 import Report from "./components/Report";
 import GenericError from "./components/GenericError";
 import type { ReactElement } from "react";
@@ -97,22 +95,23 @@ export const ErrorBoundary: ErrorBoundaryComponent = () => {
 
 export const loader = async ({
   request,
-}: DataFunctionArgs): Promise<TypedResponse<Partial<UserSessionData>>> => {
+}: LoaderFunctionArgs): Promise<TypedResponse<Partial<UserSessionData>>> => {
   const sessionData = await getSessionData(request);
-  if (sessionData == null) return json({});
+  if (sessionData == null) return Response.json({});
   const userPreferences = await getUserPreferencesAfterTimestamp(
     sessionData.lastModified,
     sessionData.userId
   );
 
-  const headers: { [key: string]: string } = {};
   if (userPreferences != null) {
-    headers["Set-Cookie"] = await getSessionCookieWithUpdatedPreferences(
-      request,
-      userPreferences
-    );
+    const headers: Headers = new Headers({
+      "Set-Cookie": await getSessionCookieWithUpdatedPreferences(
+        request,
+        userPreferences
+      ),
+    });
 
-    return json({ ...userPreferences, updateLocalStore: true }, { headers });
+    return Response.json({ ...userPreferences, updateLocalStore: true }, { headers });
   }
   const {
     isActiveSubscription,
@@ -120,14 +119,16 @@ export const loader = async ({
     locale,
     isEmailVerified,
     isMFAOn,
+    isPasskeyPresent,
     paymentGateway,
   } = sessionData;
-  return json({
+  return Response.json({
     isActiveSubscription,
     currency,
     locale,
     isEmailVerified,
     isMFAOn,
+    isPasskeyPresent,
     paymentGateway,
   });
 };
@@ -154,7 +155,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 
 export type DialogProps = {
   title: string;
-  message: string;
+  message: JSX.Element | string;
   showDialog: boolean;
   positiveButton?: string;
   negativeButton?: string;
@@ -173,6 +174,8 @@ export type BottomSheetProps = {
   show: boolean;
   content: ReactElement;
   closeButtonSize?: "sm" | "lg";
+  addToHistoryStack?: boolean;
+  onCloseClick?: () => void;
 };
 
 export type AppContext = {
@@ -198,6 +201,7 @@ export default function App() {
     updateLocalStore,
     customCategories,
     isMFAOn,
+    isPasskeyPresent,
     paymentGateway,
     lastModified,
   } = useLoaderData<typeof loader>();
@@ -240,6 +244,7 @@ export default function App() {
     locale,
     isEmailVerified,
     isMFAOn,
+    isPasskeyPresent,
     paymentGateway,
   };
 
@@ -400,7 +405,7 @@ export default function App() {
         {(location.pathname.includes("/dashboard") ||
           location.pathname.includes("/reports") ||
           location.pathname.includes("/settings/list")) && (
-          <nav className="z-20 flex justify-evenly fixed bottom-0 left-1/2 -translate-x-1/2 w-full md:w-3/4 lg:w-2/3 xl:w-1/2 backdrop-blur-3xl border border-primary text-primary rounded-t-md font-bold shadow-2xl">
+          <nav className="z-20 flex justify-evenly fixed bottom-0 left-1/2 -translate-x-1/2 w-full md:w-3/4 lg:w-2/3 xl:w-1/2 backdrop-blur-md border border-primary text-primary rounded-t-md font-bold shadow-2xl">
             <Ripple accent>
               <Link
                 className="flex flex-col items-center w-full p-1 focus-border"
@@ -532,7 +537,9 @@ export default function App() {
 
         <BottomSheet
           show={bottomSheetProps.show}
+          addToHistoryStack={bottomSheetProps.addToHistoryStack}
           closeButtonSize={bottomSheetProps.closeButtonSize}
+          onCloseClick={bottomSheetProps.onCloseClick}
           setShow={() => {
             setBottomSheetProps((prev) => ({ ...prev, show: !prev.show }));
           }}
@@ -546,7 +553,6 @@ export default function App() {
         </div>
         <ScrollRestoration />
         <Scripts />
-        <LiveReload />
       </body>
     </html>
   );

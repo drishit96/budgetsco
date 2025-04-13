@@ -1,5 +1,5 @@
 import type { LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { getGPBUserSubscription } from "~/modules/subscriptions/gpb.subscriptions.service";
 import { getSessionData } from "~/utils/auth.utils.server";
 import { getGPBSubscriptionDetails } from "~/utils/gpb.payment.utils.server";
@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 import { logError } from "~/utils/logger.utils.server";
 import { Spacer } from "~/components/Spacer";
 import type { AppContext } from "~/root";
-import type { GPBSubscriptionState } from "@prisma/client";
 import { formatDate_DD_MMMM_YYYY_hh_mm_aa } from "~/utils/date.utils";
 import { Ripple } from "@rmwc/ripple";
 import Banner from "~/components/Banner";
@@ -61,14 +60,14 @@ export let loader: LoaderFunction = async ({ request }) => {
         expiry: userSubscription.expiry,
       };
     } else if (paymentGateway == null) {
-      return json({ firstPaymentPending: true });
+      return { firstPaymentPending: true };
     } else {
-      return json({ isActive: false });
+      return { isActive: false };
     }
   } catch (error) {
     console.log(error);
     logError(error);
-    return json({ error: "Something went wrong" });
+    return { error: "Something went wrong" };
   }
 };
 
@@ -78,7 +77,7 @@ export default function GPB() {
     isActive?: boolean;
     firstPaymentPending?: boolean;
     planId?: string;
-    status?: GPBSubscriptionState;
+    status?: string;
     expiry?: string;
     error?: string;
   }>();

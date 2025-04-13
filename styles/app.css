@@ -4,7 +4,7 @@
 
 @font-face {
   font-family: "Inter";
-  src: url("../../public/fonts/Inter.woff2") format("woff2");
+  src: url("/fonts/Inter.woff2") format("woff2");
 }
 
 @layer components {
@@ -84,6 +84,7 @@
   --bg-color: #fff;
   --bg-color-elevated-10: #f8fafc;
   --bg-color-elevated-10-opacity-30: rgba(248, 250, 252, 0.3);
+  --bg-color-urgent: #fef2f2;
   --bg-color-info: rgb(240, 249, 255);
   --bg-color-important: rgb(255, 251, 235);
   --bg-color-accent: rgb(236, 253, 245);

@@ -4,9 +4,9 @@ generator client {
 }
 
 datasource db {
-  provider             = "mysql"
-  url                  = env("DATABASE_URL")
-  relationMode         = "prisma"
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model User {
@@ -49,20 +49,14 @@ model MonthlyTarget {
   @@id([userId, date])
 }
 
-enum TransactionType {
-  expense
-  income
-  investment
-}
-
 model CategoryAmount {
   userId   String
   date     DateTime
   category String
-  type     TransactionType
-  amount   Decimal          @db.Decimal(22, 4)
-  budget   Decimal?         @db.Decimal(16, 4)
-  user     User             @relation(fields: [userId], references: [id])
+  type     String   @db.VarChar(10)
+  amount   Decimal  @db.Decimal(22, 4)
+  budget   Decimal? @db.Decimal(16, 4)
+  user     User     @relation(fields: [userId], references: [id])
 
   @@id([userId, date, type, category])
   @@index([userId, date, type, amount])
@@ -71,120 +65,130 @@ model CategoryAmount {
 model PaymentModeAmount {
   userId          String
   date            DateTime
-  transactionType TransactionType
+  transactionType String   @db.VarChar(10)
   paymentMode     String
   amount          Decimal  @db.Decimal(22, 4)
   budget          Decimal? @db.Decimal(16, 4)
   user            User     @relation(fields: [userId], references: [id])
 
   @@id([userId, date, transactionType, paymentMode])
-  @@index([userId, date, transactionType, paymentMode, amount])
+  @@index([userId, date, transactionType, paymentMode, amount], map: "PaymentModeAmount_userId_d6310b-342e-4566-9d91-4c4bdd285dbc_idx")
 }
 
 model Transaction {
-  id             String           @id @default(nanoid(18))
-  createdAt      DateTime         @default(now())
+  id             String   @id @default(nanoid(18))
+  createdAt      DateTime @default(now())
   createdAtLocal DateTime
-  description    String?          @db.VarChar(250)
-  amount         Decimal          @db.Decimal(22, 4)
-  type           TransactionType
+  description    String?  @db.VarChar(250)
+  amount         Decimal  @db.Decimal(22, 4)
+  type           String   @db.VarChar(10)
   category       String
   category2      String?
   category3      String?
   paymentMode    String
-  user           User             @relation(fields: [userId], references: [id])
+  user           User     @relation(fields: [userId], references: [id])
   userId         String
 
   @@index([userId, createdAtLocal, type, category])
 }
 
-enum PaymentGateway {
-  GPB // Google Play Billing
-  STR // Stripe
-}
-
 model UserPreference {
-  userId                String          @unique
-  currency              String?         @db.VarChar(3)
-  timezone              String          @db.VarChar(64)
-  locale                String          @db.VarChar(15)
-  paymentGateway        PaymentGateway?
-  isActiveSubscription  Boolean         @default(false)
-  isMFAOn               Boolean         @default(false)
-  collectAnalytics      Boolean?
-  lastModified          Float           @default(0) @db.Double()
-  user                  User?           @relation(fields: [userId], references: [id])
+  userId               String   @unique(map: "UserPreference_userId_idx")
+  currency             String?  @db.VarChar(3)
+  timezone             String   @db.VarChar(64)
+  locale               String   @db.VarChar(15)
+  paymentGateway       String?  @db.VarChar(3)
+  isActiveSubscription Boolean  @default(false)
+  isMFAOn              Boolean  @default(false)
+  collectAnalytics     Boolean?
+  isPasskeyPresent     Boolean  @default(false)
+  lastModified         Float    @default(0)
+  user                 User?    @relation(fields: [userId], references: [id])
 
   @@index([userId, lastModified])
 }
 
 model RecurringTransaction {
-  id            String            @id @default(nanoid(12))
-  occurrence    String            @db.VarChar(5)
-  interval      Int               @db.UnsignedSmallInt
-  amount        Decimal           @db.Decimal(22, 4)
-  type          TransactionType
+  id            String   @id @default(nanoid(12))
+  occurrence    String   @db.VarChar(5)
+  interval      Int      @db.SmallInt
+  amount        Decimal  @db.Decimal(22, 4)
+  type          String   @db.VarChar(10)
   category      String
   category2     String?
   category3     String?
   paymentMode   String
-  description   String?           @db.VarChar(250)
+  description   String?  @db.VarChar(250)
   executionDate DateTime
-  isNotified    Boolean           @default(false)
-  user          User?             @relation(fields: [userId], references: [id])
+  isNotified    Boolean  @default(false)
   userId        String
+  user          User?    @relation(fields: [userId], references: [id])
 
   @@index([userId, executionDate])
   @@index([executionDate, isNotified])
 }
 
 model CustomCategory {
-  userId   String
-  type     TransactionType  
-  value    String           @db.VarChar(250)
-  user     User?            @relation(fields: [userId], references: [id])
+  userId String
+  type   String @db.VarChar(10)
+  value  String @db.VarChar(250)
+  user   User?  @relation(fields: [userId], references: [id])
 
   @@id([userId, type, value])
 }
 
-enum GPBSubscriptionState {
-  SUBSCRIPTION_STATE_ACTIVE
-  SUBSCRIPTION_STATE_CANCELED
-  SUBSCRIPTION_STATE_IN_GRACE_PERIOD
-  SUBSCRIPTION_STATE_ON_HOLD
-  SUBSCRIPTION_STATE_PAUSED
-  SUBSCRIPTION_STATE_EXPIRED
-}
 
 model GPBSubscription {
-  purchaseToken String               @id @db.VarChar(250)
+  purchaseToken String  @id @db.VarChar(250)
   userId        String
-  isLatest      Boolean              @default(false)
-  state         GPBSubscriptionState
-  expiry        Float?               @db.Double()
+  isLatest      Boolean @default(false)
+  state         String  @db.VarChar(40)
+  expiry        Float?
   cancelReason  String?
 
   @@index([userId, isLatest])
 }
 
-enum STRSubscriptionState {
-  trialing
-  active
-  past_due
-  incomplete
-  incomplete_expired
-  canceled
-  unpaid
-  paused
-}
-
 model STRSubscription {
-  userId          String  @id
-  customerId      String
-  subscriptionId  String
-  state           STRSubscriptionState
-  expiry          Float
-  cancelAtExpiry  Boolean @default(false)
+  userId         String  @id
+  customerId     String
+  subscriptionId String
+  state          String  @db.VarChar(20)
+  expiry         Float
+  cancelAtExpiry Boolean @default(false)
 
   @@index([subscriptionId])
+}
+
+model PasskeyChallenge {
+  webAuthnUserID String
+  userId         String?
+  challenge      String
+  createdAt      Float  @default(0)
+
+  @@id([webAuthnUserID])
+  @@index([userId, createdAt])
+}
+
+model Passkey {
+  id             String  @id
+  webAuthnUserID String
+  userId         String
+  publicKey      Bytes   @db.ByteA
+  deviceType     String
+  backedUp       Boolean @default(false)
+  displayName    String?
+  createdAt      Float   @default(0)
+  lastUsed       Float   @default(0)
+  transports     PasskeyTransport[]
+
+  @@unique([userId, webAuthnUserID])
+}
+
+model PasskeyTransport {
+  id            String
+  transport     String
+  passkey       Passkey @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  @@id([id, transport])
 }

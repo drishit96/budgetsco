@@ -5,9 +5,10 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "target": "ES2019",
+    "module": "ESNext",
     "strict": true,
     "baseUrl": ".",
     "paths": {
@@ -15,6 +16,8 @@
     },
     "noEmit": true,
     "forceConsistentCasingInFileNames": true,
-    "allowJs": true
+    "allowJs": true,
+    "skipLibCheck": true,
+    "types": ["@remix-run/node", "vite/client"]
   }
 }

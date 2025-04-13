@@ -8,6 +8,8 @@ type BottomSheetProps = {
   className?: string;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   closeButtonSize?: "sm" | "lg";
+  addToHistoryStack?: boolean;
+  onCloseClick?: () => void;
   children?: any;
 };
 
@@ -16,10 +18,12 @@ export const BottomSheet = ({
   className,
   setShow,
   closeButtonSize,
+  addToHistoryStack = true,
+  onCloseClick = () => {},
   children,
 }: BottomSheetProps) => {
   useEffect(() => {
-    if (show) {
+    if (show && addToHistoryStack) {
       history.pushState(null, document.title, window.location.href);
       window.onpopstate = async () => {
         window.onpopstate = () => {};
@@ -49,7 +53,7 @@ export const BottomSheet = ({
       {/* Bottom Sheet */}
       <div
         className={clsx(
-          "flex flex-col items-center bg-base p-5 w-full h-fit md:w-3/4 lg:w-2/3 left-1/2 -translate-x-1/2 fixed bottom-0 transition-all duration-300 rounded-lg z-50 shadow-2xl",
+          "flex flex-col items-center bg-base p-5 w-full h-fit max-h-[80%] overflow-y-scroll md:w-3/4 lg:w-2/3 left-1/2 -translate-x-1/2 fixed bottom-0 transition-all duration-300 rounded-lg z-50 shadow-2xl",
           {
             "translate-y-full": !show,
             "translate-y-0": show,
@@ -67,6 +71,7 @@ export const BottomSheet = ({
                 closeButtonSize === "sm" ? "btn-secondary-sm" : "btn-secondary"
               }`}
               onClick={() => {
+                typeof onCloseClick === "function" && onCloseClick();
                 setShow(false);
                 window.onpopstate = () => {};
                 history.back();

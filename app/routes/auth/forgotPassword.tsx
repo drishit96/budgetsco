@@ -1,6 +1,6 @@
 import { Ripple } from "@rmwc/ripple";
 import type { LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { Form, useNavigation } from "@remix-run/react";
 import { Input } from "~/components/Input";
 import { Spacer } from "~/components/Spacer";
@@ -22,7 +22,7 @@ export let loader: LoaderFunction = async ({ request }) => {
     return redirect("/dashboard");
   }
 
-  return json({ apiError: "" });
+  return { apiError: "" };
 };
 
 export default function ForgotPassword() {

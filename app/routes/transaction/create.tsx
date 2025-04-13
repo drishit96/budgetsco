@@ -2,7 +2,7 @@ import type { LoaderFunction } from "@remix-run/server-runtime";
 import { Ripple } from "@rmwc/ripple";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ActionFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 
 import {
   Form,
@@ -126,16 +126,16 @@ export const action: ActionFunction = async ({ request }) => {
           isRecurring: isRecurringTransaction ? "yes" : "no",
         });
       }
-      return isTransactionSaved ? json({ data: { isTransactionSaved: true } }) : null;
+      return isTransactionSaved ? { data: { isTransactionSaved: true } } : null;
     } catch (err) {
       console.error(err);
       return null;
     }
   } else {
     if (isRecurringTransaction) {
-      return json({ errors: { ...errors, ...recurringTransactionErrors } });
+      return { errors: { ...errors, ...recurringTransactionErrors } };
     }
-    return json({ errors });
+    return { errors };
   }
 };
 
@@ -152,7 +152,9 @@ export const loader: LoaderFunction = async ({ request }) => {
   }
 
   const currentMonthTarget = await getCurrentMonthTarget(userId, timezone);
-  return currentMonthTarget == null ? { budget: 0, expense: 0 } : currentMonthTarget;
+  return currentMonthTarget == null
+    ? { budget: 0, expense: 0 }
+    : Response.json(currentMonthTarget);
 };
 
 const transactionTypes = getAllTransactionTypes();

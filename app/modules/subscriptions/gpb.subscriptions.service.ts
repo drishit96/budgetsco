@@ -92,7 +92,10 @@ export async function createGPBSubscription(
     }
 
     // reset isLatest flag for all purchaseTokens of current user
-    await prisma.$executeRaw`UPDATE GPBSubscription SET isLatest = 0 WHERE userId = ${userId} AND  isLatest = 1;`;
+    await prisma.gPBSubscription.updateMany({
+      where: { userId, isLatest: true },
+      data: { isLatest: false },
+    });
 
     let expiry = 0;
     if (

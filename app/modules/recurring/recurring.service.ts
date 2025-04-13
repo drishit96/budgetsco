@@ -228,17 +228,15 @@ export async function markTransactionAsDone(
 
 export async function markAsNotified(userIds: string[], startDate: Date, endDate: Date) {
   try {
-    //Used raw query due to issue: https://github.com/prisma/prisma/issues/5043
-    const result = await prisma.$executeRaw(
-      Prisma.sql`UPDATE RecurringTransaction SET isNotified = 1 WHERE userId IN (${Prisma.join(
-        userIds
-      )}) AND executionDate > ${formatDate_DD_MMMM_YYYY_hh_mm(
-        startDate
-      )} AND executionDate <= ${formatDate_DD_MMMM_YYYY_hh_mm(
-        endDate
-      )} AND isNotified = 0`
-    );
-    return result > 0;
+    const result = await prisma.recurringTransaction.updateMany({
+      where: {
+        userId: { in: userIds },
+        executionDate: { gt: startDate, lte: endDate },
+        isNotified: false,
+      },
+      data: { isNotified: true },
+    });
+    return result.count > 0;
   } catch (error) {
     logError(error);
     return false;
@@ -250,4 +248,45 @@ export async function deleteRecurringTransaction(userId: string, transactionId: 
     where: { id: transactionId, userId },
   });
   return count > 0;
+}
+
+export async function skipRecurringTransaction(
+  userId: string,
+  transactionId: string
+): Promise<boolean> {
+  try {
+    const transaction = await prisma.recurringTransaction.findFirst({
+      where: {
+        id: transactionId,
+        userId,
+      },
+    });
+
+    if (!transaction) {
+      return false;
+    }
+
+    // Update the next execution date to skip this occurrence
+    const nextDate = getNextExecutionDate(
+      transaction.occurrence,
+      transaction.interval,
+      transaction.executionDate,
+      false
+    );
+
+    await prisma.recurringTransaction.update({
+      where: {
+        id: transactionId,
+      },
+      data: {
+        executionDate: nextDate,
+        isNotified: false,
+      },
+    });
+
+    return true;
+  } catch (error) {
+    console.error("Error skipping recurring transaction:", error);
+    return false;
+  }
 }
