@@ -37,16 +37,15 @@ export const ComboBox = <
     items: inputItems,
     defaultHighlightedIndex: 0,
     onInputValueChange: ({ inputValue }) => {
+      if (inputValue == null) return;
       const filteredItems = matchSorter(downshiftProps.items, inputValue || "", {
         keys: ["value", "label"],
       });
 
       if (onCreateItem) {
         setInputItems([
-          // @ts-ignore
           ...filteredItems,
-          // @ts-ignore
-          { label: `Create '${inputValue}'`, value: inputValue },
+          { label: `Create '${inputValue}'`, value: inputValue } as T,
         ]);
       } else {
         setInputItems(filteredItems);

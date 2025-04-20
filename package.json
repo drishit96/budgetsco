@@ -37,7 +37,7 @@
     "cross-env": "^7.0.3",
     "date-fns": "^4.1.0",
     "decimal.js": "^10.4.3",
-    "downshift": "^7.6.0",
+    "downshift": "^9.0.9",
     "express": "^5.1.0",
     "firebase": "^11.6.0",
     "firebase-admin": "^13.2.0",
