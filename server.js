@@ -46,7 +46,7 @@ app.use(expressStatic("build/client", { maxAge: "1d" }));
 app.use(morgan("tiny"));
 
 app.all(
-  "*",
+  /(.*)/,
   createRequestHandler({
     build: viteDevServer
       ? () => viteDevServer.ssrLoadModule("virtual:remix/server-build")
