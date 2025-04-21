@@ -96,7 +96,7 @@ export default function Settings() {
                 onClick={() => context.setShowLoader(true)}
               >
                 <span className="text-base">Subscription</span>
-                <span className="flex flex-grow"></span>
+                <span className="flex grow"></span>
                 <span
                   className={`w-min p-1 rounded-md text-sm ${
                     context.isActiveSubscription

@@ -400,10 +400,7 @@ export default function Create() {
                     if (isNullOrEmpty(changes.selectedItem)) return;
                     setSelectedCategories([changes.selectedItem.value]);
                   }}
-                  selectedItem={{
-                    label: selectedCategories[0],
-                    value: selectedCategories[0],
-                  }}
+                  selectedItem={categories.find((c) => c.value === selectedCategories[0])}
                   items={categories}
                   itemToString={(item) => (item ? item.label : "")}
                 />

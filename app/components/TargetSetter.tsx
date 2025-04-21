@@ -235,7 +235,7 @@ export default function TargetSetter({
 
               <div className="flex items-center gap-3 flex-wrap pb-4">
                 <span className="font-semibold">Budget per category</span>
-                <span className="flex-grow"></span>
+                <span className="grow"></span>
                 <Ripple accent>
                   <button
                     className="btn-secondary-sm"

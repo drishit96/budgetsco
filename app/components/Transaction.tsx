@@ -51,7 +51,7 @@ export function Transaction({
         <div className="flex flex-col">
           <div className="flex">
             <span className="font-bold">{transaction.category}</span>
-            <span className="flex-grow"></span>
+            <span className="grow"></span>
             <span
               className={
                 getTransactionColor(transaction.type) + " font-bold tabular-nums"
@@ -69,7 +69,7 @@ export function Transaction({
             <span className="text-gray-500">
               {formatDate_DD_MMMM_YYYY(new Date(transaction.createdAt))}
             </span>
-            <span className="flex-grow"></span>
+            <span className="grow"></span>
             <span className="text-gray-500">{transaction.paymentMode}</span>
           </div>
         </div>

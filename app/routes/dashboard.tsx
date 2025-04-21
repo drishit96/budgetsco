@@ -559,7 +559,7 @@ export default function Index() {
 
             {transactions.length > 0 && (
               <div className="flex">
-                <div className="flex-grow"></div>
+                <div className="grow"></div>
                 <Ripple accent>
                   <Link
                     to={`/transaction/history`}

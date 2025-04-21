@@ -53,7 +53,7 @@ export default function PieChartCard({
     <>
       <div className="flex">
         <p className="text-xl font-bold">{title}</p>
-        <span className="flex-grow"></span>
+        <span className="grow"></span>
         <ReportViewSwitch
           chartView={chartView}
           onChange={() => setChartView((prev) => !prev)}

@@ -50,7 +50,7 @@ export default function MonthYearSelector({
     <Form
       replace
       method="GET"
-      className="lg:flex lg:justify-center flex-grow bg-elevated-10 p-3 rounded-lg"
+      className="lg:flex lg:justify-center grow bg-elevated-10 p-3 rounded-lg"
     >
       {showCompareSettingButton && (
         <div className="flex w-full">
@@ -64,7 +64,7 @@ export default function MonthYearSelector({
             >
               <span>{`${format_MMMM_YYYY(startMonth - 1, startYear)} - 
     ${format_MMMM_YYYY(endMonth - 1, endYear)}`}</span>
-              <span className="flex-grow"></span>
+              <span className="grow"></span>
               <EditIcon size={24} />
             </button>
           </Ripple>
