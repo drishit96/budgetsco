@@ -40,7 +40,7 @@ export const BottomSheet = ({
           "bg-black bg-opacity-60 h-screen fixed inset-0 z-40 transition-opacity duration-300",
           {
             "opacity-0 pointer-events-none": !show,
-            "opacity-100": show,
+            "opacity-60": show,
           }
         )}
         onClick={() => {
