@@ -38,6 +38,7 @@ if (viteDevServer) {
     "/sounds",
     expressStatic("build/client/sounds", { immutable: true, maxAge: "1y" })
   );
+  app.use("/.well-known", expressStatic("build/client/.well-known", { maxAge: "1d" }));
 }
 
 //cache everything else for 1 day
