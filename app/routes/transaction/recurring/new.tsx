@@ -43,11 +43,6 @@ export let action: ActionFunction = async ({ request }) => {
   const { userId, timezone } = sessionData;
 
   const form = await request.formData();
-  const startDate = form.get("startDate")?.toString();
-  let startDateError = false;
-  if (isNullOrEmpty(startDate) || new Date(startDate).toString() === "Invalid Date") {
-    startDateError = true;
-  }
 
   const recurringTransactionInput = {
     occurrence: form.get("occurrence"),
@@ -59,20 +54,16 @@ export let action: ActionFunction = async ({ request }) => {
     category2: form.get("category2")?.toString().trim(),
     category3: form.get("category3")?.toString().trim(),
     paymentMode: form.get("paymentMode"),
-    startDate:
-      !startDateError && isNotNullAndEmpty(startDate) ? new Date(startDate) : null,
+    startDate: form.get("startDate")?.toString().trim(),
   };
   const recurringTransaction = parseRecurringTransactionInput(recurringTransactionInput);
   if (recurringTransaction.errors) {
-    if (startDateError) {
-      recurringTransaction.errors.startDate = "Please select a valid date";
-    }
     return {
-      data: { ...recurringTransactionInput, startDate },
+      data: recurringTransactionInput,
       errors: recurringTransaction.errors,
     };
   } else {
-    const isRecurringTransactionSaved = await createNewRecurringTransaction(
+    const { success: isRecurringTransactionSaved } = await createNewRecurringTransaction(
       userId,
       timezone,
       recurringTransaction.transaction

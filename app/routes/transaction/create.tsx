@@ -98,19 +98,19 @@ export const action: ActionFunction = async ({ request }) => {
   if (errors == null && (!isRecurringTransaction || recurringTransactionErrors == null)) {
     try {
       const addTransactionTask = addNewTransaction(transaction, userId, timezone);
-      const tasks = [addTransactionTask];
+      const tasks: Promise<any>[] = [addTransactionTask];
       const newCategory = form.get("customCategory")?.toString();
       if (newCategory) {
         tasks.push(addNewCustomCategory(userId, transaction.type, newCategory));
       }
 
       await Promise.allSettled(tasks);
-      const isTransactionSaved = await addTransactionTask;
+      const { success: isTransactionSaved } = await addTransactionTask;
 
       if (isRecurringTransaction && recurringTransaction != null) {
         createNewRecurringTransaction(userId, timezone, recurringTransaction).then(
-          (isDataSaved) => {
-            isDataSaved &&
+          (result) => {
+            result.success &&
               trackEvent(request, EventNames.RECURRING_TRANSACTION_CREATED, {
                 type: recurringTransaction.type,
                 occurrence: recurringTransaction.occurrence,

@@ -175,6 +175,18 @@ export default function Settings() {
             </Ripple>
 
             <Spacer size={3} />
+            <p className="text-emerald-700 font-bold">Developer settings</p>
+            <Spacer size={1} />
+            <Ripple>
+              <Link
+                to={`/settings/tokens/list`}
+                className="p-4 border border-primary rounded-lg focus-border"
+              >
+                <span>Personal Access Tokens</span>
+              </Link>
+            </Ripple>
+
+            <Spacer size={3} />
             <p className="text-emerald-700 font-bold">Help & Feedback</p>
             <Spacer size={1} />
             <Ripple>

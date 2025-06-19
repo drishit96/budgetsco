@@ -22,6 +22,7 @@ model User {
   paymentModeAmount    PaymentModeAmount[]
   recurringTransaction RecurringTransaction[]
   customCategories     CustomCategory[]
+  accessTokens         PersonalAccessToken[]
 
   @@index([emailId])
 }
@@ -191,4 +192,17 @@ model PasskeyTransport {
   passkey       Passkey @relation(fields: [id], references: [id], onDelete: Cascade)
 
   @@id([id, transport])
+}
+
+model PersonalAccessToken {
+  id          String   @id
+  name        String   @db.VarChar(100)
+  token       String   @db.VarChar(250)
+  permissions Json
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

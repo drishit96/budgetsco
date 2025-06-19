@@ -1,13 +1,16 @@
 import { add } from "date-fns";
 import {
-  formatDate_DD_MMMM_YYYY_hh_mm,
   getCurrentLocalDateInUTC,
   getNextExecutionDate,
+  parseDate,
 } from "~/utils/date.utils";
 import prisma from "../../lib/prisma";
 import type { TransactionType } from "../transaction/transaction.schema";
 import { addNewTransaction } from "../transaction/transaction.service";
-import type { RecurringTransactionInput } from "./recurring.schema";
+import type {
+  RecurringTransactionFilter,
+  RecurringTransactionInput,
+} from "./recurring.schema";
 import {
   parseRecurringTransactionResponse,
   parseRecurringTransactionsResponse,
@@ -121,6 +124,56 @@ export async function getUpcomingTransactions(userId: string, timezone: string) 
   }
 }
 
+export async function getRecurringTransactions(
+  userId: string,
+  filter: RecurringTransactionFilter
+) {
+  try {
+    let executionDateFilter: Prisma.DateTimeFilter | undefined = undefined;
+    if (filter.startDate && filter.endDate) {
+      executionDateFilter = {
+        gte: parseDate(filter.startDate),
+        lte: parseDate(filter.endDate),
+      };
+    } else if (filter.startDate) {
+      executionDateFilter = { gte: parseDate(filter.startDate) };
+    } else if (filter.endDate) {
+      executionDateFilter = { lte: parseDate(filter.endDate) };
+    }
+
+    const transactions = await prisma.recurringTransaction.findMany({
+      where: {
+        userId,
+        executionDate: executionDateFilter,
+      },
+      select: {
+        id: true,
+        amount: true,
+        category: true,
+        paymentMode: true,
+        description: true,
+        type: true,
+        occurrence: true,
+        interval: true,
+        executionDate: true,
+      },
+      orderBy: { executionDate: "asc" },
+    });
+
+    const recurringTransactions = parseRecurringTransactionsResponse(transactions);
+
+    if (recurringTransactions.errors) {
+      logError(JSON.stringify(recurringTransactions.errors));
+      return [];
+    }
+
+    return recurringTransactions.transactions;
+  } catch (error) {
+    logError(error);
+    return [];
+  }
+}
+
 export async function createNewRecurringTransaction(
   userId: string,
   timezone: string,
@@ -134,17 +187,17 @@ export async function createNewRecurringTransaction(
       executionDate = getNextExecutionDate(
         recurringTransactionInput.occurrence,
         recurringTransactionInput.interval
-      );
+      ).toISOString();
     }
 
-    await prisma.recurringTransaction.create({
+    const createdTransaction = await prisma.recurringTransaction.create({
       data: { ...recurringTransactionInput, executionDate, userId },
     });
 
-    return true;
+    return { success: true, transactionId: createdTransaction.id, executionDate };
   } catch (error) {
-    console.log(error);
-    return false;
+    logError(error);
+    return { success: false, transactionId: null };
   }
 }
 
@@ -166,11 +219,10 @@ export async function editRecurringTransaction(
       },
     });
 
-    return true;
+    return { success: true, transactionId, executionDate };
   } catch (error) {
-    console.log(error);
     logError(error);
-    return false;
+    return { success: false, transactionId: null };
   }
 }
 
@@ -222,6 +274,7 @@ export async function markTransactionAsDone(
       type: recurringTransaction.type.toString(),
     };
   } catch (error) {
+    logError(error);
     return { isTransactionMarkedAsDone: false, type: null };
   }
 }
@@ -286,7 +339,7 @@ export async function skipRecurringTransaction(
 
     return true;
   } catch (error) {
-    console.error("Error skipping recurring transaction:", error);
+    logError(error);
     return false;
   }
 }

@@ -9,6 +9,7 @@ import { parseTransactionsResponse } from "./transaction.schema";
 
 import prisma from "../../lib/prisma";
 import {
+  formatDate_YYY_MM,
   formatDate_YYYY_MM_DD,
   getCurrentLocalDateInUTC,
   getFirstDateOfMonth,
@@ -19,6 +20,8 @@ import { isNotNullAndEmpty, isNullOrEmpty } from "~/utils/text.utils";
 import { Prisma } from "@prisma/client";
 import { add } from "date-fns";
 import { logError } from "~/utils/logger.utils.server";
+import { getCategoriesByTransactionType } from "~/utils/category.utils";
+import { groupByDateToObject } from "~/utils/array.utils";
 
 export async function getTransaction(transactionId: string, userId: string) {
   const transaction = await prisma.transaction.findFirst({
@@ -34,8 +37,9 @@ export async function addNewTransaction(
 ) {
   try {
     const date = getCurrentLocalDateInUTC(timezone);
-    const tasks: Promise<boolean>[] = [
-      createTransaction(userId, timezone, transaction),
+    const createTransactionTask = createTransaction(userId, timezone, transaction);
+    const tasks: Promise<any>[] = [
+      createTransactionTask,
       updateMonthlyTarget(
         userId,
         transaction.type,
@@ -93,10 +97,10 @@ export async function addNewTransaction(
     }
 
     await Promise.allSettled(tasks);
-    return true;
+    return { success: true, transactionId: (await createTransactionTask).transactionId };
   } catch (error) {
     logError(error);
-    return false;
+    return { success: false, transactionId: null };
   }
 }
 
@@ -106,7 +110,7 @@ async function createTransaction(
   transaction: TransactionInput
 ) {
   try {
-    await prisma.transaction.create({
+    const createdTransaction = await prisma.transaction.create({
       data: {
         ...transaction,
         createdAtLocal: getCurrentLocalDateInUTC(timezone),
@@ -115,10 +119,10 @@ async function createTransaction(
         },
       },
     });
-    return true;
+    return { success: true, transactionId: createdTransaction.id };
   } catch (error) {
     console.log(error);
-    return false;
+    return { success: false, transactionId: null };
   }
 }
 
@@ -134,7 +138,7 @@ export async function editTransaction(
       where: { id: transactionId, userId },
     });
 
-    if (oldTransaction == null) return false;
+    if (oldTransaction == null) return { success: false, transactionId: null };
 
     tasks.push(
       prisma.transaction.update({
@@ -332,10 +336,10 @@ export async function editTransaction(
     });
 
     await Promise.all(tasks);
-    return true;
+    return { success: true, transactionId: transactionId };
   } catch (error) {
     logError(error);
-    throw error;
+    return { success: false, transactionId: null };
   }
 }
 
@@ -463,17 +467,53 @@ export async function getTransactions(
     types?: string[];
     categories?: string[];
     paymentModes?: string[];
+    startDate?: string;
+    endDate?: string;
   }
 ) {
-  const currentMonth = month ? parseDate(month) : getFirstDateOfThisMonth(timezone);
-  const nextMonth = add(currentMonth, { months: 1 });
   try {
-    const where: any = {
-      userId,
-      createdAtLocal: {
+    let dateRange: { gte?: Date; lt?: Date; lte?: Date } = {};
+
+    if (month) {
+      const currentMonth = parseDate(month);
+      const nextMonth = add(currentMonth, { months: 1 });
+      dateRange = {
         gte: currentMonth,
         lt: nextMonth,
-      },
+      };
+    } else if (filter?.startDate || filter?.endDate) {
+      if (filter?.startDate == null) {
+        throw new Error("startDate is required");
+      }
+
+      if (filter.startDate) {
+        const startDate = parseDate(filter.startDate);
+        dateRange.gte = startDate;
+        dateRange.lte = add(startDate, { days: 1 });
+
+        if (filter.endDate) {
+          const endDate = parseDate(filter.endDate);
+          const maxEndDate = add(startDate, { years: 1 });
+
+          if (endDate > maxEndDate) {
+            throw new Error("End date cannot be more than 1 year from start date");
+          }
+
+          dateRange.lte = endDate;
+        }
+      }
+    } else {
+      const currentMonth = getFirstDateOfThisMonth(timezone);
+      const nextMonth = add(currentMonth, { months: 1 });
+      dateRange = {
+        gte: currentMonth,
+        lt: nextMonth,
+      };
+    }
+
+    const where: any = {
+      userId,
+      createdAtLocal: dateRange,
     };
 
     if (filter) {
@@ -506,6 +546,16 @@ export async function getTransactions(
 
     const transactions = await prisma.transaction.findMany({
       where,
+      select: {
+        amount: true,
+        category: true,
+        createdAt: true,
+        createdAtLocal: true,
+        description: true,
+        id: true,
+        paymentMode: true,
+        type: true,
+      },
       orderBy: { createdAtLocal: "desc" },
     });
     const parsedTransactions = parseTransactionsResponse(transactions);
@@ -573,6 +623,55 @@ export async function getMonthlyTarget(userId: string, date: Date) {
     return targetAchievementData;
   } catch (error) {
     console.log(error);
+    return null;
+  }
+}
+
+export async function getExpenseTargets(
+  userId: string,
+  startMonth: string,
+  endMonth?: string | null
+) {
+  try {
+    const startDate = parseDate(startMonth);
+    const firstDateOfStartMonth = getFirstDateOfMonth(startDate);
+
+    let dateFilter: { gte: Date; lt?: Date } = {
+      gte: firstDateOfStartMonth,
+    };
+
+    if (endMonth) {
+      const endDate = parseDate(endMonth);
+      const firstDateOfEndMonth = getFirstDateOfMonth(endDate);
+      const firstDateOfNextMonth = add(firstDateOfEndMonth, { months: 1 });
+      dateFilter.lt = firstDateOfNextMonth;
+    } else {
+      const firstDateOfNextMonth = add(firstDateOfStartMonth, { months: 1 });
+      dateFilter.lt = firstDateOfNextMonth;
+    }
+
+    const targetAchievementData = await prisma.monthlyTarget.findMany({
+      select: {
+        budget: true,
+        expense: true,
+        date: true,
+      },
+      where: {
+        userId,
+        date: dateFilter,
+      },
+      orderBy: {
+        date: "asc",
+      },
+    });
+
+    return targetAchievementData.map((item) => ({
+      budget: item.budget,
+      expense: item.expense,
+      month: formatDate_YYY_MM(item.date),
+    }));
+  } catch (error) {
+    logError(error);
     return null;
   }
 }
@@ -666,7 +765,7 @@ export async function editMonthlyTarget(
     await Promise.all(tasks);
     return true;
   } catch (error) {
-    console.log(error);
+    logError(error);
     return false;
   }
 }
@@ -760,6 +859,59 @@ export async function getBudgetPerCategoryThisMonth(userId: string, timezone: st
   return categoryBudgets;
 }
 
+export async function getBudgetPerCategoryByMonth(
+  userId: string,
+  startMonth: string,
+  endMonth?: string | null
+) {
+  try {
+    const startDate = parseDate(startMonth);
+    const firstDateOfStartMonth = getFirstDateOfMonth(startDate);
+
+    let dateFilter: { gte: Date; lt?: Date } = {
+      gte: firstDateOfStartMonth,
+    };
+
+    if (endMonth) {
+      const endDate = parseDate(endMonth);
+      const firstDateOfEndMonth = getFirstDateOfMonth(endDate);
+      const firstDateOfNextMonth = add(firstDateOfEndMonth, { months: 1 });
+      dateFilter.lt = firstDateOfNextMonth;
+    } else {
+      const firstDateOfNextMonth = add(firstDateOfStartMonth, { months: 1 });
+      dateFilter.lt = firstDateOfNextMonth;
+    }
+
+    const categoryBudgets = await prisma.categoryAmount.findMany({
+      where: {
+        userId,
+        date: dateFilter,
+        type: "expense",
+        budget: { gt: 0 },
+      },
+      select: {
+        category: true,
+        budget: true,
+        amount: true,
+        date: true,
+      },
+    });
+
+    return groupByDateToObject(
+      categoryBudgets.map((item) => ({
+        category: item.category,
+        budget: item.budget,
+        expense: item.amount,
+        month: item.date,
+      })),
+      "month"
+    );
+  } catch (error) {
+    logError(error);
+    return null;
+  }
+}
+
 export async function addNewCustomCategory(
   userId: string,
   type: TransactionType,
@@ -779,7 +931,7 @@ export async function addNewCustomCategory(
     ]);
     return true;
   } catch (error) {
-    console.log(error);
+    logError(error);
     return false;
   }
 }
@@ -808,14 +960,14 @@ export async function addNewCustomCategories(
     ]);
     return true;
   } catch (error) {
-    console.log(error);
+    logError(error);
     return false;
   }
 }
 
-export async function getCustomCategories(userId: string) {
+export async function getCustomCategories(userId: string, type?: TransactionType) {
   const customCategories = await prisma.customCategory.findMany({
-    where: { userId },
+    where: { userId, ...(type ? { type } : {}) },
   });
   if (customCategories.length == 0) return null;
   const map: { [key: string]: string[] } = {};
@@ -830,6 +982,24 @@ export async function getCustomCategories(userId: string) {
   return map;
 }
 
+export async function getCombinedCategoriesByTransactionType(
+  userId: string,
+  transactionType: TransactionType
+) {
+  try {
+    const preSetCategories = getCategoriesByTransactionType(transactionType);
+    const customCategories = await prisma.customCategory.findMany({
+      where: { userId, type: transactionType },
+      select: { value: true },
+    });
+
+    return [...preSetCategories, ...customCategories.map((c) => c.value)].sort();
+  } catch (error) {
+    logError(error);
+    return [];
+  }
+}
+
 export async function aggregateTransactionsIntoCategoryAmount(userId: string) {
   try {
     await prisma.$executeRaw(
@@ -837,7 +1007,23 @@ export async function aggregateTransactionsIntoCategoryAmount(userId: string) {
     );
     return true;
   } catch (error) {
-    console.log(error);
+    logError(error);
+    return false;
+  }
+}
+
+export async function removeCustomCategory(
+  userId: string,
+  type: TransactionType,
+  category: string
+) {
+  try {
+    const { count } = await prisma.customCategory.deleteMany({
+      where: { userId, type, value: category },
+    });
+    return count > 0;
+  } catch (error) {
+    logError(error);
     return false;
   }
 }

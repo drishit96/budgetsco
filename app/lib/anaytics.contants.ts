@@ -18,6 +18,8 @@ const EventNames = {
   BUDGET_EDITED: "Budget edited",
   LOGOUT: "Logged out",
   RECURRING_TRANSACTION_SKIPPED: "Recurring transaction skipped",
+  CUSTOM_CATEGORY_CREATED: "Custom category created",
+  CUSTOM_CATEGORY_DELETED: "Custom category deleted",
 } as const;
 
 export { EventNames };

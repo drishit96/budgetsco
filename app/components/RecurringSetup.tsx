@@ -53,7 +53,7 @@ export default function RecurringSetup({
         tempHour += 12;
       }
       tempDate.setHours(tempHour, minute);
-      setDateString(tempDate.toString());
+      setDateString(tempDate.toISOString());
     }
   }, [date, hour, minute, meridiem]);
 

@@ -95,14 +95,14 @@ export const action: ActionFunction = async ({ request, params }) => {
         transaction,
         timezone
       );
-      const tasks = [editTransactionTask];
+      const tasks: Promise<any>[] = [editTransactionTask];
       const newCategory = form.get("customCategory")?.toString();
       if (newCategory) {
         tasks.push(addNewCustomCategory(userId, transaction.type, newCategory));
       }
 
       await Promise.allSettled(tasks);
-      const isTransactionSaved = await editTransactionTask;
+      const { success: isTransactionSaved } = await editTransactionTask;
       isTransactionSaved &&
         trackEvent(request, EventNames.TRANSACTION_EDITED, { type: transaction.type });
       return isTransactionSaved ? { data: { isTransactionSaved: true } } : null;

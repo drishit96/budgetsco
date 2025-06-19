@@ -42,6 +42,7 @@ import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import { ComboBox } from "~/components/ComboBox";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
+import { logError } from "~/utils/logger.utils.server";
 
 export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
@@ -67,12 +68,6 @@ export const action: ActionFunction = async ({ request, params }) => {
   const [category, category2, category3] =
     categoriesString == null ? [] : categoriesString.split(",");
 
-  const startDate = form.get("startDate")?.toString();
-  let startDateError = false;
-  if (isNullOrEmpty(startDate) || new Date(startDate).toString() === "Invalid Date") {
-    startDateError = true;
-  }
-
   const recurringTransactionInput = {
     occurrence: form.get("occurrence"),
     interval: Number(form.get("interval")),
@@ -83,8 +78,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     category2,
     category3,
     paymentMode: form.get("paymentMode"),
-    startDate:
-      !startDateError && isNotNullAndEmpty(startDate) ? new Date(startDate) : null,
+    startDate: form.get("startDate")?.toString().trim(),
   };
 
   const { errors, transaction } = parseRecurringTransactionInput(
@@ -97,16 +91,17 @@ export const action: ActionFunction = async ({ request, params }) => {
         params.recurringTransactionId,
         transaction
       );
-      const tasks = [editRecurringTransactionTask];
+      const tasks: Promise<any>[] = [editRecurringTransactionTask];
       const newCategory = form.get("customCategory")?.toString();
       if (newCategory) {
         tasks.push(addNewCustomCategory(userId, transaction.type, newCategory));
       }
+      await Promise.allSettled(tasks);
       const isTransactionSaved = await editRecurringTransactionTask;
       isTransactionSaved && trackEvent(request, EventNames.RECURRING_TRANSACTION_EDITED);
       return isTransactionSaved ? { data: { isTransactionSaved: true } } : null;
     } catch (err) {
-      console.error(err);
+      logError(err);
       return null;
     }
   } else {
