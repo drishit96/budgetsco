@@ -22,8 +22,11 @@ export const action: ActionFunction = async ({ request }) => {
       );
     }
 
-    const body = await request.json();
-    const { errors, data: input } = parseCustomCategoryActionInput(body);
+    const urlSearchParams = new URL(request.url).searchParams;
+    const type = urlSearchParams.get("type");
+    const category = urlSearchParams.get("category");
+
+    const { errors, data: input } = parseCustomCategoryActionInput({ type, category });
 
     if (errors) {
       return Response.json({ success: false, errors }, { status: 400 });

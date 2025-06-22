@@ -45,7 +45,7 @@ export let action: ActionFunction = async ({ request }) => {
         isRecurring: "no",
       });
     }
-    return isTransactionSaved ? { success: transactionId } : null;
+    return isTransactionSaved ? { transactionId } : null;
   } catch (error) {
     logError(error);
     return Response.json({ error: "Internal server error" }, { status: 500 });

@@ -22,8 +22,8 @@ export let action: ActionFunction = async ({ request }) => {
       );
     }
 
-    const body = await request.json();
-    const transactionId = body.transactionId;
+    const urlSearchParams = new URL(request.url).searchParams;
+    const transactionId = urlSearchParams.get("transactionId");
 
     if (isNullOrEmpty(transactionId) || typeof transactionId !== "string") {
       return Response.json({ error: "Transaction ID is required" }, { status: 400 });

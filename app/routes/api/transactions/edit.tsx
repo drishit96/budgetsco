@@ -61,7 +61,7 @@ export let action: ActionFunction = async ({ request }) => {
       });
     }
     return isTransactionSaved
-      ? { success: transactionId }
+      ? { transactionId }
       : { error: "Failed to edit transaction" };
   } catch (error) {
     logError(error);

@@ -37,7 +37,6 @@ export function checkPermissions(request: Request, permissions: TokenPermissions
     if (method === "get") {
       return true;
     } else if (method === "post") {
-      console.log("Checking currency write permission", permissions);
       return (permissions.preferences as TokenPermissions)?.currency?.write as boolean;
     }
   } else if (path.startsWith("/api/target")) {

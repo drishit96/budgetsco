@@ -4,7 +4,10 @@ import * as argon2 from "argon2";
 import { nanoid } from "nanoid";
 import { isNullOrEmpty } from "~/utils/text.utils";
 
-const INVALID_HASH = await argon2.hash("");
+let INVALID_HASH: string;
+(async () => {
+  INVALID_HASH = await argon2.hash("");
+})();
 
 export async function createPersonalAccessToken(
   userId: string,
