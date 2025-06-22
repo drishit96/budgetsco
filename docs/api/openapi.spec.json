@@ -1,0 +1,1618 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Budgetsco API",
+    "description": "API documentation for Budgetsco",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api",
+      "description": "API base path"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "description": "Error response schema containing an error message.",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          }
+        },
+        "example": {
+          "error": "Unauthorized"
+        }
+      },
+      "Success": {
+        "type": "object",
+        "description": "Success response schema indicating operation result.",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Indicates if the operation was successful"
+          }
+        },
+        "example": {
+          "success": true
+        }
+      },
+      "Category": {
+        "type": "string",
+        "description": "Category name",
+        "example": "Grocery"
+      },
+      "TransactionType": {
+        "type": "string",
+        "enum": [
+          "income",
+          "expense",
+          "investment"
+        ],
+        "description": "Type of transaction",
+        "example": "expense"
+      },
+      "CustomCategoryInput": {
+        "type": "object",
+        "description": "Input schema for creating or deleting a custom category.",
+        "required": [
+          "type",
+          "category"
+        ],
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/TransactionType"
+          },
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          }
+        },
+        "example": {
+          "type": "expense",
+          "category": "Books"
+        }
+      },
+      "RecurringTransactionInput": {
+        "type": "object",
+        "description": "Input schema for creating a recurring transaction.",
+        "required": [
+          "amount",
+          "category",
+          "type",
+          "occurrence",
+          "interval"
+        ],
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "float",
+            "description": "Transaction amount",
+            "example": 100.0
+          },
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "type": {
+            "$ref": "#/components/schemas/TransactionType"
+          },
+          "occurrence": {
+            "type": "string",
+            "description": "Occurrence frequency (e.g., daily, weekly, monthly)",
+            "example": "monthly"
+          },
+          "interval": {
+            "type": "integer",
+            "description": "Interval for the recurrence (e.g., every 2 months)",
+            "example": 1
+          }
+        }
+      },
+      "RecurringTransactionEditInput": {
+        "type": "object",
+        "description": "Input schema for editing a recurring transaction.",
+        "properties": {
+          "transactionId": {
+            "type": "string",
+            "description": "ID of the transaction to edit",
+            "example": "abc123"
+          },
+          "amount": {
+            "type": "number",
+            "format": "float",
+            "description": "New transaction amount",
+            "example": 120.0
+          },
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          }
+        },
+        "required": [
+          "transactionId"
+        ]
+      },
+      "RecurringTransactionSkipInput": {
+        "type": "object",
+        "description": "Input schema for skipping a recurring transaction occurrence.",
+        "properties": {
+          "transactionId": {
+            "type": "string",
+            "description": "ID of the transaction to skip",
+            "example": "abc123"
+          }
+        },
+        "required": [
+          "transactionId"
+        ]
+      },
+      "RecurringTransactionMarkAsDoneInput": {
+        "type": "object",
+        "description": "Input schema for marking a recurring transaction as done.",
+        "properties": {
+          "transactionId": {
+            "type": "string",
+            "description": "ID of the transaction to mark as done",
+            "example": "abc123"
+          }
+        },
+        "required": [
+          "transactionId"
+        ]
+      },
+      "TargetFilter": {
+        "type": "object",
+        "description": "Filter for retrieving budget/target data.",
+        "properties": {
+          "startMonth": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}$",
+            "description": "Start month in YYYY-MM format.",
+            "example": "2025-06"
+          },
+          "endMonth": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}$",
+            "description": "End month in YYYY-MM format.",
+            "example": "2025-07"
+          },
+          "breakDownByCategory": {
+            "type": "boolean",
+            "description": "Whether to break down the target by category.",
+            "example": true
+          }
+        },
+        "required": [
+          "startMonth"
+        ],
+        "example": {
+          "startMonth": "2025-06",
+          "endMonth": "2025-07",
+          "breakDownByCategory": true
+        }
+      },
+      "BudgetInput": {
+        "type": "object",
+        "description": "Input for setting a budget/target.",
+        "properties": {
+          "breakdown": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number",
+              "format": "float"
+            },
+            "description": "Map of category to budget amount."
+          }
+        },
+        "required": [
+          "breakdown"
+        ],
+        "example": {
+          "breakdown": {
+            "Grocery": 200,
+            "Utilities": 100
+          }
+        }
+      },
+      "BudgetCategoryBreakdown": {
+        "type": "object",
+        "description": "Budget breakdown by category.",
+        "additionalProperties": {
+          "type": "number",
+          "format": "float"
+        },
+        "example": {
+          "Grocery": 200,
+          "Utilities": 100
+        }
+      },
+      "BudgetResponse": {
+        "type": "object",
+        "description": "Response for budget/target endpoints.",
+        "properties": {
+          "total": {
+            "type": "number",
+            "format": "float",
+            "description": "Total budget for the period.",
+            "example": 300
+          },
+          "breakdown": {
+            "$ref": "#/components/schemas/BudgetCategoryBreakdown"
+          }
+        },
+        "example": {
+          "total": 300,
+          "breakdown": {
+            "Grocery": 200,
+            "Utilities": 100
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Bearer token (personal access token) for authentication"
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Bearer token is missing or invalid",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "Unauthorized"
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Internal server error occurred",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "Internal server error"
+            }
+          }
+        }
+      },
+      "MethodNotAllowedError": {
+        "description": "Method not allowed",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "error": "Method not allowed"
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/categories/get": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Get combined categories by transaction type",
+        "description": "Returns both default and custom categories for a specific transaction type.",
+        "operationId": "getCombinedCategories",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/TransactionType"
+            },
+            "description": "Type of transaction",
+            "example": "expense"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of categories (default and custom)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Category"
+                  }
+                },
+                "examples": {
+                  "categories": {
+                    "value": [
+                      "Grocery",
+                      "Books",
+                      "Utilities"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid type parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Type is required"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/categories/custom/get": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Get custom categories",
+        "description": "Returns user-defined custom categories for a specific transaction type.",
+        "operationId": "getCustomCategories",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/TransactionType"
+            },
+            "description": "Type of transaction",
+            "example": "income"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of custom categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Category"
+                  }
+                },
+                "examples": {
+                  "customCategories": {
+                    "value": [
+                      "Freelance",
+                      "Gift"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid type parameter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Type is required"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Create custom category",
+        "description": "Adds a new user-defined category to the specified transaction type.",
+        "operationId": "createCustomCategory",
+        "requestBody": {
+          "description": "Custom category input object containing type and category.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomCategoryInput"
+              },
+              "example": {
+                "type": "expense",
+                "category": "Books"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Category created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                },
+                "example": {
+                  "success": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or creation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "type": "boolean"
+                        },
+                        "errors": {
+                          "type": "object"
+                        }
+                      },
+                      "example": {
+                        "success": false,
+                        "errors": {
+                          "category": "Required"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "type": "boolean"
+                        },
+                        "error": {
+                          "type": "string"
+                        }
+                      },
+                      "example": {
+                        "success": false,
+                        "error": "Failed to create category"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Categories"
+        ],
+        "summary": "Delete custom category",
+        "description": "Removes a user-defined category from the specified transaction type.",
+        "operationId": "deleteCustomCategory",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/TransactionType"
+            },
+            "description": "Type of transaction",
+            "example": "expense"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Category"
+            },
+            "description": "Name of the custom category to delete",
+            "example": "Books"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                },
+                "example": {
+                  "success": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or deletion failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "type": "boolean"
+                        },
+                        "errors": {
+                          "type": "object"
+                        }
+                      },
+                      "example": {
+                        "success": false,
+                        "errors": {
+                          "category": "Required"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "type": "boolean"
+                        },
+                        "error": {
+                          "type": "string"
+                        }
+                      },
+                      "example": {
+                        "success": false,
+                        "error": "Failed to delete category"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/currency/get": {
+      "get": {
+        "tags": [
+          "Currency"
+        ],
+        "summary": "Get user's preferred currency",
+        "description": "Returns the currently set currency for the authenticated user.",
+        "operationId": "getCurrency",
+        "responses": {
+          "200": {
+            "description": "Current currency preference",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "currency": {
+                      "type": "string",
+                      "example": "USD"
+                    }
+                  }
+                },
+                "examples": {
+                  "currency": {
+                    "value": {
+                      "currency": "USD"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/currency/set": {
+      "post": {
+        "tags": [
+          "Currency"
+        ],
+        "summary": "Set user's preferred currency",
+        "description": "Sets or updates the preferred currency for the authenticated user.",
+        "operationId": "setCurrency",
+        "requestBody": {
+          "description": "Currency preference input object.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "currency": {
+                    "type": "string",
+                    "example": "USD"
+                  }
+                },
+                "required": [
+                  "currency"
+                ],
+                "example": {
+                  "currency": "USD"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Currency updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                },
+                "example": {
+                  "success": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Invalid currency code"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/recurringTransactions/get": {
+      "get": {
+        "tags": [
+          "RecurringTransactions"
+        ],
+        "summary": "Get recurring transactions",
+        "description": "Returns a list of recurring transactions for the authenticated user, optionally filtered by date range.",
+        "operationId": "getRecurringTransactions",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Filter transactions starting from this date.",
+            "example": "2025-06-01"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Filter transactions up to this date.",
+            "example": "2025-06-30"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of recurring transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "examples": {
+                  "transactions": {
+                    "value": [
+                      {
+                        "id": "abc123",
+                        "amount": 100,
+                        "category": "Rent"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid filter input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Invalid date format"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/recurringTransactions/create": {
+      "post": {
+        "tags": [
+          "RecurringTransactions"
+        ],
+        "summary": "Create a recurring transaction",
+        "description": "Creates a new recurring transaction for the authenticated user.",
+        "operationId": "createRecurringTransaction",
+        "requestBody": {
+          "description": "Recurring transaction input object.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecurringTransactionInput"
+              },
+              "example": {
+                "amount": 100,
+                "category": "Rent",
+                "type": "expense",
+                "occurrence": "monthly",
+                "interval": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Recurring transaction created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "transactionId": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "transactionId": "abc123"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or creation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Validation error"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/recurringTransactions/edit": {
+      "post": {
+        "tags": [
+          "RecurringTransactions"
+        ],
+        "summary": "Edit a recurring transaction",
+        "description": "Edits an existing recurring transaction for the authenticated user.",
+        "operationId": "editRecurringTransaction",
+        "requestBody": {
+          "description": "Recurring transaction edit input object (must include transactionId).",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecurringTransactionEditInput"
+              },
+              "example": {
+                "transactionId": "abc123",
+                "amount": 120,
+                "category": "Rent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Recurring transaction edited successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "transactionId": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "transactionId": "abc123"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or edit failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Validation error"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/recurringTransactions/delete": {
+      "delete": {
+        "tags": [
+          "RecurringTransactions"
+        ],
+        "summary": "Delete a recurring transaction",
+        "description": "Deletes a recurring transaction for the authenticated user.",
+        "operationId": "deleteRecurringTransaction",
+        "parameters": [
+          {
+            "name": "transactionId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the recurring transaction to delete.",
+            "example": "abc123"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Recurring transaction deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                },
+                "example": {
+                  "success": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or deletion failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Transaction ID is required"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/recurringTransactions/skip": {
+      "post": {
+        "tags": [
+          "RecurringTransactions"
+        ],
+        "summary": "Skip a recurring transaction occurrence",
+        "description": "Skips the next occurrence of a recurring transaction.",
+        "operationId": "skipRecurringTransaction",
+        "requestBody": {
+          "description": "Object containing the transactionId to skip.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecurringTransactionSkipInput"
+              },
+              "example": {
+                "transactionId": "abc123"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Recurring transaction skipped successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                },
+                "example": {
+                  "success": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or skip failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Transaction ID is required"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/recurringTransactions/markAsDone": {
+      "post": {
+        "tags": [
+          "RecurringTransactions"
+        ],
+        "summary": "Mark a recurring transaction as done",
+        "description": "Marks a recurring transaction occurrence as completed.",
+        "operationId": "markRecurringTransactionAsDone",
+        "requestBody": {
+          "description": "Object containing the transactionId to mark as done.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecurringTransactionMarkAsDoneInput"
+              },
+              "example": {
+                "transactionId": "abc123"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Recurring transaction marked as done successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                },
+                "example": {
+                  "success": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or mark as done failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Transaction ID is required"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/transactions/get": {
+      "get": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Get transactions",
+        "description": "Returns a list of transactions for the authenticated user, with optional filters.",
+        "operationId": "getTransactions",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/TransactionType"
+            },
+            "description": "Filter by transaction type.",
+            "example": "expense"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/Category"
+            },
+            "description": "Filter by category.",
+            "example": "Grocery"
+          },
+          {
+            "name": "paymentMode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by payment mode.",
+            "example": "Credit Card"
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Start date for filtering.",
+            "example": "2025-06-01"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "End date for filtering.",
+            "example": "2025-06-30"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "examples": {
+                  "transactions": {
+                    "value": [
+                      {
+                        "id": "txn1",
+                        "amount": 50,
+                        "category": "Grocery"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid filter input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Invalid filter"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/transactions/create": {
+      "post": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Create a transaction",
+        "description": "Creates a new transaction for the authenticated user.",
+        "operationId": "createTransaction",
+        "requestBody": {
+          "description": "Transaction input object.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "amount": 50,
+                "category": "Grocery",
+                "type": "expense",
+                "paymentMode": "Credit Card"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transaction created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "transactionId": {
+                      "type": "string",
+                      "description": "ID of the created transaction"
+                    }
+                  }
+                },
+                "example": {
+                  "transactionId": "txn1"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or creation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Validation error"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/transactions/edit": {
+      "post": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Edit a transaction",
+        "description": "Edits an existing transaction for the authenticated user.",
+        "operationId": "editTransaction",
+        "requestBody": {
+          "description": "Transaction edit input object (must include transactionId).",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "transactionId": "txn1",
+                "amount": 60,
+                "category": "Grocery"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Transaction edited successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "transactionId": {
+                      "type": "string",
+                      "description": "ID of the edited transaction"
+                    }
+                  }
+                },
+                "example": {
+                  "transactionId": "txn1"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or edit failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Validation error"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/transactions/delete": {
+      "delete": {
+        "tags": [
+          "Transactions"
+        ],
+        "summary": "Delete a transaction",
+        "description": "Deletes a transaction for the authenticated user.",
+        "operationId": "deleteTransaction",
+        "parameters": [
+          {
+            "name": "transactionId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the transaction to delete.",
+            "example": "txn1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transaction deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                },
+                "example": {
+                  "success": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or deletion failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Transaction ID is required"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/target/get": {
+      "get": {
+        "tags": [
+          "Target"
+        ],
+        "summary": "Get budget/target information",
+        "description": "Returns the user's budget/target for a given month or range, optionally broken down by category.",
+        "operationId": "getTarget",
+        "parameters": [
+          {
+            "name": "startMonth",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}$"
+            },
+            "description": "Start month in YYYY-MM format.",
+            "example": "2025-06"
+          },
+          {
+            "name": "endMonth",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}$"
+            },
+            "description": "End month in YYYY-MM format.",
+            "example": "2025-07"
+          },
+          {
+            "name": "breakDownByCategory",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Whether to break down the target by category.",
+            "example": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Budget/target information (total or breakdown by category)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/BudgetResponse"
+                    },
+                    {
+                      "$ref": "#/components/schemas/BudgetCategoryBreakdown"
+                    }
+                  ]
+                },
+                "examples": {
+                  "total": {
+                    "value": {
+                      "total": 300,
+                      "breakdown": {
+                        "Grocery": 200,
+                        "Utilities": 100
+                      }
+                    }
+                  },
+                  "breakdown": {
+                    "value": {
+                      "Grocery": 200,
+                      "Utilities": 100
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid filter input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Start month must be in YYYY-MM format"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/target/set": {
+      "post": {
+        "tags": [
+          "Target"
+        ],
+        "summary": "Set budget/target",
+        "description": "Sets or updates the user's budget/target for the current month broken down by category.",
+        "operationId": "setTarget",
+        "requestBody": {
+          "description": "Budget/target input object.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BudgetInput"
+              },
+              "example": {
+                "breakdown": {
+                  "Grocery": 200,
+                  "Utilities": 100
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Target set successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Success"
+                },
+                "example": {
+                  "success": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or save failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Budget has to be more than zero"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    }
+  }
+}

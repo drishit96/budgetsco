@@ -120,7 +120,10 @@ export default function PersonalAccessTokens() {
         <p className="text-secondary mb-4 w-full lg:w-1/2">
           Personal access tokens are fine-grained tokens suitable for personal API use and
           for using Budgetsco with MCP. They can be used to authenticate to the API over
-          Basic Authentication.
+          Basic Authentication.{" "}
+          <a href="/docs/api" className="text-accent">
+            Learn more
+          </a>
         </p>
 
         {errorValue && (
