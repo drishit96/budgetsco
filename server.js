@@ -2,6 +2,8 @@ import express, { static as expressStatic } from "express";
 import compression from "compression";
 import morgan from "morgan";
 import { createRequestHandler } from "@remix-run/express";
+import { serve, setup } from "swagger-ui-express";
+import openApiSpec from "./docs/api/openapi.spec.json" with { type: "json" };
 
 const viteDevServer =
   process.env.NODE_ENV === "production"
@@ -43,6 +45,8 @@ if (viteDevServer) {
 
 //cache everything else for 1 day
 app.use(expressStatic("build/client", { maxAge: "1d" }));
+
+app.use("/docs/api", serve, setup(openApiSpec));
 
 app.use(morgan("tiny"));
 

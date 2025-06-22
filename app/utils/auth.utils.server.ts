@@ -4,6 +4,10 @@ import { createCookie } from "@remix-run/node";
 import type { UserPreferenceResponse } from "~/modules/settings/settings.schema";
 import { authenticator } from "otplib";
 import { logError } from "./logger.utils.server";
+import { isNullOrEmpty } from "./text.utils";
+import { getUserByToken } from "~/modules/settings/tokens/tokens.service";
+import { checkPermissions } from "./access.utils";
+import { TokenPermissions } from "~/modules/settings/tokens/tokens.schema";
 
 function initializeFirebaseApp() {
   try {
@@ -76,7 +80,8 @@ export type UserSessionData = {
   userId: string;
   isEmailVerified?: boolean;
   emailId?: string;
-  expiresOn: number;
+  expiresOn?: number;
+  permissions?: TokenPermissions;
 } & UserPreferenceResponse & {
     updateLocalStore?: boolean;
     customCategories?: { [key: string]: string[] } | null;
@@ -85,6 +90,36 @@ export type UserSessionData = {
 export async function getSessionData(request: Request): Promise<UserSessionData | null> {
   try {
     initializeFirebaseApp();
+
+    const authHeader = request.headers.get("Authorization");
+    if (authHeader) {
+      const [type, token] = authHeader.split(" ");
+      if (type !== "Bearer" || isNullOrEmpty(token)) {
+        return null;
+      }
+      const user = await getUserByToken(token);
+      if (user == null || user.userPreference == null) {
+        return null;
+      }
+
+      const hasPermission = checkPermissions(
+        request,
+        user.permissions as TokenPermissions
+      );
+      if (!hasPermission) {
+        return null;
+      }
+
+      const userPreferences = user.userPreference as UserPreferenceResponse;
+      return {
+        ...userPreferences,
+        userId: user.id,
+        isEmailVerified: true,
+        emailId: user.emailId ?? undefined,
+        permissions: user.permissions as TokenPermissions,
+      };
+    }
+
     const sessionCookie: SessionCookie = await getSessionCookieBuilder().parse(
       request.headers.get("Cookie")
     );

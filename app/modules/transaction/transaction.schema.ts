@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { formatErrors } from "~/utils/error.utils";
+import { safeParseObjectToSchema } from "~/utils/schema.utils";
 
 export const decimal = ({
   path,
@@ -72,6 +73,14 @@ export const TransactionResponseSchema = z.object({
   ...transactionGenerated,
 });
 
+const TransactionFilterSchema = z.object({
+  types: z.array(z.enum(["income", "expense", "investment"])).optional(),
+  categories: z.array(z.string().min(1)).optional(),
+  paymentModes: z.array(z.string().min(1)).optional(),
+  startDate: z.string().date().optional(),
+  endDate: z.string().date().optional(),
+});
+
 const d = decimal({});
 export type Decimal = z.output<typeof d>;
 export const TransactionsResponseSchema = z.array(TransactionResponseSchema);
@@ -88,6 +97,7 @@ export type MonthlyTargetInput = z.infer<typeof MonthlyTargetInputSchema>;
 export type MonthlyCategoryWiseTargetInput = z.infer<
   typeof MonthlyCategoryWiseTargetInputSchema
 >;
+export type TransactionFilter = z.infer<typeof TransactionFilterSchema>;
 
 export type TransactionType = "income" | "expense" | "investment";
 
@@ -132,4 +142,8 @@ export function parseMonthlyCategoryWiseTargetInput(targetDetails: unknown) {
     const errors = formatErrors(output.error.issues);
     return { errors, categoryWiseTargetDetails: null };
   }
+}
+
+export function parseTransactionFilter(filter: unknown) {
+  return safeParseObjectToSchema(filter, TransactionFilterSchema);
 }

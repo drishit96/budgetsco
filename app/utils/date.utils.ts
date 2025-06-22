@@ -100,13 +100,20 @@ export function formatDate_DD_MMMM_YYYY_hh_mm(date: Date) {
   return format(date, "yyyy-MM-dd hh:mm");
 }
 
-export function formatDate_YYYY_MM_DD(date: Date) {
+export function formatDate_YYYY_MM_DD(date: Date, silentError = false) {
+  if (silentError) {
+    try {
+      return format(date, "yyyy-MM-dd");
+    } catch (error) {
+      return "";
+    }
+  }
   return format(date, "yyyy-MM-dd");
 }
 
 export function parseDate(dateString: string) {
-  const [year, month] = dateString.split("-").map((n) => Number(n));
-  return new Date(Date.UTC(year, month - 1, 1));
+  const [year, month, day] = dateString.split("-").map((n) => Number(n));
+  return new Date(Date.UTC(year, month - 1, day || 1));
 }
 
 export function getCurrentYear() {

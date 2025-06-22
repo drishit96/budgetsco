@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { formatErrors } from "../../utils/error.utils";
 import { decimal } from "../transaction/transaction.schema";
+import { safeParseObjectToSchema } from "~/utils/schema.utils";
 
 const recurringTransactionInput = {
   occurrence: z.enum(["day", "month", "year"]),
@@ -12,7 +13,10 @@ const recurringTransactionInput = {
   category2: z.string().nullish(),
   category3: z.string().nullish(),
   paymentMode: z.string().min(1, "Please select a payment mode"),
-  startDate: z.date().optional(),
+  startDate: z
+    .string()
+    .datetime({ message: "Please select a valid start date" })
+    .optional(),
 };
 
 const recurringTransactionGenerated = {
@@ -36,6 +40,11 @@ export const RecurringTransactionInputSchema = z
     }
   );
 
+export const RecurringTransactionFilterSchema = z.object({
+  startDate: z.string().date().optional(),
+  endDate: z.string().date().optional(),
+});
+
 export const RecurringTransactionResponseSchema = z.object({
   ...recurringTransactionInput,
   ...recurringTransactionGenerated,
@@ -52,6 +61,7 @@ export type RecurringTransactionResponse = z.infer<
 export type RecurringTransactionsResponse = z.infer<
   typeof RecurringTransactionsResponseSchema
 >;
+export type RecurringTransactionFilter = z.infer<typeof RecurringTransactionFilterSchema>;
 
 export function parseRecurringTransactionInput(transaction: unknown) {
   const output = RecurringTransactionInputSchema.safeParse(transaction);
@@ -90,4 +100,8 @@ export function parseRecurringTransactionsResponse(transactions: unknown) {
     const errors = formatErrors(output.error.issues);
     return { errors, transaction: null };
   }
+}
+
+export function parseRecurringTransactionFilter(filter: unknown) {
+  return safeParseObjectToSchema(filter, RecurringTransactionFilterSchema);
 }
