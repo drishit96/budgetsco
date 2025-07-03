@@ -115,7 +115,7 @@ test.describe.serial("Personal Access Tokens", () => {
     await page.getByRole("button", { name: "Done" }).click();
 
     await expect(page.getByText("Test Token")).toBeVisible();
-    const dateToVerify = formatDate_DD_MMMM_YYYY(add(new Date(), { months: 1 }));
+    const dateToVerify = formatDate_DD_MMMM_YYYY(add(new Date(), { days: 30 }));
     await expect(page.getByText(`Expires on: ${dateToVerify}`)).toBeVisible();
 
     // Open the edit page for the created token
@@ -168,7 +168,7 @@ test.describe.serial("Personal Access Tokens", () => {
 
     await page.getByRole("button", { name: "Save" }).click();
     await expect(page.getByText("Test Token Updated")).toBeVisible();
-    const dateToVerify = formatDate_DD_MMMM_YYYY(add(new Date(), { months: 1 }));
+    const dateToVerify = formatDate_DD_MMMM_YYYY(add(new Date(), { days: 30 }));
     await expect(page.getByText(`Expires on: ${dateToVerify}`)).toBeVisible();
 
     await page.getByRole("button", { name: /Test Token Updated/ }).click();
