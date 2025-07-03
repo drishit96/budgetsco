@@ -4,6 +4,7 @@ app = "budgetsco"
 primary_region = "fra"
 kill_signal = "SIGINT"
 kill_timeout = "5s"
+swap_size_mb = 128
 [env]
   PORT = "8080"
 
