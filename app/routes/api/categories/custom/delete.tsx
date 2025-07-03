@@ -1,6 +1,6 @@
 import type { ActionFunction } from "@remix-run/node";
 import { EventNames } from "~/lib/anaytics.contants";
-import { removeCustomCategory } from "~/modules/transaction/transaction.service";
+import { removeCustomCategories } from "~/modules/transaction/transaction.service";
 import { getSessionData } from "~/utils/auth.utils.server";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { parseCustomCategoryActionInput } from "~/modules/settings/settings.schema";
@@ -24,20 +24,20 @@ export const action: ActionFunction = async ({ request }) => {
 
     const urlSearchParams = new URL(request.url).searchParams;
     const type = urlSearchParams.get("type");
-    const category = urlSearchParams.get("category");
+    const categories = urlSearchParams.getAll("category");
 
-    const { errors, data: input } = parseCustomCategoryActionInput({ type, category });
+    const { errors, data: input } = parseCustomCategoryActionInput({ type, categories });
 
     if (errors) {
       return Response.json({ success: false, errors }, { status: 400 });
     }
 
-    const isDeleted = await removeCustomCategory(userId, input.type, input.category);
+    const isDeleted = await removeCustomCategories(userId, input.type, input.categories);
     if (isDeleted) {
       trackEvent(request, EventNames.CUSTOM_CATEGORY_DELETED);
     } else {
       return Response.json(
-        { success: false, error: "Failed to delete category" },
+        { success: false, error: "Failed to delete categories" },
         { status: 400 }
       );
     }

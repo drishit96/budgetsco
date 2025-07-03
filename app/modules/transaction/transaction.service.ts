@@ -1012,15 +1012,23 @@ export async function aggregateTransactionsIntoCategoryAmount(userId: string) {
   }
 }
 
-export async function removeCustomCategory(
+export async function removeCustomCategories(
   userId: string,
   type: TransactionType,
-  category: string
+  categories: string[]
 ) {
   try {
-    const { count } = await prisma.customCategory.deleteMany({
-      where: { userId, type, value: category },
+    const deleteTask = prisma.customCategory.deleteMany({
+      where: { userId, type, value: { in: categories } },
     });
+    await Promise.all([
+      deleteTask,
+      prisma.userPreference.update({
+        data: { lastModified: new Date().getTime() },
+        where: { userId },
+      }),
+    ]);
+    const { count } = await deleteTask;
     return count > 0;
   } catch (error) {
     logError(error);

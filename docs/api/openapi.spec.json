@@ -54,24 +54,32 @@
         "description": "Type of transaction",
         "example": "expense"
       },
-      "CustomCategoryInput": {
+      "CustomCategoryActionInput": {
         "type": "object",
-        "description": "Input schema for creating or deleting a custom category.",
+        "description": "Input schema for creating or deleting custom categories.",
         "required": [
           "type",
-          "category"
+          "categories"
         ],
         "properties": {
           "type": {
             "$ref": "#/components/schemas/TransactionType"
           },
-          "category": {
-            "$ref": "#/components/schemas/Category"
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "description": "Array of category names to create or delete."
           }
         },
         "example": {
           "type": "expense",
-          "category": "Books"
+          "categories": [
+            "Books",
+            "Snacks"
+          ]
         }
       },
       "RecurringTransactionInput": {
@@ -434,32 +442,37 @@
             "$ref": "#/components/responses/InternalServerError"
           }
         }
-      },
+      }
+    },
+    "/categories/custom/create": {
       "post": {
         "tags": [
           "Categories"
         ],
-        "summary": "Create custom category",
-        "description": "Adds a new user-defined category to the specified transaction type.",
+        "summary": "Create custom categories",
+        "description": "Adds new user-defined categories to the specified transaction type.",
         "operationId": "createCustomCategory",
         "requestBody": {
-          "description": "Custom category input object containing type and category.",
+          "description": "Custom category input object containing type and categories.",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CustomCategoryInput"
+                "$ref": "#/components/schemas/CustomCategoryActionInput"
               },
               "example": {
                 "type": "expense",
-                "category": "Books"
+                "categories": [
+                  "Books",
+                  "Snacks"
+                ]
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Category created successfully",
+            "description": "Categories created successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -490,7 +503,7 @@
                       "example": {
                         "success": false,
                         "errors": {
-                          "category": "Required"
+                          "categories": "Required"
                         }
                       }
                     },
@@ -506,7 +519,7 @@
                       },
                       "example": {
                         "success": false,
-                        "error": "Failed to create category"
+                        "error": "Failed to create categories"
                       }
                     }
                   ]
@@ -524,13 +537,15 @@
             "$ref": "#/components/responses/InternalServerError"
           }
         }
-      },
+      }
+    },
+    "/categories/custom/delete": {
       "delete": {
         "tags": [
           "Categories"
         ],
-        "summary": "Delete custom category",
-        "description": "Removes a user-defined category from the specified transaction type.",
+        "summary": "Delete custom categories",
+        "description": "Removes user-defined categories from the specified transaction type.",
         "operationId": "deleteCustomCategory",
         "parameters": [
           {
@@ -548,15 +563,24 @@
             "in": "query",
             "required": true,
             "schema": {
-              "$ref": "#/components/schemas/Category"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1
             },
-            "description": "Name of the custom category to delete",
-            "example": "Books"
+            "style": "form",
+            "explode": true,
+            "description": "One or more custom category names to delete.",
+            "example": [
+              "Books",
+              "Snacks"
+            ]
           }
         ],
         "responses": {
           "200": {
-            "description": "Category deleted successfully",
+            "description": "Categories deleted successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -587,7 +611,7 @@
                       "example": {
                         "success": false,
                         "errors": {
-                          "category": "Required"
+                          "categories": "Required"
                         }
                       }
                     },
@@ -603,7 +627,7 @@
                       },
                       "example": {
                         "success": false,
-                        "error": "Failed to delete category"
+                        "error": "Failed to delete categories"
                       }
                     }
                   ]
