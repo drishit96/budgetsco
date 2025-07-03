@@ -7,6 +7,7 @@ import {
 } from "~/modules/transaction/transaction.service";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { getSessionData } from "~/utils/auth.utils.server";
+import { getCategoriesByTransactionType } from "~/utils/category.utils";
 import { formatDate_YYY_MM, getFirstDateOfThisMonth } from "~/utils/date.utils";
 import { logError } from "~/utils/logger.utils.server";
 
@@ -43,10 +44,16 @@ export let action: ActionFunction = async ({ request }) => {
     );
     tasks.push(editMonthlyTargetTask);
 
-    if (Object.keys(parsedBudget.breakdown).length > 0) {
-      tasks.push(
-        addNewCustomCategories(userId, "expense", Object.keys(parsedBudget.breakdown))
-      );
+    const presetCategories = new Set(getCategoriesByTransactionType("expense"));
+    const customCategories: string[] = [];
+    Object.keys(parsedBudget.breakdown).forEach((category) => {
+      if (!presetCategories.has(category.trim())) {
+        customCategories.push(category);
+      }
+    });
+
+    if (customCategories.length > 0) {
+      tasks.push(addNewCustomCategories(userId, "expense", customCategories));
     }
 
     const isTargetSaved = await editMonthlyTargetTask;
