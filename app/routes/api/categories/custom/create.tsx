@@ -1,6 +1,6 @@
 import type { ActionFunction } from "@remix-run/node";
 import { EventNames } from "~/lib/anaytics.contants";
-import { addNewCustomCategory } from "~/modules/transaction/transaction.service";
+import { addNewCustomCategories } from "~/modules/transaction/transaction.service";
 import { getSessionData } from "~/utils/auth.utils.server";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { logError } from "~/utils/logger.utils.server";
@@ -23,19 +23,18 @@ export const action: ActionFunction = async ({ request }) => {
     }
 
     const body = await request.json();
-    console.log("Received body:", body);
     const { errors, data: input } = parseCustomCategoryActionInput(body);
 
     if (errors) {
       return Response.json({ success: false, errors }, { status: 400 });
     }
 
-    const isCreated = await addNewCustomCategory(userId, input.type, input.category);
+    const isCreated = await addNewCustomCategories(userId, input.type, input.categories);
     if (isCreated) {
       trackEvent(request, EventNames.CUSTOM_CATEGORY_CREATED);
     } else {
       return Response.json(
-        { success: false, error: "Failed to create category" },
+        { success: false, error: "Failed to create categories" },
         { status: 400 }
       );
     }
