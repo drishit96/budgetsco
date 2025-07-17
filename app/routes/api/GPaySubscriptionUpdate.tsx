@@ -10,9 +10,11 @@ export let action: ActionFunction = async ({ request }) => {
     if (isNullOrEmpty(payloadStr)) return new Response("OK", { status: 200 });
 
     const payload: GPBNotificaction = JSON.parse(payloadStr);
-    await updateSubscriptionStatus(
-      payload.subscriptionNotification.purchaseToken
-    );
+    if (!payload || !payload.subscriptionNotification) {
+      return new Response("OK", { status: 200 });
+    }
+
+    await updateSubscriptionStatus(payload.subscriptionNotification.purchaseToken);
 
     return new Response("OK", { status: 200 });
   } catch (error) {
