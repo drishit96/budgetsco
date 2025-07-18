@@ -207,6 +207,7 @@ export default function GPB() {
               message="There is a problem with your subscription. Please go to Google Play subscription settings to fix your payment method."
               showAction
               actionText="Open Google Play Store"
+              allowDismiss={false}
               onActionClick={() => {
                 location.assign(
                   `https://play.google.com/store/account/subscriptions?sku=${subscription.planId}&package=com.app.budgetsco`
@@ -215,8 +216,19 @@ export default function GPB() {
             />
           )}
 
+          {subscription.status === "SUBSCRIPTION_STATE_CANCELED" && (
+            <>
+              <Banner
+                type="important"
+                message="Your subscription will be canceled at the end of the billing period. You can resubscribe at any time."
+              />
+              <Spacer size={2} />
+            </>
+          )}
+
           {subscription.isActive &&
-            subscription.status === "SUBSCRIPTION_STATE_ACTIVE" &&
+            (subscription.status === "SUBSCRIPTION_STATE_ACTIVE" ||
+              subscription.status === "SUBSCRIPTION_STATE_CANCELED") &&
             selectedPlan && (
               <div className="p-4 border rounded-md">
                 <span className="pl-2 pr-2 pt-1 pb-1 rounded-md border border-accent bg-accent text-accent text-sm font-bold">
@@ -232,7 +244,9 @@ export default function GPB() {
                 <Spacer size={1} />
 
                 <p>
-                  Renews on:{" "}
+                  {subscription.status === "SUBSCRIPTION_STATE_CANCELED"
+                    ? "Cancels on:"
+                    : "Renews on:"}{" "}
                   {formatDate_DD_MMMM_YYYY_hh_mm_aa(
                     new Date(Number(subscription.expiry))
                   )}
