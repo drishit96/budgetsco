@@ -31,7 +31,7 @@ export default function Turnstile({
 
   return (
     <>
-      <div id="cf-turnstile"></div>
+      <div id="cf-turnstile" data-size="flexible"></div>
     </>
   );
 }

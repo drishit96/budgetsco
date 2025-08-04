@@ -313,7 +313,7 @@ export default function Login() {
 
   return (
     <>
-      <main className="pt-7 w-full md:w-3/4 lg:w-1/3">
+      <main className="pt-7 w-full max-w-xl">
         <h1 className="text-3xl text-center pb-7">Login</h1>
 
         <div className="flex flex-col items-center justify-center">
@@ -323,7 +323,7 @@ export default function Login() {
           </div>
           <Spacer />
 
-          <div>
+          <div className="w-full p-2">
             <Form
               replace
               method="POST"
@@ -362,17 +362,20 @@ export default function Login() {
                 value={Intl.DateTimeFormat().resolvedOptions().timeZone}
               />
 
+              <Spacer size={1} />
               <Turnstile action="login" onNewToken={setTurnstileToken} />
+              <Spacer size={1} />
 
-              <Spacer />
               <Ripple>
                 <button
                   type="submit"
-                  className="btn-primary w-full"
+                  className="btn-primary w-full disabled:opacity-75 disabled:cursor-not-allowed"
                   disabled={
                     navigation.state === "submitting" ||
+                    navigation.state === "loading" ||
                     isLoginInProgress ||
-                    isPasskeyLoginInProgress
+                    isPasskeyLoginInProgress ||
+                    !turnstileToken
                   }
                 >
                   {isLoginInProgress ? "Logging in..." : "Log in"}
@@ -387,8 +390,10 @@ export default function Login() {
                   <Ripple>
                     <button
                       type="submit"
-                      className="btn-secondary w-full"
-                      disabled={isLoginInProgress || isPasskeyLoginInProgress}
+                      className="btn-secondary w-full disabled:opacity-75 disabled:cursor-not-allowed"
+                      disabled={
+                        isLoginInProgress || isPasskeyLoginInProgress || !turnstileToken
+                      }
                     >
                       {isPasskeyLoginInProgress
                         ? navigation.state === "submitting"

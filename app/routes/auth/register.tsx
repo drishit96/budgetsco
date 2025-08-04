@@ -194,11 +194,12 @@ export default function Register() {
 
   return (
     <>
-      <main className="pt-7 w-full md:w-3/4 lg:w-1/3">
+      <main className="pt-7 w-full max-w-xl">
         <h1 className="text-3xl text-center pb-7">Register</h1>
 
         <div className="flex flex-col items-center justify-center">
           <Form
+            className="w-full p-2"
             replace
             method="POST"
             onSubmit={(e) => handleRegister(e, emailId, password)}
@@ -254,7 +255,11 @@ export default function Register() {
 
             <Spacer />
             <Ripple>
-              <button type="submit" className="btn-primary w-full">
+              <button
+                type="submit"
+                className="btn-primary w-full disabled:opacity-75 disabled:cursor-not-allowed"
+                disabled={navigation.state === "submitting" || !turnstileToken}
+              >
                 {navigation.state === "submitting" ? "Registering..." : "Register"}
               </button>
             </Ripple>
