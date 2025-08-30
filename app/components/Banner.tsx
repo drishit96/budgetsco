@@ -35,19 +35,22 @@ function DismissButton({
   bannerType,
   onClick,
   permanent = false,
+  tabIndex,
 }: {
   bannerType: BannerType;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
   permanent?: boolean;
+  tabIndex?: number;
 }) {
   return (
     <>
       <Ripple>
         <button
-          className={`pl-2 pr-2 pt-1 pb-1 grow sm:grow-0 rounded-md border ${getBorderColorFromBannerType(
+          className={`pl-2 pr-2 pt-1 pb-1 grow sm:grow-0 rounded-md border focus:ring-1 focus:ring-offset-2 ${getBorderColorFromBannerType(
             bannerType
           )}`}
           onClick={onClick}
+          tabIndex={tabIndex}
         >
           {permanent ? "Don't show again" : "Dismiss"}
         </button>
@@ -68,6 +71,9 @@ export default function Banner({
   allowDismiss = true,
   allowPermanentDismiss = false,
   permanentDismissSettingName,
+  onDismiss,
+  carouselMode = false,
+  isVisible = true,
 }: {
   type: BannerType;
   message: string;
@@ -80,6 +86,9 @@ export default function Banner({
   allowDismiss?: boolean;
   allowPermanentDismiss?: boolean;
   permanentDismissSettingName?: string;
+  onDismiss?: () => void;
+  carouselMode?: boolean;
+  isVisible?: boolean;
 }) {
   const [showBanner, setShowBanner] = useState(false);
 
@@ -91,11 +100,28 @@ export default function Banner({
     );
   }, []);
 
+  const handleDismiss = (permanent = false) => {
+    if (permanent && permanentDismissSettingName) {
+      saveBoolSettingToLocalStorage(permanentDismissSettingName, false);
+    }
+
+    if (carouselMode && onDismiss) {
+      // In carousel mode, let the carousel handle the dismissal
+      onDismiss();
+    } else {
+      // In standalone mode, handle dismissal internally
+      setShowBanner(false);
+    }
+  };
+
+  // In carousel mode, make interactive elements non-focusable if not visible
+  const interactiveTabIndex = carouselMode && !isVisible ? -1 : undefined;
+
   return (
     <>
-      {showBanner && (
+      {(carouselMode || showBanner) && (
         <div
-          className={`p-4 rounded-md w-full
+          className={`p-4 rounded-md w-full h-full flex flex-col
     ${getTextColorFromBannerType(type)} ${getBackgroundColorFromBannerType(type)}`}
         >
           <div className="flex">
@@ -123,27 +149,32 @@ export default function Banner({
             </div>
           </div>
           <Spacer />
+          <div className="grow"></div>
           {showAction && (
             <div className="flex justify-end flex-wrap-reverse gap-1">
               {allowPermanentDismiss && (
                 <DismissButton
                   bannerType={type}
                   permanent={true}
-                  onClick={() => {
-                    permanentDismissSettingName &&
-                      saveBoolSettingToLocalStorage(permanentDismissSettingName, false);
-                    setShowBanner(false);
-                  }}
+                  onClick={() => handleDismiss(true)}
+                  tabIndex={interactiveTabIndex}
                 />
               )}
               {allowDismiss && (
-                <DismissButton bannerType={type} onClick={() => setShowBanner(false)} />
+                <DismissButton
+                  bannerType={type}
+                  onClick={() => handleDismiss(false)}
+                  tabIndex={interactiveTabIndex}
+                />
               )}
               <Ripple>
                 <button
                   className={`pl-2 pr-2 pt-1 pb-1 grow sm:grow-0 border 
-            ${getBorderColorFromBannerType(type)} rounded-md`}
+            ${getBorderColorFromBannerType(
+              type
+            )} rounded-md focus:ring-1 focus:ring-offset-2`}
                   onClick={onActionClick}
+                  tabIndex={interactiveTabIndex}
                 >
                   {actionText}
                 </button>
@@ -156,22 +187,26 @@ export default function Banner({
                 <DismissButton
                   bannerType={type}
                   permanent={true}
-                  onClick={() => {
-                    permanentDismissSettingName &&
-                      saveBoolSettingToLocalStorage(permanentDismissSettingName, false);
-                    setShowBanner(false);
-                  }}
+                  onClick={() => handleDismiss(true)}
+                  tabIndex={interactiveTabIndex}
                 />
               )}
               {allowDismiss && (
-                <DismissButton bannerType={type} onClick={() => setShowBanner(false)} />
+                <DismissButton
+                  bannerType={type}
+                  onClick={() => handleDismiss(false)}
+                  tabIndex={interactiveTabIndex}
+                />
               )}
 
               <Ripple>
                 <Link
                   className={`pl-2 pr-2 pt-1 pb-1 grow sm:grow-0 text-center border 
-          ${getBorderColorFromBannerType(type)} rounded-md`}
+          ${getBorderColorFromBannerType(
+            type
+          )} rounded-md focus:ring-1 focus:ring-offset-2`}
                   to={link ?? ""}
+                  tabIndex={interactiveTabIndex}
                 >
                   {linkText}
                 </Link>
