@@ -375,7 +375,7 @@ export default function Login() {
                     navigation.state === "loading" ||
                     isLoginInProgress ||
                     isPasskeyLoginInProgress ||
-                    !turnstileToken
+                    (UI_ENV !== "test" && !turnstileToken)
                   }
                 >
                   {isLoginInProgress ? "Logging in..." : "Log in"}
@@ -392,7 +392,9 @@ export default function Login() {
                       type="submit"
                       className="btn-secondary w-full disabled:opacity-75 disabled:cursor-not-allowed"
                       disabled={
-                        isLoginInProgress || isPasskeyLoginInProgress || !turnstileToken
+                        isLoginInProgress ||
+                        isPasskeyLoginInProgress ||
+                        (UI_ENV !== "test" && !turnstileToken)
                       }
                     >
                       {isPasskeyLoginInProgress

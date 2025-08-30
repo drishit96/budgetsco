@@ -9,7 +9,6 @@ async function globalSetup(config: FullConfig) {
 
   await page.getByLabel("E-mail Id").fill("#{TEST_LOGIN_USERNAME}#");
   await page.getByLabel("Password").fill("#{TEST_LOGIN_PASSWORD}#");
-  await page.waitForTimeout(5000);
   await page.getByRole("button", { name: "Log in" }).click();
   await page.waitForURL("**/dashboard");
 
