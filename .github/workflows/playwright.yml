@@ -93,7 +93,7 @@ jobs:
           timeout_seconds: 90
           max_attempts: 3
           retry_on: error
-          command: npx playwright test --project='Chromium'
+          command: CI=true npx playwright test --project='Chromium'
 
       - uses: actions/upload-artifact@v4
         if: always()
