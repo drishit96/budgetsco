@@ -41,9 +41,9 @@ import {
   regenerateUserIdToken,
 } from "~/utils/firebase.utils";
 import { saveNotificationToken } from "~/modules/user/user.service";
-import { getCurrencyName } from "~/utils/category.utils";
 import { getUserPreferencesAfterTimestamp } from "~/modules/settings/settings.service";
-import Banner from "~/components/Banner";
+import BannerCarousel from "~/components/BannerCarousel/BannerCarousel";
+import { prepareBannerData } from "~/utils/banner.utils";
 import { getThisMonthTarget } from "~/modules/reports/reports.service";
 import { StatisticsCard } from "~/components/StatisticsCard";
 import type { MetaFunction } from "@remix-run/react/dist/routeModules";
@@ -52,6 +52,7 @@ import type { Currency } from "~/utils/number.utils";
 import { abs, calculate, subtract } from "~/utils/number.utils";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
+import { BannerData } from "~/components/BannerCarousel/types";
 
 export const meta: MetaFunction = ({ matches }) => {
   const rootModule = matches.find((match) => match.id === "root");
@@ -248,12 +249,10 @@ function renderTransactions(
 
 export default function Index() {
   const navigation = useNavigation();
-  const [bannerParent] = useAutoAnimate<HTMLDivElement>();
   const [listParent] = useAutoAnimate<HTMLUListElement>();
   const context = useOutletContext<AppContext>();
   const submit = useSubmit();
   const [isRefreshCallSent, setIsRefreshCallSent] = useState(false);
-  const [browserSupportsNotification, setBrowserSupportsNotification] = useState(false);
   const [expandedOverdueTransactionIndex, setExpandedOverdueTransactionIndex] = useState<
     number | undefined
   >(undefined);
@@ -262,6 +261,7 @@ export default function Index() {
   const [expandedTransactionIndex, setExpandedTransactionIndex] = useState<
     number | undefined
   >(undefined);
+  const [bannerData, setBannerData] = useState<BannerData[]>([]);
   const {
     overDueTransactions,
     upcomingTransactions,
@@ -298,15 +298,14 @@ export default function Index() {
     });
   }
 
-  async function checkSupportForNotifications() {
-    const isSupported = await isNotificationSupported();
-    setBrowserSupportsNotification(isSupported);
-  }
-
   async function requestNotificationPermission() {
     const { token, error } = await getFCMRegistrationToken();
     if (isNullOrEmpty(token) && isNotNullAndEmpty(error)) {
-      context.setSnackBarMsg("Notifications not supported by browser");
+      if (typeof error === "string" && error.includes("messaging/permission-blocked")) {
+        context.setSnackBarMsg("Notification permission denied");
+      } else {
+        context.setSnackBarMsg("Unable to enable notifications");
+      }
       return;
     }
     if (isNullOrEmpty(token)) return;
@@ -343,9 +342,31 @@ export default function Index() {
     }
   }
 
+  async function prepareBanners() {
+    const browserSupportsNotification = await isNotificationSupported();
+    setBannerData(
+      prepareBannerData(
+        context,
+        {
+          overDueTransactions,
+          upcomingTransactions,
+          transactions,
+          targetDetails,
+          askUserForNewTarget,
+          recommendToSetBudget,
+          refreshSession,
+        },
+        {
+          browserSupportsNotification,
+          notificationPermission: Notification.permission,
+        }
+      )
+    );
+  }
+
   useEffect(() => {
-    checkSupportForNotifications();
     checkForUnAcknowledgedPurchases();
+    prepareBanners();
   }, []);
 
   useEffect(() => {
@@ -363,82 +384,30 @@ export default function Index() {
     context.showBackButton(false);
   }, [context]);
 
+  // Add the notification action callback to the notification banner
+  const bannersWithActions = bannerData.map((banner) => {
+    if (banner.id === "notification-setup") {
+      return {
+        ...banner,
+        actionText:
+          navigation.state === "submitting" &&
+          navigation.formData?.get("formName") === "SAVE_REGISTRATION_TOKEN"
+            ? "Enabling..."
+            : "Enable",
+        onActionClick: requestNotificationPermission,
+      };
+    }
+    return banner;
+  });
+
   return (
     <main className="pb-28 pl-3 pr-3">
       <h1 className="text-3xl text-center text-primary-dark pb-5">Dashboard</h1>
       <div className="flex flex-col items-center">
-        <div
-          ref={bannerParent}
-          className="flex flex-wrap items-center space-y-1 w-full md:w-3/4 lg:w-2/3 xl:w-1/2"
-        >
-          {!context.isMFAOn && !context.isPasskeyPresent && (
-            <Banner
-              type="important"
-              message={`Add a passkey to avoid the need to remember your password. Or enable two factor authentication (2FA) to add an additional layer of security to your account by requiring more than just a password to sign in. (You can always enable it from settings)`}
-              showLink
-              link="/settings/security/list"
-              linkText="Set up passkey or 2FA"
-              allowDismiss={false}
-              allowPermanentDismiss={true}
-              permanentDismissSettingName={"show2FASuggestion"}
-            />
-          )}
-          <Banner
-            type="tip"
-            message={`Your currency is set to ${getCurrencyName(
-              context.currency
-            )}. If this isn't right, you can change it now. You can always change it from settings.`}
-            showLink
-            link={`/settings/changeCurrency?value=${
-              context.userPreferredCurrency ?? context.currency
-            }`}
-            linkText="Change currency"
-            allowDismiss={false}
-            allowPermanentDismiss={true}
-            permanentDismissSettingName={"showChangeCurrencyBanner"}
-          />
-
-          {browserSupportsNotification && Notification.permission !== "granted" && (
-            <Banner
-              type="tip"
-              message="Enable notifications for recurring transactions."
-              showAction
-              actionText={
-                navigation.state === "submitting" &&
-                navigation.formData?.get("formName") === "SAVE_REGISTRATION_TOKEN"
-                  ? "Enabling..."
-                  : "Enable"
-              }
-              allowDismiss={false}
-              allowPermanentDismiss={true}
-              permanentDismissSettingName={"showNotificationBanner"}
-              onActionClick={requestNotificationPermission}
-            />
-          )}
-
-          {context.isEmailVerified && askUserForNewTarget && (
-            <>
-              <Spacer />
-              <Banner
-                type="important"
-                message="It's time to set a budget for this month"
-                showLink
-                link="/settings/createBudget"
-                linkText="Set now"
-              />
-            </>
-          )}
-
-          {recommendToSetBudget && (
-            <Banner
-              type="tip"
-              message="Don't let your expenses control you"
-              showLink
-              link="/settings/editBudget"
-              linkText="Set budget now"
-            />
-          )}
-        </div>
+        <BannerCarousel
+          banners={bannersWithActions}
+          className="w-full md:w-3/4 lg:w-2/3 xl:w-1/2"
+        />
 
         {overDueTransactions && overDueTransactions.length > 0 && (
           <div
