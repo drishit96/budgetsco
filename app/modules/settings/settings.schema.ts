@@ -8,9 +8,7 @@ import { safeParseObjectToSchema } from "~/utils/schema.utils";
 const currencyInput = {
   currency: z
     .enum(CURRENCY_CODES, {
-      errorMap: (val, ctx) => {
-        return { message: `'${ctx.data}' currency is not supported yet` };
-      },
+      error: (issue) => `'${issue.input}' currency is not supported yet`,
     })
     .nullish(),
 };
@@ -41,12 +39,12 @@ export const UserPreferenceResponseSchema = z.object({
 
 export const TargetFilterSchema = z.object({
   startMonth: z.string().regex(/^\d{4}-\d{2}$/, {
-    message: "Start month must be in YYYY-MM format",
+    error: "Start month must be in YYYY-MM format",
   }),
   endMonth: z
     .string()
     .regex(/^\d{4}-\d{2}$/, {
-      message: "End month must be in YYYY-MM format",
+      error: "End month must be in YYYY-MM format",
     })
     .nullish(),
   breakDownByCategory: z.boolean().default(false),

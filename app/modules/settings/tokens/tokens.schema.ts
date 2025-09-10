@@ -75,7 +75,7 @@ const permissions = z
       return hasPermission(data);
     },
     {
-      message: "At least one permission must be enabled",
+      error: "At least one permission must be enabled",
     }
   );
 
