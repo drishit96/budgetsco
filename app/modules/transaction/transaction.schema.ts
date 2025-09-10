@@ -27,7 +27,7 @@ export const decimal = ({
     .refine(
       (value) => (allowZero ? value.greaterThanOrEqualTo(0) : value.greaterThan(0)),
       {
-        message: errorMsg,
+        error: errorMsg,
         path,
       }
     );
@@ -55,7 +55,7 @@ const monthlyTargetInput = {
 export const TransactionInputSchema = z
   .object(transactionInput)
   .refine((data) => data.category2 !== data.category, {
-    message: "Categories must be unique",
+    error: "Categories must be unique",
     path: ["category2"],
   })
   .refine(
@@ -63,7 +63,7 @@ export const TransactionInputSchema = z
       data.category3 !== data.category &&
       (!data.category2 || data.category3 !== data.category2),
     {
-      message: "Categories must be unique",
+      error: "Categories must be unique",
       path: ["category3"],
     }
   );

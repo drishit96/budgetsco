@@ -19,7 +19,7 @@ export const LoginInputSchema = z.object({
 export const RegisterInputSchema = z
   .object(registerInput)
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
+    error: "Passwords don't match",
     path: ["confirmPassword"],
   });
 

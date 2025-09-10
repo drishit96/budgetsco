@@ -13,10 +13,7 @@ const recurringTransactionInput = {
   category2: z.string().nullish(),
   category3: z.string().nullish(),
   paymentMode: z.string().min(1, "Please select a payment mode"),
-  startDate: z
-    .string()
-    .datetime({ message: "Please select a valid start date" })
-    .optional(),
+  startDate: z.iso.datetime({ error: "Please select a valid start date" }).optional(),
 };
 
 const recurringTransactionGenerated = {
@@ -27,7 +24,7 @@ const recurringTransactionGenerated = {
 export const RecurringTransactionInputSchema = z
   .object(recurringTransactionInput)
   .refine((data) => data.category2 !== data.category, {
-    message: "Categories must be unique",
+    error: "Categories must be unique",
     path: ["category2"],
   })
   .refine(
@@ -35,7 +32,7 @@ export const RecurringTransactionInputSchema = z
       data.category3 !== data.category &&
       (!data.category2 || data.category3 !== data.category2),
     {
-      message: "Categories must be unique",
+      error: "Categories must be unique",
       path: ["category3"],
     }
   );
