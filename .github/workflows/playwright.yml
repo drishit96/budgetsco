@@ -27,7 +27,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Find and Replace FIREBASE_API_KEY - Using Build Variable
         run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{FIREBASE_API_KEY}#/${{ env.FIREBASE_API_KEY }}/g'' {} \;
