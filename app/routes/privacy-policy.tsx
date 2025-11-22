@@ -11,7 +11,7 @@ export default function PrivacyPolicy() {
     <>
       <main className="pb-28">
         <h1 className="text-3xl text-center pb-5">Privacy policy</h1>
-        <h3 className="text-sm text-center">Last updated: January 7, 2022</h3>
+        <h3 className="text-sm text-center">Last updated: November 22, 2025</h3>
         <div className="flex flex-col items-center p-4">
           <div className="flex justify-center w-full md:w-3/4">
             <div>
@@ -62,6 +62,13 @@ export default function PrivacyPolicy() {
                 on our servers, you are consenting to our storage of that information on
                 our servers.
               </p>
+              <Spacer size={1} />
+              <p>
+                <strong>AI API Keys:</strong> If you configure a custom AI provider, we do
+                not store your API key on our servers or log it anywhere. It is stored
+                securely on your browser (in a cookie) solely to authenticate your
+                requests with the AI provider.
+              </p>
               <br />
               <h3 className="text-xl font-semibold">Why do we collect this data?</h3>
               <Spacer size={1} />
@@ -96,6 +103,13 @@ export default function PrivacyPolicy() {
                   in the situations listed in this section or in the section below on
                   Compelled Disclosure.
                 </li>
+                <li>
+                  When you use AI-powered features (such as budget estimation), we send
+                  relevant data (like transaction history) to the configured AI provider
+                  (e.g., OpenAI or a compatible service). This data is processed to
+                  generate the response and is subject to the privacy policy of the
+                  respective AI provider.
+                </li>
               </ul>
               <br />
               <h3 className="text-xl font-semibold">Cookie policy</h3> <Spacer size={1} />
@@ -103,7 +117,9 @@ export default function PrivacyPolicy() {
                 Budgetsco uses cookies to make interactions with our service easy and
                 meaningful. We use cookies (and similar technologies, like localStorage,
                 indexedDB) to keep you logged in, remember your preferences, and provide
-                necessary functionalities.
+                necessary functionalities. We also use cookies to securely store your
+                custom AI provider settings (such as API keys) if you configure them,
+                ensuring you don't need to re-enter them for each session.
               </p>
               <br />
               <p>
