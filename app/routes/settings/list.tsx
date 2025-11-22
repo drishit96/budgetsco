@@ -14,6 +14,7 @@ import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import { getCurrentAppTheme } from "~/utils/setting.utils";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
+import { clearAIProviderConfig } from "~/utils/aiProvider.utils.server";
 
 export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
@@ -30,11 +31,15 @@ export let action: ActionFunction = async ({ request }) => {
   if (formName === "LOGOUT_FORM") {
     trackEvent(request, EventNames.LOGOUT);
     return redirect("/auth/login", {
-      headers: {
-        "Set-Cookie": await getSessionCookieBuilder().serialize("", {
-          expires: new Date("1970-01-01"),
-        }),
-      },
+      headers: [
+        [
+          "Set-Cookie",
+          await getSessionCookieBuilder().serialize("", {
+            expires: new Date("1970-01-01"),
+          }),
+        ],
+        ["Set-Cookie", await clearAIProviderConfig()],
+      ],
     });
   }
 
@@ -98,11 +103,10 @@ export default function Settings() {
                 <span className="text-base">Subscription</span>
                 <span className="flex grow"></span>
                 <span
-                  className={`w-min p-1 rounded-md text-sm ${
-                    context.isActiveSubscription
+                  className={`w-min p-1 rounded-md text-sm ${context.isActiveSubscription
                       ? "text-accent bg-accent"
                       : "text-urgent bg-urgent"
-                  }`}
+                    }`}
                 >
                   {context.isActiveSubscription ? "ACTIVE" : "INACTIVE"}
                 </span>
@@ -168,19 +172,27 @@ export default function Settings() {
                   {theme === "system"
                     ? "Use my system theme"
                     : theme === "dark"
-                    ? "Dark theme"
-                    : "Light theme"}
+                      ? "Dark theme"
+                      : "Light theme"}
                 </p>
               </Link>
             </Ripple>
 
             <Spacer size={3} />
-            <p className="text-emerald-700 font-bold">Developer settings</p>
+            <p className="text-emerald-700 font-bold">Advanced settings</p>
             <Spacer size={1} />
             <Ripple>
               <Link
+                to={`/settings/ai-byok`}
+                className="p-4 border border-primary rounded-t-lg focus-border"
+              >
+                <span>Enable AI features (BYOK)</span>
+              </Link>
+            </Ripple>
+            <Ripple>
+              <Link
                 to={`/settings/tokens/list`}
-                className="p-4 border border-primary rounded-lg focus-border"
+                className="p-4 border-b border-l border-r border-primary rounded-b-lg focus-border"
               >
                 <span>Personal Access Tokens</span>
               </Link>

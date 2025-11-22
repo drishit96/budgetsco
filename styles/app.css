@@ -1209,3 +1209,19 @@ svg.mdc-button__icon {
 .mdc-button--unelevated.mdc-ripple-upgraded {
   --mdc-ripple-fg-opacity: 0.24;
 }
+
+@keyframes icon-glow {
+  0%,
+  50% {
+    filter: drop-shadow(0 0 0px var(--text-color-accent));
+    transform: scale(1);
+  }
+  100% {
+    filter: drop-shadow(0 0 24px var(--text-color-accent));
+    transform: scale(1);
+  }
+}
+
+.animate-icon-glow {
+  animation: icon-glow 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}

@@ -20,6 +20,7 @@ const EventNames = {
   RECURRING_TRANSACTION_SKIPPED: "Recurring transaction skipped",
   CUSTOM_CATEGORY_CREATED: "Custom category created",
   CUSTOM_CATEGORY_DELETED: "Custom category deleted",
+  AI_BUDGET_ESTIMATE_GENERATED: "AI budget estimate generated",
 } as const;
 
 export { EventNames };
