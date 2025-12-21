@@ -1,12 +1,7 @@
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { generateObject } from "ai";
 import { z } from "zod";
-
-export interface AIProviderConfig {
-  baseUrl: string;
-  apiKey: string;
-  model: string;
-}
+import { AIProviderConfig } from "./aiProvider.schema";
 
 export interface AIUsageData {
   inputTokens: number;

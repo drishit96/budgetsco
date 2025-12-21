@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @config '../tailwind.config.js';
 
@@ -71,8 +71,8 @@
 
 @layer utilities {
   @font-face {
-    font-family: 'Inter';
-    src: url('/fonts/Inter.woff2') format('woff2');
+    font-family: "Inter";
+    src: url("/fonts/Inter.woff2") format("woff2");
   }
 }
 
@@ -101,6 +101,7 @@
   --border-color: #e5e7eb;
   --border-color-important: rgb(120, 53, 15);
   --border-color-accent: #047857;
+  --border-color-info: rgb(12, 74, 110);
   --bg-color: #fff;
   --bg-color-elevated-10: #f8fafc;
   --bg-color-elevated-10-opacity-30: rgba(248, 250, 252, 0.3);
@@ -125,6 +126,7 @@
   --border-color: #383838;
   --border-color-important: rgb(217, 119, 6);
   --border-color-accent: #059669;
+  --border-color-info: #7dd3fc;
   --bg-color: #222222;
   --bg-color-elevated-10: #383838;
   --bg-color-elevated-10-opacity-30: rgba(56, 56, 56, 0.3);
@@ -151,6 +153,7 @@
     --border-color: #383838;
     --border-color-important: rgb(217, 119, 6);
     --border-color-accent: #059669;
+    --border-color-info: #7dd3fc;
     --bg-color: #222222;
     --bg-color-elevated-10: #383838;
     --bg-color-elevated-10-opacity-30: rgba(56, 56, 56, 0.3);
@@ -176,6 +179,7 @@
     --border-color: #e5e7eb;
     --border-color-important: rgb(120, 53, 15);
     --border-color-accent: #047857;
+    --border-color-info: rgb(12, 74, 110);
     --bg-color: #fff;
     --bg-color-elevated-10: #f8fafc;
     --bg-color-elevated-10-opacity-30: rgba(248, 250, 252, 0.3);
@@ -1224,4 +1228,40 @@ svg.mdc-button__icon {
 
 .animate-icon-glow {
   animation: icon-glow 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* AI Progress Box Styles */
+.ai-progress-box {
+  width: 100%;
+}
+
+.ai-progress-box__gradient-wrapper {
+  padding: 0.09rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(
+    90deg,
+    #10b981 0%,
+    #3b82f6 25%,
+    #8b5cf6 50%,
+    #ec4899 75%,
+    #10b981 100%
+  );
+  background-size: 300% 100%;
+  animation: border-progress 6s linear infinite;
+}
+
+@keyframes border-progress {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 300% 50%;
+  }
+}
+
+.ai-progress-box__content-wrapper {
+  background: var(--bg-color);
+  border-radius: calc(0.75rem - 3px);
+  padding: 1rem;
+  display: flex;
 }

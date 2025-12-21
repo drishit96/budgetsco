@@ -53,6 +53,7 @@ module.exports = {
         primary: "var(--border-color)",
         important: "var(--border-color-important)",
         accent: "var(--border-color-accent)",
+        info: "var(--border-color-info)",
       },
     },
   },
