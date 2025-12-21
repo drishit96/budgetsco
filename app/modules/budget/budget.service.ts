@@ -5,8 +5,8 @@ import { formatDate_YYY_MM, getFirstDateOfThisMonth } from "~/utils/date.utils";
 import {
   AIUsageData,
   generateStructuredObject,
-  type AIProviderConfig,
 } from "~/modules/ai/ai.service";
+import { AIProviderConfig } from "~/modules/ai/aiProvider.schema";
 
 export interface BudgetEstimate {
   category: string;

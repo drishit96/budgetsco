@@ -50,9 +50,8 @@ export function RecurringTransaction({
 
   return (
     <ListItem
-      dataTestId={`more-${transaction.category.split(" ").join("")}-${
-        transaction.amount
-      }`}
+      dataTestId={`more-${transaction.category.split(" ").join("")}-${transaction.amount
+        }`}
       hideDivider={hideDivider}
       index={index}
       expandedIndex={expandedIndex}
@@ -80,11 +79,11 @@ export function RecurringTransaction({
 
           <Spacer size={1} />
           <div className="flex">
-            <span className="text-gray-500">
+            <span className="text-secondary">
               {formatDate_DD_MMMM_YYYY(new Date(transaction.executionDate))}
             </span>
             <span className="grow"></span>
-            <span className="text-gray-500">
+            <span className="text-secondary">
               Every {transaction.interval + " " + transaction.occurrence + "(s)"}
             </span>
           </div>

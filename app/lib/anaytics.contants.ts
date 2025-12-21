@@ -21,6 +21,7 @@ const EventNames = {
   CUSTOM_CATEGORY_CREATED: "Custom category created",
   CUSTOM_CATEGORY_DELETED: "Custom category deleted",
   AI_BUDGET_ESTIMATE_GENERATED: "AI budget estimate generated",
+  AI_RECOMMEND_RECURRING_TRANSACTIONS: "AI recurring transactions recommended",
 } as const;
 
 export { EventNames };
