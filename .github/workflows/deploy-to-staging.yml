@@ -28,10 +28,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.0.0
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
           registry-url: https://registry.npmjs.org/
+          cache: "pnpm"
 
       - name: Find and Replace FIREBASE_API_KEY - Using Build Variable
         run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{FIREBASE_API_KEY}#/${{ env.FIREBASE_API_KEY }}/g'' {} \;
@@ -64,10 +69,10 @@ jobs:
         run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{TURNSTILE_SITE_KEY}#/${{ env.TURNSTILE_SITE_KEY }}/g'' {} \;
 
       - name: "Install packages"
-        run: npm install --production=false --legacy-peer-deps
+        run: pnpm install --frozen-lockfile
 
       - name: "Build"
-        run: DEPLOYMENT_TARGET=vercel npm run build
+        run: DEPLOYMENT_TARGET=vercel pnpm build
 
       - name: "Deploy to Vercel"
         run: |
@@ -76,7 +81,7 @@ jobs:
             prodRun="--prod"
           fi
 
-          npx vercel --token ${VERCEL_TOKEN} $prodRun
+          pnpm dlx vercel --token ${VERCEL_TOKEN} $prodRun
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}

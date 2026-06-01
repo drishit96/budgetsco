@@ -4,7 +4,7 @@ import {
   getCustomerPortalSession,
   getSTRSubscriptionDetails,
 } from "~/utils/str.payment.utils.server";
-import type { STRSubscription } from "@prisma/client";
+import type { STRSubscription } from "~/generated/prisma/client";
 import { isNotNullAndEmpty } from "~/utils/text.utils";
 import { updatePaymentStatusInPreferences } from "../settings/settings.service";
 import { logError } from "~/utils/logger.utils.server";

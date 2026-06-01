@@ -25,9 +25,14 @@ jobs:
       image: mcr.microsoft.com/playwright:v1.56.1-noble
     steps:
       - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.0.0
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+          cache: "pnpm"
 
       - name: Find and Replace FIREBASE_API_KEY - Using Build Variable
         run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{FIREBASE_API_KEY}#/${{ env.FIREBASE_API_KEY }}/g'' {} \;
@@ -80,7 +85,7 @@ jobs:
           echo NEW_RELIC_LICENSE_KEY=${{ secrets.NEW_RELIC_LICENSE_KEY }} >> .env
 
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: pnpm install --frozen-lockfile
 
       - name: Set DEBUG=pw:webserver
         run: echo "DEBUG=pw:webserver" >> $GITHUB_ENV
@@ -93,7 +98,7 @@ jobs:
           timeout_seconds: 180
           max_attempts: 3
           retry_on: error
-          command: CI=true npx playwright test --project='Chromium'
+          command: CI=true pnpm exec playwright test --project='Chromium'
 
       - uses: actions/upload-artifact@v4
         if: always()

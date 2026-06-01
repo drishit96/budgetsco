@@ -1,0 +1,11 @@
+allowBuilds:
+  '@contrast/fn-inspect': true
+  '@firebase/util': true
+  '@newrelic/native-metrics': true
+  '@parcel/watcher': true
+  '@prisma/engines': true
+  '@scarf/scarf': true
+  argon2: true
+  esbuild: true
+  prisma: true
+  protobufjs: true
