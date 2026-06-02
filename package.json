@@ -8,12 +8,12 @@
   "scripts": {
     "build": "pnpm build:css && pnpm build:worker && remix vite:build",
     "build:css": "pnpm dlx --allow-build=@parcel/watcher @tailwindcss/cli -m -i ./styles/app.css -o app/styles/app.css",
-    "build:worker": "esbuild ./app/entry.worker.ts --outfile=./public/entry.worker.js --minify --bundle --format=esm --define:process.env.NODE_ENV='\"production\"'",
+    "build:worker": "pnpm exec esbuild ./app/entry.worker.ts --outfile=./public/entry.worker.js --minify --bundle --format=esm --define:process.env.NODE_ENV='\"production\"'",
     "deploy": "cp ./app/lib/prod.ui.config.ts ./app/lib/ui.config.ts && DEPLOYMENT_TARGET=flyio pnpm build && fly deploy --remote-only",
     "stage-deploy": "cp ./app/lib/test.ui.config.ts ./app/lib/ui.config.ts && NODE_ENV=production DEPLOYMENT_TARGET=vercel pnpm build && vercel deploy --prod",
     "dev": "cp ./app/lib/test.ui.config.ts ./app/lib/ui.config.ts && concurrently \"pnpm dev:css\" \"pnpm dev:worker\" \"remix vite:dev\"",
     "dev:css": "pnpm dlx --allow-build=@parcel/watcher @tailwindcss/cli -w -i ./styles/app.css -o app/styles/app.css",
-    "dev:worker": "esbuild ./app/entry.worker.ts --outfile=./public/entry.worker.js --bundle --format=esm --define:process.env.NODE_ENV='\"development\"' --watch",
+    "dev:worker": "pnpm exec esbuild ./app/entry.worker.ts --outfile=./public/entry.worker.js --bundle --format=esm --define:process.env.NODE_ENV='\"development\"' --watch",
     "start": "cross-env NODE_ENV=production node --enable-source-maps ./server.js",
     "testserver": "concurrently \"pnpm dev:css\" \"pnpm dev:worker\" \"remix vite:dev\""
   },

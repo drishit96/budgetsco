@@ -98,7 +98,7 @@ jobs:
 
       - uses: nick-fields/retry@v2
         with:
-          timeout_seconds: 480
+          timeout_seconds: 180
           max_attempts: 3
           retry_on: error
           command: CI=true pnpm exec playwright test --project='Chromium'
