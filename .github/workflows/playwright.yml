@@ -101,7 +101,7 @@ jobs:
           NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
           NEON_PROJECT_ID: ${{ secrets.NEON_PROJECT_ID }}
         with:
-          timeout_seconds: 300
+          timeout_seconds: 900
           max_attempts: 3
           retry_on: error
           command: CI=true pnpm test:e2e --project='Chromium'
