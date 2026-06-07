@@ -39,7 +39,11 @@ export function getSessionCookieBuilder() {
 
   // Temp fix for webkit based browsers not able to set cookie
   // with sameSite: "strict" and secure: true options in localhost
-  if (process.env.NODE_ENV !== "production") {
+  if (
+    process.env.NODE_ENV !== "production" ||
+    process.env.E2E === "true" ||
+    process.env.CI === "true"
+  ) {
     delete cookieOptions.sameSite;
     delete cookieOptions.secure;
   }

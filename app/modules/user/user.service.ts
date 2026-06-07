@@ -86,7 +86,13 @@ export async function validateChallengeResponse(
   action: ChallengeAction
 ) {
   try {
-    if (process.env.NODE_ENV !== "production") return true;
+    if (
+      process.env.NODE_ENV !== "production" ||
+      process.env.E2E === "true" ||
+      process.env.CI === "true"
+    ) {
+      return true;
+    }
 
     if (isNullOrEmpty(token)) return false;
 

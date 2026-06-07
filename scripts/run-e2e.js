@@ -241,6 +241,7 @@ async function seedDatabase(connectionUri) {
 }
 
 async function main() {
+  process.env.E2E = 'true';
   loadEnv();
 
   const apiKey = process.env.NEON_API_KEY;
