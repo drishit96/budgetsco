@@ -85,7 +85,7 @@ jobs:
           echo NEW_RELIC_LICENSE_KEY=${{ secrets.NEW_RELIC_LICENSE_KEY }} >> .env
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Generate Prisma Client
         run: pnpm prisma generate
