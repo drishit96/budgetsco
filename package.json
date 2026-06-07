@@ -15,7 +15,8 @@
     "dev:css": "tailwindcss -w -i ./styles/app.css -o app/styles/app.css",
     "dev:worker": "esbuild ./app/entry.worker.ts --outfile=./public/entry.worker.js --bundle --format=esm --define:process.env.NODE_ENV='\"development\"' --watch",
     "start": "cross-env NODE_ENV=production node --enable-source-maps ./server.js",
-    "testserver": "concurrently \"pnpm dev:css\" \"pnpm dev:worker\" \"remix vite:dev\""
+    "testserver": "concurrently \"pnpm dev:css\" \"pnpm dev:worker\" \"remix vite:dev\"",
+    "test:e2e": "node scripts/run-e2e.js"
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^1.0.27",
@@ -89,7 +90,7 @@
     "vite": "^6.2.3",
     "vite-tsconfig-paths": "^5.1.4"
   },
-  "packageManager": "pnpm@11.0.0",
+  "packageManager": "pnpm@11.5.2",
   "engines": {
     "node": "24.x"
   }

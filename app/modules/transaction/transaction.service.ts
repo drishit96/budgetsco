@@ -854,6 +854,9 @@ export async function getBudgetPerCategoryThisMonth(userId: string, timezone: st
       category: true,
       budget: true,
     },
+    orderBy: {
+      category: "asc",
+    },
   });
 
   return categoryBudgets;

@@ -97,11 +97,14 @@ jobs:
         run: echo $DEBUG
 
       - uses: nick-fields/retry@v2
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          NEON_PROJECT_ID: ${{ secrets.NEON_PROJECT_ID }}
         with:
-          timeout_seconds: 180
+          timeout_seconds: 300
           max_attempts: 3
           retry_on: error
-          command: CI=true pnpm exec playwright test --project='Chromium'
+          command: CI=true pnpm test:e2e --project='Chromium'
 
       - uses: actions/upload-artifact@v4
         if: always()
