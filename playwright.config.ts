@@ -43,6 +43,9 @@ const config: PlaywrightTestConfig = {
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on",
     // storageState: "storageState.json",
+    launchOptions: {
+      args: ["--disable-dev-shm-usage"],
+    },
   },
 
   /* Configure projects for major browsers */
@@ -108,13 +111,13 @@ const config: PlaywrightTestConfig = {
     // },
   ],
 
-  /* Folder for test artifacts such as screenshots, videos, traces, etc. */
+  /* Folder test artifacts such as screenshots, videos, traces, etc. */
   // outputDir: 'test-results/',
 
   /* Run your local dev server before starting the tests */
   webServer: [
     {
-      command: "pnpm run testserver",
+      command: process.env.CI ? "pnpm run build && pnpm run start" : "pnpm run testserver",
       port: 3000,
       reuseExistingServer: true,
     },

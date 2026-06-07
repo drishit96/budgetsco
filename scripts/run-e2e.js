@@ -284,6 +284,9 @@ async function main() {
       throw new Error(`Failed to retrieve a valid connection URI from Neon API. Received: ${newConnectionUri}`);
     }
 
+    console.log('Waiting 5 seconds for the Neon database endpoint to settle...');
+    await new Promise(resolve => setTimeout(resolve, 5000));
+
     // Write new DATABASE_URL to .env
     let envContent = '';
     if (originalEnvExists) {

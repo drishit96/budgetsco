@@ -21,7 +21,7 @@ if (typeof requestIdleCallback === "function") {
   setTimeout(hydrate, 1);
 }
 
-if ("serviceWorker" in navigator) {
+if ("serviceWorker" in navigator && !navigator.webdriver) {
   navigator.serviceWorker.register("/entry.worker.js").catch((error) => {
     console.error("Service worker registration failed", error);
   });
