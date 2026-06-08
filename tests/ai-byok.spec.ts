@@ -5,7 +5,7 @@ test("AI BYOK Lifecycle", async ({ page }) => {
   await page.waitForTimeout(500);
   await page.getByRole("link", { name: "Settings" }).click();
   await page.waitForTimeout(500);
-  await page.getByRole("link", { name: "Enable AI features (BYOK)" }).click();
+  await page.getByRole("link", { name: "Enable AI features (BYOK)" }).first().click();
 
   await expect(page.getByRole("heading", { name: "AI BYOK" })).toBeVisible();
 
@@ -21,7 +21,7 @@ test("AI BYOK Lifecycle", async ({ page }) => {
 
   await page.waitForURL("**/settings/list");
 
-  await page.getByRole("link", { name: "Enable AI features (BYOK)" }).click();
+  await page.getByRole("link", { name: "Enable AI features (BYOK)" }).first().click();
 
   await expect(page.getByLabel("Base URL")).toHaveValue("https://api.openai.com/v1");
   await expect(page.getByLabel("Model")).toHaveValue("gpt-3.5-turbo");
@@ -37,7 +37,7 @@ test("AI BYOK Lifecycle", async ({ page }) => {
   await expect(page.getByText("AI configuration saved successfully!")).toBeVisible();
   await page.waitForURL("**/settings/list");
 
-  await page.getByRole("link", { name: "Enable AI features (BYOK)" }).click();
+  await page.getByRole("link", { name: "Enable AI features (BYOK)" }).first().click();
   await expect(page.getByLabel("Base URL")).toHaveValue("https://openrouter.ai/api/v1");
   await expect(page.getByLabel("Model")).toHaveValue("llama-3-70b");
 });

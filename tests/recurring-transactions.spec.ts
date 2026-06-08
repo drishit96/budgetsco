@@ -44,7 +44,7 @@ test.describe.serial("recurringTransactionsGroup", () => {
       .locator("[data-test-id=more-Business-100]")
       .first()
       .click();
-    await page.locator("[data-test-id=btn-delete]").dblclick();
+    await page.locator("[data-test-id=btn-delete]").click();
     await page.getByRole("alertdialog").getByRole("button", { name: "Delete" }).click();
     await page.waitForTimeout(1000);
 
@@ -108,7 +108,7 @@ test.describe.serial("recurringTransactionsGroup", () => {
       .locator("[data-test-id=more-Business-100]")
       .first()
       .click();
-    await page.locator("[data-test-id=btn-delete]").dblclick();
+    await page.locator("[data-test-id=btn-delete]").click();
     await page.getByRole("alertdialog").getByRole("button", { name: "Delete" }).click();
     await page.waitForTimeout(1000);
   });
@@ -200,7 +200,7 @@ test.describe.serial("recurringTransactionsGroup", () => {
     await page.locator("[data-test-id=more-Business-150]").first().click();
 
     // Click delete button
-    await page.locator('[data-test-id="btn-recurring-delete"]').click({ clickCount: 2 });
+    await page.locator('[data-test-id="btn-recurring-delete"]').click();
 
     // Confirm deletion in the modal
     await page.getByRole("alertdialog").getByRole("button", { name: "Delete" }).click();

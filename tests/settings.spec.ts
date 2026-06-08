@@ -192,7 +192,7 @@ test.describe.serial("Personal Access Tokens", () => {
     ).toBeVisible();
 
     await page.getByRole("button", { name: /Test Token Updated/ }).click();
-    await page.getByRole("button", { name: "Delete" }).click({ clickCount: 2 });
+    await page.getByRole("button", { name: "Delete" }).click();
 
     await expect(page.getByRole("heading", { name: "Delete token?" })).toBeVisible();
     await page.getByRole("alertdialog").getByRole("button", { name: "Delete" }).click();
