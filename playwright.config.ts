@@ -44,7 +44,7 @@ const config: PlaywrightTestConfig = {
     trace: "on",
     // storageState: "storageState.json",
     launchOptions: {
-      args: ["--disable-dev-shm-usage"],
+      args: ["--disable-dev-shm-usage", "--no-sandbox", "--disable-setuid-sandbox"],
     },
   },
 

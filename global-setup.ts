@@ -2,7 +2,9 @@ import type { FullConfig } from "@playwright/test";
 import { chromium } from "@playwright/test";
 
 async function globalSetup(config: FullConfig) {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({
+    args: ["--disable-dev-shm-usage", "--no-sandbox", "--disable-setuid-sandbox"],
+  });
   const context = await browser.newContext();
   const page = await context.newPage();
   await page.goto("http://localhost:3000/auth/login");
