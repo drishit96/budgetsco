@@ -27,7 +27,6 @@ test.describe.serial("transactionCrudGroup", () => {
     const existingTransactionCount = await page
       .locator("[data-test-id=more-Business-30]")
       .count();
-    await page.waitForTimeout(3000);
     await page.locator("[data-test-id=more-Business-30]").first().click();
     await page.locator("[data-test-id=btn-edit]").click();
     await page.getByRole("spinbutton").fill("50");
@@ -45,7 +44,6 @@ test.describe.serial("transactionCrudGroup", () => {
     const existingTransactionCount = await page
       .locator("[data-test-id=more-Business-50]")
       .count();
-    await page.waitForTimeout(3000);
     await page.locator("[data-test-id=more-Business-50]").first().click();
     await page.locator("[data-test-id=btn-delete]").click();
     await page.getByRole("alertdialog").getByRole("button", { name: "Delete" }).click();
