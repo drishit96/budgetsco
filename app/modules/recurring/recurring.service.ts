@@ -17,7 +17,6 @@ import {
   parseRecurringTransactionResponse,
   parseRecurringTransactionsResponse,
 } from "./recurring.schema";
-import { Prisma } from "@prisma/client";
 import { logError } from "~/utils/logger.utils.server";
 import { AIUsageData, generateStructuredObject } from "~/modules/ai/ai.service";
 import {
@@ -25,6 +24,7 @@ import {
   type RecurringRecommendation,
 } from "./recurringRecommendation.schema";
 import { AIProviderConfig } from "../ai/aiProvider.schema";
+import { Prisma } from "~/generated/prisma/client";
 
 export async function getAllRecurringTransactions(userId: string) {
   try {

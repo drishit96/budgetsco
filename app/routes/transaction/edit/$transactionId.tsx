@@ -1,4 +1,4 @@
-import type { Transaction } from "@prisma/client";
+import type { Transaction } from "~/generated/prisma/client";
 import { Ripple } from "@rmwc/ripple";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";

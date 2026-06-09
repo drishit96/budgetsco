@@ -11,3 +11,4 @@
 /playwright/.cache/
 storageState.json
 auth.json
+/app/generated

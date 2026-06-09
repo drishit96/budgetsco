@@ -27,3 +27,4 @@ newrelic_agent.log
 /playwright-report/
 /playwright/.cache/
 .vscode/
+/app/generated/

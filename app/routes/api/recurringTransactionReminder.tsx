@@ -1,4 +1,4 @@
-import type { NotificationToken } from "@prisma/client";
+import type { NotificationToken } from "~/generated/prisma/client";
 import type { LoaderFunction } from "@remix-run/node";
 import { subHours } from "date-fns";
 import { initializeApp, getApps, cert } from "firebase-admin/app";

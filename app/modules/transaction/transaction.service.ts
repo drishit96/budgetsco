@@ -17,7 +17,7 @@ import {
   parseDate,
 } from "~/utils/date.utils";
 import { isNotNullAndEmpty, isNullOrEmpty } from "~/utils/text.utils";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "~/generated/prisma/client";
 import { add } from "date-fns";
 import { logError } from "~/utils/logger.utils.server";
 import { getCategoriesByTransactionType } from "~/utils/category.utils";
@@ -853,6 +853,9 @@ export async function getBudgetPerCategoryThisMonth(userId: string, timezone: st
     select: {
       category: true,
       budget: true,
+    },
+    orderBy: {
+      category: "asc",
     },
   });
 

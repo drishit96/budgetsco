@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "~/generated/prisma/client";
 import { z } from "zod";
 import { formatErrors } from "~/utils/error.utils";
 import { safeParseObjectToSchema } from "~/utils/schema.utils";

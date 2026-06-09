@@ -8,7 +8,7 @@ import {
   getFirstDateOfXMonthsBeforeFormatted,
   parseDate,
 } from "~/utils/date.utils";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "~/generated/prisma/client";
 import Decimal from "decimal.js";
 import type { TransactionType } from "../transaction/transaction.schema";
 

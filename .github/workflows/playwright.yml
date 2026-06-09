@@ -23,11 +23,17 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.56.1-noble
+      options: --ipc=host
     steps:
       - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.2
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 24.15.0
+          cache: "pnpm"
 
       - name: Find and Replace FIREBASE_API_KEY - Using Build Variable
         run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{FIREBASE_API_KEY}#/${{ env.FIREBASE_API_KEY }}/g'' {} \;
@@ -80,20 +86,13 @@ jobs:
           echo NEW_RELIC_LICENSE_KEY=${{ secrets.NEW_RELIC_LICENSE_KEY }} >> .env
 
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: pnpm install --frozen-lockfile
 
-      - name: Set DEBUG=pw:webserver
-        run: echo "DEBUG=pw:webserver" >> $GITHUB_ENV
+      - name: Generate Prisma Client
+        run: pnpm prisma generate
 
-      - name: Check DEBUG value
-        run: echo $DEBUG
-
-      - uses: nick-fields/retry@v2
-        with:
-          timeout_seconds: 180
-          max_attempts: 3
-          retry_on: error
-          command: CI=true npx playwright test --project='Chromium'
+      - name: Run E2E tests
+        run: CI=true NEON_API_KEY=${{ secrets.NEON_API_KEY }} NEON_PROJECT_ID=${{ secrets.NEON_PROJECT_ID }} pnpm test:e2e --project='Chromium'
 
       - uses: actions/upload-artifact@v4
         if: always()
