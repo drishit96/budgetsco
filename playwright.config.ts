@@ -41,7 +41,7 @@ const config: PlaywrightTestConfig = {
     baseURL: "http://localhost:3000",
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: "on",
+    trace: "retain-on-failure",
     // storageState: "storageState.json",
     launchOptions: {
       args: ["--disable-dev-shm-usage", "--no-sandbox", "--disable-setuid-sandbox"],

@@ -32,7 +32,7 @@ jobs:
           version: 11.5.2
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 24.15.0
           cache: "pnpm"
 
       - name: Find and Replace FIREBASE_API_KEY - Using Build Variable
@@ -91,8 +91,8 @@ jobs:
       - name: Generate Prisma Client
         run: pnpm prisma generate
 
-      - name: Set DEBUG=pw:webserver
-        run: echo "DEBUG=pw:webserver" >> $GITHUB_ENV
+      - name: Set DEBUG=pw:api,pw:worker,pw:webserver
+        run: echo "DEBUG=pw:api,pw:worker,pw:webserver" >> $GITHUB_ENV
 
       - name: Check DEBUG value
         run: echo $DEBUG
