@@ -6,7 +6,7 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "build": "pnpm build:css && pnpm build:worker && remix vite:build",
+    "build": "pnpm prisma generate && pnpm build:css && pnpm build:worker && remix vite:build",
     "build:css": "tailwindcss -m -i ./styles/app.css -o app/styles/app.css",
     "build:worker": "esbuild ./app/entry.worker.ts --outfile=./public/entry.worker.js --minify --bundle --format=esm --define:process.env.NODE_ENV='\"production\"'",
     "deploy": "cp ./app/lib/prod.ui.config.ts ./app/lib/ui.config.ts && DEPLOYMENT_TARGET=flyio pnpm build && fly deploy --remote-only",
