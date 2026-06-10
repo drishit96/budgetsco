@@ -206,34 +206,6 @@ async function seedDatabase(connectionUri) {
       [userId, timezone, lastModified]
     );
 
-    console.log('Seeding MonthlyTarget...');
-    const currentMonthDate = getFirstDateOfThisMonth(timezone);
-    await client.query(
-      `INSERT INTO "MonthlyTarget" ("userId", "date", "budget", "expense", "income", "incomeEarned", "investment", "investmentDone")
-       VALUES ($1, $2, 9000.0000, 0.0000, 0.0000, 0.0000, 0.0000, 0.0000)
-       ON CONFLICT ("userId", "date") DO UPDATE SET
-         "budget" = EXCLUDED."budget"`,
-      [userId, currentMonthDate]
-    );
-
-    console.log('Seeding CategoryAmount budgets...');
-    const categories = [
-      { name: 'Bills & Subscriptions', budget: 3000.0000 },
-      { name: 'EMI', budget: 3000.0000 },
-      { name: 'Grocery', budget: 3000.0000 },
-      { name: 'Others', budget: 0.0000 }
-    ];
-
-    for (const cat of categories) {
-      await client.query(
-        `INSERT INTO "CategoryAmount" ("userId", "date", "category", "type", "amount", "budget")
-         VALUES ($1, $2, $3, 'expense', 0.0000, $4)
-         ON CONFLICT ("userId", "date", "type", "category") DO UPDATE SET
-           "budget" = EXCLUDED."budget"`,
-        [userId, currentMonthDate, cat.name, cat.budget]
-      );
-    }
-
     console.log('Seeding completed successfully!');
   } finally {
     await client.end();
