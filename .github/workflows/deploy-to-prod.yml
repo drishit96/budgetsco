@@ -24,7 +24,6 @@ jobs:
         with:
           node-version: "24"
           registry-url: https://registry.npmjs.org/
-          cache: "pnpm"
 
       - name: Find and Replace FIREBASE_API_KEY - Using Build Variable
         run: find -name "ui.config.ts" -type f -exec sed -i ''s/#{FIREBASE_API_KEY}#/${{ vars.FIREBASE_API_KEY }}/g'' {} \;
