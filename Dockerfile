@@ -65,4 +65,4 @@ ADD . .
 
 RUN apk add ca-certificates
 
-CMD ["pnpm", "run", "start"]
+CMD ["node", "--enable-source-maps", "./server.js"]
