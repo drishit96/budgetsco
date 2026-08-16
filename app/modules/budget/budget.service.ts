@@ -2,11 +2,10 @@ import { subMonths } from "date-fns";
 import { z } from "zod";
 import prisma from "~/lib/prisma";
 import { formatDate_YYY_MM, getFirstDateOfThisMonth } from "~/utils/date.utils";
-import {
-  AIUsageData,
-  generateStructuredObject,
-} from "~/modules/ai/ai.service";
+import { AIUsageData, generateStructuredObject } from "~/modules/ai/ai.service";
 import { AIProviderConfig } from "~/modules/ai/aiProvider.schema";
+import { parseMonthlyCategoryWiseTargetInput } from "../transaction/transaction.schema";
+import { logWarn } from "~/utils/logger.utils.server";
 
 export interface BudgetEstimate {
   category: string;
@@ -131,9 +130,20 @@ Important:
     0.3
   );
 
-  const formattedBudgets: BudgetEstimate[] = object.budgets.map((c) => {
-    return { ...c, index: c.category };
-  });
+  const budgetMap = new Map(object.budgets.map((b) => [b.category, b.budget]));
+  const validBudgetMap = parseMonthlyCategoryWiseTargetInput(budgetMap);
+  if (validBudgetMap.errors) {
+    logWarn("Invalid budget recommendation: " + JSON.stringify(object.budgets));
+    return {
+      budgets: [],
+      usage,
+    };
+  }
+
+  const formattedBudgets: BudgetEstimate[] = [];
+  for (let [category, budget] of validBudgetMap.categoryWiseTargetDetails.entries()) {
+    formattedBudgets.push({ category, budget: budget.toString(), index: category });
+  }
 
   return {
     budgets: formattedBudgets,
