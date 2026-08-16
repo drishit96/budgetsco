@@ -1,6 +1,7 @@
 allowBuilds:
   '@contrast/fn-inspect': false
   '@firebase/util': true
+  '@newrelic/fn-inspect': false
   '@newrelic/native-metrics': false
   '@parcel/watcher': true
   '@prisma/engines': true
