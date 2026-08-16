@@ -183,14 +183,14 @@ export default function ThisMonthReport() {
         />
       </div>
 
-      {incomeEarned !== "0" && calculate(expense).gt(incomeEarned) && (
+      {calculate(incomeEarned).gt(0) && calculate(expense).gt(incomeEarned) && (
         <>
           <Spacer />
           <ErrorText error="You have already spent more than you have earned" showIcon />
         </>
       )}
 
-      {calculate(investmentDone).gt(expense) && (
+      {calculate(investmentDone).gt(0) && calculate(investmentDone).gt(expense) && (
         <>
           <Spacer />
           <SuccessText text="🎉 Congrats on investing more than you spent" />
@@ -268,6 +268,7 @@ export default function ThisMonthReport() {
             locale={reportsPageContext.userPreferredLocale}
             colHeaders={["Category", "Expense"]}
             colors={CHART_COLOR_MAP}
+            zeroTotalInfoMsg="Add this month's expenses to see the chart"
           />
         </div>
 
@@ -293,6 +294,7 @@ export default function ThisMonthReport() {
             locale={reportsPageContext.userPreferredLocale}
             colHeaders={["Payment mode", "Amount"]}
             colors={CHART_COLOR_MAP}
+            zeroTotalInfoMsg="Add this month's expenses to see the chart"
           />
         </div>
 

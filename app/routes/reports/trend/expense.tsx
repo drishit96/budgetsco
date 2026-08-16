@@ -105,6 +105,7 @@ export default function ExpenseTrendReport() {
           locale={trendingReportContext.userPreferredLocale}
           colHeaders={["Category", "Expense"]}
           colors={CHART_COLOR_MAP}
+          zeroTotalInfoMsg="No expenses in this period"
         />
       </div>
 

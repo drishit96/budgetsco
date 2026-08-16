@@ -103,6 +103,7 @@ export default function InvestmentTrendReport() {
           locale={trendingReportContext.userPreferredLocale}
           colHeaders={["Category", "Investment"]}
           colors={INVESTMENT_CHART_COLORS_MAP}
+          zeroTotalInfoMsg="No investments in this period"
         />
       </div>
 

@@ -4,6 +4,7 @@ import type { Color, ColorMap } from "~/utils/colors.utils";
 import { CHART_COLOR_MAP } from "~/utils/colors.utils";
 import type { Currency } from "~/utils/number.utils";
 import {
+  calculate,
   formatNumber,
   formatToCurrency,
   formatToCurrencyCompact,
@@ -34,6 +35,10 @@ export default function PieChartCard({
 }) {
   const [chartView, setChartView] = useState(true);
 
+  const validData = (data ?? []).filter((d) => Number(d.value) > 0);
+  const isDataAvailable =
+    calculate(total).gt(0) && validData.length > 0;
+
   const renderCenterLabel = () => {
     return (
       <text
@@ -61,8 +66,10 @@ export default function PieChartCard({
       </div>
 
       <Spacer size={1} />
-      {total === "0" && <InfoText text={zeroTotalInfoMsg} />}
-      {total !== "0" && data.length > 0 && (
+      {!isDataAvailable && (
+        <InfoText text={zeroTotalInfoMsg ?? "No data to display"} />
+      )}
+      {isDataAvailable && (
         <>
           <Spacer />
 
@@ -72,16 +79,16 @@ export default function PieChartCard({
                 <PieChart width={100} height={100}>
                   <Pie
                     animationDuration={800}
-                    //need to convert back to number since recharts doesn't support numbers in strings
-                    data={data.map((d) => ({ ...d, value: Number(d.value) }))}
+                    data={validData.map((d) => ({ ...d, value: Number(d.value) }))}
                     cx="50%"
+                    cy="50%"
                     innerRadius={83}
                     outerRadius={100}
                     stroke="var(--bg-color)"
                     dataKey="value"
                     legendType="circle"
                   >
-                    {data.map((_entry, index) => (
+                    {validData.map((_entry, index) => (
                       <Cell
                         key={`cell-${index}`}
                         fill={
@@ -107,7 +114,7 @@ export default function PieChartCard({
               </ResponsiveContainer>
               <Spacer size={4} />
               <CustomLegend
-                rows={data}
+                rows={validData}
                 valueType="currency"
                 currency={currency}
                 locale={locale}
@@ -133,7 +140,7 @@ export default function PieChartCard({
                 </tr>
               </thead>
               <tbody>
-                {data.map((item) => {
+                {validData.map((item) => {
                   return (
                     <tr key={item.name}>
                       <td className="p-1 border border-primary">{item.name}</td>
