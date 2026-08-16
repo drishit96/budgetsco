@@ -121,6 +121,7 @@ export default function IncomeTrendReport() {
           locale={trendingReportContext.userPreferredLocale}
           colHeaders={["Category", "Income"]}
           colors={CHART_COLOR_MAP}
+          zeroTotalInfoMsg="No income in this period"
         />
       </div>
       {categoryIncomesByCategory != null && categoryForCategoryIncomeTrend != null ? (
