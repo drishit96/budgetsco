@@ -8,7 +8,7 @@ import { createMultipleRecurringTransactions } from "~/modules/recurring/recurri
 import { getSessionData } from "~/utils/auth.utils.server";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
-import { logError } from "~/utils/logger.utils.server";
+import { logError, logWarn } from "~/utils/logger.utils.server";
 
 const MAX_BULK_TRANSACTIONS = 10;
 
@@ -115,6 +115,10 @@ export let action: ActionFunction = async ({ request }) => {
     });
 
     const errors = [...validationErrors, ...batchResult.failed];
+
+    if (errors.length) {
+      logWarn(`Bulk recurring transaction fail: ${JSON.stringify(errors)}`);
+    }
 
     return Response.json({
       success: errors.length === 0,

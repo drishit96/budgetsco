@@ -14,6 +14,7 @@ import type {
   RecurringTransactionInput,
 } from "./recurring.schema";
 import {
+  parseRecurringTransactionInput,
   parseRecurringTransactionResponse,
   parseRecurringTransactionsResponse,
 } from "./recurring.schema";
@@ -573,8 +574,13 @@ Important:
     };
   }
 
+  const validRecommendations = deduplicatedRecommendations.filter((rec) => {
+    const parsed = parseRecurringTransactionInput(rec);
+    return !parsed.errors;
+  });
+
   return {
-    recommendations: deduplicatedRecommendations,
+    recommendations: validRecommendations,
     usage,
   };
 }
