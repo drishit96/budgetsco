@@ -1,6 +1,7 @@
 allowBuilds:
   '@contrast/fn-inspect': false
   '@firebase/util': true
+  '@newrelic/fn-inspect': true
   '@newrelic/native-metrics': false
   '@parcel/watcher': true
   '@prisma/engines': true
@@ -9,3 +10,33 @@ allowBuilds:
   esbuild: true
   prisma: true
   protobufjs: true
+
+overrides:
+  '@babel/core': '>=7.29.1'
+  '@babel/traverse': '>=7.29.1'
+  '@babel/template': '>=7.29.1'
+  '@babel/generator': '>=7.29.1'
+  body-parser: '>=1.20.6'
+  cookie: '>=0.7.2 <1.0.0'
+  cross-spawn: '>=7.0.6'
+  send: '>=0.19.0'
+  serve-static: '>=1.16.0'
+  undici: '>=6.27.0'
+  ws: '>=8.17.1'
+  nanoid: '>=5.1.16'
+  braces: '>=3.0.3'
+  micromatch: '>=4.0.8'
+  picomatch: '>=2.3.1'
+  qs: '>=6.14.2'
+  diff: '>=5.2.2'
+  js-yaml: '>=4.3.1'
+  deepmerge-ts: '>=8.0.0'
+  tar: '>=7.5.21'
+  fast-uri: '>=3.0.0'
+  valibot: '>=1.2.0'
+  hono: '>=4.7.1'
+  semver: '>=7.7.4'
+  protobufjs: '>=7.5.5'
+  shell-quote: '>=1.8.4'
+  brace-expansion: '>=2.1.4'
+

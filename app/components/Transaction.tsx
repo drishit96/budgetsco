@@ -41,7 +41,7 @@ export function Transaction({
   return (
     <ListItem
       dataTestId={`more-${transaction.category.split(" ").join("")}-${
-        transaction.amount
+        Number(transaction.amount)
       }`}
       hideDivider={hideDivider}
       index={index}
