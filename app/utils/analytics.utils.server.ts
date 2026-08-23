@@ -12,7 +12,7 @@ export type UserProfileUpdateParams =
     }
   | { request: Request; updateType: "unset"; data: string[] };
 
-const mixpanel = init(process.env.MIXPANEL_TOKEN!);
+const mixpanel = process.env.MIXPANEL_TOKEN ? init(process.env.MIXPANEL_TOKEN) : null;
 let batch: Event[] = [];
 
 setInterval(() => sendTrackedEvents(), 5000);
@@ -24,6 +24,7 @@ export async function trackEvent(
   userId?: string
 ) {
   try {
+    if (!mixpanel) return;
     const sessionData = await getSessionData(request);
     const collectAnalytics = sessionData?.collectAnalytics;
     userId = userId ?? sessionData?.userId;
@@ -41,7 +42,7 @@ export async function trackEvent(
 
 export async function trackUserProfileUpdate(params: UserProfileUpdateParams) {
   try {
-    if (params.data == null) return;
+    if (!mixpanel || params.data == null) return;
     const sessionData = await getSessionData(params.request);
     if (sessionData == null) return;
     const { userId, collectAnalytics } = sessionData;
@@ -59,7 +60,7 @@ export async function trackUserProfileUpdate(params: UserProfileUpdateParams) {
 
 function sendTrackedEvents() {
   try {
-    if (batch.length == 0) return;
+    if (!mixpanel || batch.length == 0) return;
     mixpanel.track_batch(batch, (error) => {
       batch = [];
       if (error == null) return;

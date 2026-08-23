@@ -138,7 +138,7 @@ async function waitForBranchReady(apiKey, projectId, branchId) {
 }
 
 async function getConnectionUri(apiKey, projectId, branchId, roleName, databaseName) {
-  const url = `https://console.neon.tech/api/v2/projects/${projectId}/connection_uri?branch_id=${branchId}&role_name=${roleName}&database_name=${databaseName}`;
+  const url = `https://console.neon.tech/api/v2/projects/${projectId}/connection_uri?branch_id=${branchId}&role_name=${roleName}&database_name=${databaseName}&pooled=false`;
   const response = await fetchWithRetry(url, {
     headers: {
       'Authorization': `Bearer ${apiKey}`,
@@ -179,8 +179,17 @@ async function deleteBranch(apiKey, projectId, branchId) {
 }
 
 async function seedDatabase(connectionUri) {
-  const client = new pg.Client({ connectionString: connectionUri });
-  await client.connect();
+  let client;
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    try {
+      client = new pg.Client({ connectionString: connectionUri });
+      await client.connect();
+      break;
+    } catch (err) {
+      if (attempt === 5) throw err;
+      await new Promise((r) => setTimeout(r, 2000));
+    }
+  }
   try {
     const userId = '1FgeDbZjUlTUveythpmCyd9q3Zn1';
     const emailId = 'budgetsco@gmail.com';
@@ -257,8 +266,26 @@ async function main() {
       throw new Error(`Failed to retrieve a valid connection URI from Neon API. Received: ${newConnectionUri}`);
     }
 
-    console.log('Waiting 5 seconds for the Neon database endpoint to settle...');
-    await new Promise(resolve => setTimeout(resolve, 5000));
+    console.log('Waiting for the Neon database endpoint to accept connections...');
+    let connected = false;
+    for (let attempt = 1; attempt <= 15; attempt++) {
+      try {
+        const testClient = new pg.Client({ connectionString: newConnectionUri, connectionTimeoutMillis: 5000 });
+        await testClient.connect();
+        await testClient.query('SELECT 1');
+        await testClient.end();
+        connected = true;
+        console.log('Database endpoint is ready and accepting connections.');
+        break;
+      } catch (err) {
+        console.log(`Waiting for database endpoint to become ready (attempt ${attempt}/15)...`);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    }
+    if (!connected) {
+      throw new Error('Database endpoint failed to accept connections after 30 seconds.');
+    }
+    await new Promise(resolve => setTimeout(resolve, 1500));
 
     // Write new DATABASE_URL to .env
     let envContent = '';
@@ -273,10 +300,44 @@ async function main() {
     console.log('.env file temporarily updated with new branch DATABASE_URL.');
 
     console.log('Syncing database schema (prisma db push)...');
-    execSync('pnpm prisma db push --accept-data-loss', {
-      env: { ...process.env, DATABASE_URL: newConnectionUri },
-      stdio: 'inherit'
-    });
+    const aiAgentPrefixes = [
+      'COPILOT',
+      'GITHUB_COPILOT',
+      'CURSOR',
+      'CLAUDE',
+      'ANTIGRAVITY',
+      'WINDSURF',
+      'DEVIN',
+      'AIDER',
+      'CONTINUE',
+      'CODY',
+      'REPLIT',
+      'AGENT',
+      'AI_AGENT',
+      'AI_TOOL'
+    ];
+    const pushEnv = Object.fromEntries(
+      Object.entries(process.env).filter(
+        ([k]) => !aiAgentPrefixes.some(prefix => k.toUpperCase().startsWith(prefix))
+      )
+    );
+    pushEnv.DATABASE_URL = newConnectionUri;
+    
+    let pushSuccess = false;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        execSync('pnpm prisma db push --accept-data-loss', {
+          env: pushEnv,
+          stdio: 'inherit'
+        });
+        pushSuccess = true;
+        break;
+      } catch (err) {
+        if (attempt === 3) throw err;
+        console.log(`Prisma db push attempt ${attempt} failed, retrying in 2s...`);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    }
 
     console.log('Seeding test data...');
     await seedDatabase(newConnectionUri);
@@ -286,7 +347,7 @@ async function main() {
     const args = ['playwright', 'test', ...process.argv.slice(2)];
     const testProcess = spawn('pnpm', args, {
       stdio: 'inherit',
-      env: { ...process.env, DATABASE_URL: newConnectionUri }
+      env: { ...process.env, DATABASE_URL: newConnectionUri, PW_TEST_HTML_REPORT_OPEN: 'never' }
     });
 
     const exitCode = await new Promise((resolve) => {

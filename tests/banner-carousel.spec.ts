@@ -3,6 +3,8 @@ import { test, expect } from "@playwright/test";
 test.describe("Banner Carousel", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("http://localhost:3000/dashboard");
+    await page.evaluate(() => localStorage.clear());
+    await page.reload();
     await page.waitForTimeout(500);
   });
 

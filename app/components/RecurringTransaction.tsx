@@ -50,8 +50,9 @@ export function RecurringTransaction({
 
   return (
     <ListItem
-      dataTestId={`more-${transaction.category.split(" ").join("")}-${transaction.amount
-        }`}
+      dataTestId={`more-${transaction.category.split(" ").join("")}-${Number(
+        transaction.amount
+      )}`}
       hideDivider={hideDivider}
       index={index}
       expandedIndex={expandedIndex}
