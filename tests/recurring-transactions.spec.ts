@@ -37,14 +37,25 @@ test.describe.serial("recurringTransactionsGroup", () => {
     // Verify transaction was created
     await page.waitForURL("**/dashboard");
     await expect(page.getByText("Transaction saved")).toBeVisible();
+    await page.waitForTimeout(500);
 
     //Delete the source transaction
     await page
       .locator("[data-test-id=section-recent-transactions]")
-      .locator("[data-test-id=more-Business-100]")
+      .locator("[data-test-id^=more-Business-100]")
       .first()
       .click();
-    await page.locator("[data-test-id=btn-delete]").click();
+    await page
+      .locator("[data-test-id=section-recent-transactions]")
+      .locator("[data-test-id=btn-delete]")
+      .first()
+      .waitFor({ state: "visible" });
+    await page.waitForTimeout(300);
+    await page
+      .locator("[data-test-id=section-recent-transactions]")
+      .locator("[data-test-id=btn-delete]")
+      .first()
+      .click();
     await page.getByRole("alertdialog").getByRole("button", { name: "Delete" }).click();
     await page.waitForTimeout(1000);
 

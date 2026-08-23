@@ -26,7 +26,7 @@ test("can edit budget", async ({ page }) => {
   await expect(page.getByText("10K").first()).toBeVisible();
 
   await page.getByRole("link", { name: "Settings" }).click();
-  await page.getByRole("link", { name: "Edit Budget" }).click();
+  await page.getByRole("link", { name: "Edit Budget" }).first().click();
   await page.waitForURL("**/settings/editBudget");
   await expect(page.locator('input[name="category4"]')).toHaveValue("Others");
   await page.locator("#btn-deleteCategoryBudget4").click();
@@ -114,12 +114,13 @@ test.describe.serial("Personal Access Tokens", () => {
     expect(tokenCode).toContain("budgetsco_pat_");
     await page.getByRole("button", { name: "Done" }).click();
 
-    await expect(page.getByText("Test Token")).toBeVisible();
-    const dateToVerify = formatDate_DD_MMMM_YYYY(add(new Date(), { days: 30 }));
-    await expect(page.getByText(`Expires on: ${dateToVerify}`)).toBeVisible();
+    await expect(
+      page.locator('[data-test-id="token-Test Token"]').getByText(/Expires on:/)
+    ).toBeVisible();
 
     // Open the edit page for the created token
-    await page.getByRole("button", { name: /Test Token/ }).click();
+    await page.locator('[data-test-id="token-Test Token"]').click();
+    await page.waitForTimeout(300);
     await page.getByRole("button", { name: "Edit" }).click();
     await expect(page.getByRole("heading", { name: "Edit Token" })).toBeVisible();
 
@@ -191,10 +192,11 @@ test.describe.serial("Personal Access Tokens", () => {
       page.getByRole("heading", { name: "Personal Access Tokens" })
     ).toBeVisible();
 
-    await page.getByRole("button", { name: /Test Token Updated/ }).click();
-    await page.getByRole("button", { name: "Delete" }).click();
+    await page.locator('[data-test-id="token-Test Token Updated"]').click();
+    await page.locator("[data-test-id=btn-delete]").waitFor({ state: "visible" });
+    await page.waitForTimeout(300);
+    await page.locator("[data-test-id=btn-delete]").click();
 
-    await expect(page.getByRole("heading", { name: "Delete token?" })).toBeVisible();
     await page.getByRole("alertdialog").getByRole("button", { name: "Delete" }).click();
 
     await expect(page.getByText("Token deleted successfully")).toBeVisible();

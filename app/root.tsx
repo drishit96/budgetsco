@@ -519,7 +519,7 @@ export default function App() {
             }
             setDialogProps((prev) => ({
               ...prev,
-              showDialog: !prev.showDialog,
+              showDialog: false,
             }));
           }}
         >
