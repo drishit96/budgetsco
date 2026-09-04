@@ -1,3 +1,4 @@
+import "zod/compile";
 import newrelic from "newrelic";
 import { renderToPipeableStream } from "react-dom/server";
 import type { EntryContext, HandleDataRequestFunction } from "@remix-run/node";

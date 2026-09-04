@@ -96,14 +96,16 @@ const tokenGenerated = {
   token: z.string(),
 };
 
-const tokenSchema = z.object({
-  ...tokenInput,
-  ...tokenGenerated,
-});
+const tokenSchema = z.compile(
+  z.object({
+    ...tokenInput,
+    ...tokenGenerated,
+  })
+);
 
-export const TokensResponseSchema = z.array(tokenSchema);
+export const TokensResponseSchema = z.compile(z.array(tokenSchema));
 export const TokenResponseSchema = tokenSchema;
-export const TokenInputSchema = z.object(tokenInput);
+export const TokenInputSchema = z.compile(z.object(tokenInput));
 
 export type TokenResponse = Omit<
   z.infer<typeof TokenResponseSchema>,

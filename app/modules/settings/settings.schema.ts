@@ -23,58 +23,70 @@ const preferencesInput = {
   collectAnalytics: z.boolean().nullable(),
 };
 
-export const CurrencyPreferenceInputSchema = z.object({
-  ...currencyInput,
-});
-export const UserPreferenceInputSchema = z.object({
-  ...preferencesInput,
-  ...currencyInput,
-});
-export const UserPreferenceResponseSchema = z.object({
-  ...preferencesInput,
-  ...currencyInput,
-  lastModified: z.number(),
-  userId: z.string(),
-});
-
-export const TargetFilterSchema = z.object({
-  startMonth: z.string().regex(/^\d{4}-\d{2}$/, {
-    error: "Start month must be in YYYY-MM format",
-  }),
-  endMonth: z
-    .string()
-    .regex(/^\d{4}-\d{2}$/, {
-      error: "End month must be in YYYY-MM format",
-    })
-    .nullish(),
-  breakDownByCategory: z.boolean().default(false),
-});
-
-export const BudgetInputSchema = z
-  .object({
-    breakdown: z.record(
-      z.string().min(1),
-      decimal({
-        errorMsg: "Budget has to be more than zero",
-        allowZero: true,
-      })
-    ),
+export const CurrencyPreferenceInputSchema = z.compile(
+  z.object({
+    ...currencyInput,
   })
-  .transform((data) => {
-    const breakdownTotal = Decimal.sum(...Object.values(data.breakdown));
-    return {
-      ...data,
-      total: breakdownTotal,
-      breakdown: data.breakdown,
-    };
-  });
+);
+export const UserPreferenceInputSchema = z.compile(
+  z.object({
+    ...preferencesInput,
+    ...currencyInput,
+  })
+);
+export const UserPreferenceResponseSchema = z.compile(
+  z.object({
+    ...preferencesInput,
+    ...currencyInput,
+    lastModified: z.number(),
+    userId: z.string(),
+  })
+);
 
-export const CustomCategoryActionSchema = z.object({
-  categories: z
-    .array(z.string().min(1, "Category name cannot be empty"))
-    .min(1, "At least one category is required"),
-  type: z.enum(["expense", "income", "investment"]),
-});
+export const TargetFilterSchema = z.compile(
+  z.object({
+    startMonth: z.string().regex(/^\d{4}-\d{2}$/, {
+      error: "Start month must be in YYYY-MM format",
+    }),
+    endMonth: z
+      .string()
+      .regex(/^\d{4}-\d{2}$/, {
+        error: "End month must be in YYYY-MM format",
+      })
+      .nullish(),
+    breakDownByCategory: z.boolean().default(false),
+  })
+);
+
+export const BudgetInputSchema = z.compile(
+  z
+    .object({
+      breakdown: z.record(
+        z.string().min(1),
+        decimal({
+          errorMsg: "Budget has to be more than zero",
+          allowZero: true,
+        })
+      ),
+    })
+    .transform((data) => {
+      const breakdownTotal = Decimal.sum(...Object.values(data.breakdown));
+      return {
+        ...data,
+        total: breakdownTotal,
+        breakdown: data.breakdown,
+      };
+    })
+);
+
+export const CustomCategoryActionSchema = z.compile(
+  z.object({
+    categories: z
+      .array(z.string().min(1, "Category name cannot be empty"))
+      .min(1, "At least one category is required"),
+    type: z.enum(["expense", "income", "investment"]),
+  })
+);
 
 export type CurrencyPreferenceInput = z.infer<typeof CurrencyPreferenceInputSchema>;
 export type UserPreferenceInput = z.infer<typeof UserPreferenceInputSchema>;

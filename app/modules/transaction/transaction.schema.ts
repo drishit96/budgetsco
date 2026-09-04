@@ -52,42 +52,50 @@ const monthlyTargetInput = {
   budget: decimal({ errorMsg: "Budget has to be more than zero", path: ["budget"] }),
 };
 
-export const TransactionInputSchema = z
-  .object(transactionInput)
-  .refine((data) => data.category2 !== data.category, {
-    error: "Categories must be unique",
-    path: ["category2"],
-  })
-  .refine(
-    (data) =>
-      data.category3 !== data.category &&
-      (!data.category2 || data.category3 !== data.category2),
-    {
+export const TransactionInputSchema = z.compile(
+  z
+    .object(transactionInput)
+    .refine((data) => data.category2 !== data.category, {
       error: "Categories must be unique",
-      path: ["category3"],
-    }
-  );
+      path: ["category2"],
+    })
+    .refine(
+      (data) =>
+        data.category3 !== data.category &&
+        (!data.category2 || data.category3 !== data.category2),
+      {
+        error: "Categories must be unique",
+        path: ["category3"],
+      }
+    )
+);
 
-export const TransactionResponseSchema = z.object({
-  ...transactionInput,
-  ...transactionGenerated,
-});
+export const TransactionResponseSchema = z.compile(
+  z.object({
+    ...transactionInput,
+    ...transactionGenerated,
+  })
+);
 
-const TransactionFilterSchema = z.object({
-  types: z.array(z.enum(["income", "expense", "investment"])).optional(),
-  categories: z.array(z.string().min(1)).optional(),
-  paymentModes: z.array(z.string().min(1)).optional(),
-  startDate: z.string().date().optional(),
-  endDate: z.string().date().optional(),
-});
+const TransactionFilterSchema = z.compile(
+  z.object({
+    types: z.array(z.enum(["income", "expense", "investment"])).optional(),
+    categories: z.array(z.string().min(1)).optional(),
+    paymentModes: z.array(z.string().min(1)).optional(),
+    startDate: z.string().date().optional(),
+    endDate: z.string().date().optional(),
+  })
+);
 
 const d = decimal({});
 export type Decimal = z.output<typeof d>;
-export const TransactionsResponseSchema = z.array(TransactionResponseSchema);
-export const MonthlyTargetInputSchema = z.object(monthlyTargetInput);
-export const MonthlyCategoryWiseTargetInputSchema = z.map(
-  z.string().min(1),
-  decimal({ errorMsg: "Budget has to be more than zero", allowZero: true })
+export const TransactionsResponseSchema = z.compile(z.array(TransactionResponseSchema));
+export const MonthlyTargetInputSchema = z.compile(z.object(monthlyTargetInput));
+export const MonthlyCategoryWiseTargetInputSchema = z.compile(
+  z.map(
+    z.string().min(1),
+    decimal({ errorMsg: "Budget has to be more than zero", allowZero: true })
+  )
 );
 
 export type TransactionInput = z.infer<typeof TransactionInputSchema>;

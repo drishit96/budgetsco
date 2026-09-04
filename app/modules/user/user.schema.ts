@@ -12,16 +12,20 @@ const registerInput = {
   confirmPassword: z.string().min(1, "Please confirm your password"),
 };
 
-export const LoginInputSchema = z.object({
-  ...loginInput,
-});
+export const LoginInputSchema = z.compile(
+  z.object({
+    ...loginInput,
+  })
+);
 
-export const RegisterInputSchema = z
-  .object(registerInput)
-  .refine((data) => data.password === data.confirmPassword, {
-    error: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
+export const RegisterInputSchema = z.compile(
+  z
+    .object(registerInput)
+    .refine((data) => data.password === data.confirmPassword, {
+      error: "Passwords don't match",
+      path: ["confirmPassword"],
+    })
+);
 
 export type LoginInput = z.infer<typeof LoginInputSchema>;
 export type RegisterInput = z.infer<typeof RegisterInputSchema>;

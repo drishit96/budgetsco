@@ -1,4 +1,5 @@
 import "dotenv/config";
+import "zod/compile";
 import express, { static as expressStatic } from "express";
 import compression from "compression";
 import morgan from "morgan";
