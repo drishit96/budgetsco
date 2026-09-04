@@ -13,16 +13,18 @@ export interface BudgetEstimate {
   index: string;
 }
 
-const budgetEstimateSchema = z.object({
-  budgets: z.array(
-    z.object({
-      category: z.string().describe("The exact category name from historical data"),
-      budget: z
-        .string()
-        .describe("Estimated budget amount as a string with up to 2 decimal places"),
-    })
-  ),
-});
+const budgetEstimateSchema = z.compile(
+  z.object({
+    budgets: z.array(
+      z.object({
+        category: z.string().describe("The exact category name from historical data"),
+        budget: z
+          .string()
+          .describe("Estimated budget amount as a string with up to 2 decimal places"),
+      })
+    ),
+  })
+);
 
 export async function estimateBudgetWithAI(
   userId: string,

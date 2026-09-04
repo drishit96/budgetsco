@@ -19,11 +19,15 @@ const recurringRecommendationInput = {
   reasoning: z.string().describe("Explanation for why this is recommended"),
 };
 
-export const RecurringRecommendationSchema = z.object(recurringRecommendationInput);
+export const RecurringRecommendationSchema = z.compile(
+  z.object(recurringRecommendationInput)
+);
 
-export const RecurringRecommendationsResponseSchema = z.object({
-  recommendations: z.array(RecurringRecommendationSchema),
-});
+export const RecurringRecommendationsResponseSchema = z.compile(
+  z.object({
+    recommendations: z.array(RecurringRecommendationSchema),
+  })
+);
 
 export type RecurringRecommendation = z.infer<typeof RecurringRecommendationSchema>;
 export type RecurringRecommendationsResponse = z.infer<typeof RecurringRecommendationsResponseSchema>;

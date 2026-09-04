@@ -7,7 +7,7 @@ const aiProviderConfigInput = {
   model: z.string().min(1, "Model is required"),
 };
 
-export const AIProviderConfigSchema = z.object(aiProviderConfigInput);
+export const AIProviderConfigSchema = z.compile(z.object(aiProviderConfigInput));
 
 export type AIProviderConfig = z.infer<typeof AIProviderConfigSchema>;
 

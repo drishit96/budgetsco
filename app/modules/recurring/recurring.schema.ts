@@ -21,34 +21,40 @@ const recurringTransactionGenerated = {
   executionDate: z.date(),
 };
 
-export const RecurringTransactionInputSchema = z
-  .object(recurringTransactionInput)
-  .refine((data) => data.category2 !== data.category, {
-    error: "Categories must be unique",
-    path: ["category2"],
-  })
-  .refine(
-    (data) =>
-      data.category3 !== data.category &&
-      (!data.category2 || data.category3 !== data.category2),
-    {
+export const RecurringTransactionInputSchema = z.compile(
+  z
+    .object(recurringTransactionInput)
+    .refine((data) => data.category2 !== data.category, {
       error: "Categories must be unique",
-      path: ["category3"],
-    }
-  );
+      path: ["category2"],
+    })
+    .refine(
+      (data) =>
+        data.category3 !== data.category &&
+        (!data.category2 || data.category3 !== data.category2),
+      {
+        error: "Categories must be unique",
+        path: ["category3"],
+      }
+    )
+);
 
-export const RecurringTransactionFilterSchema = z.object({
-  startDate: z.string().date().optional(),
-  endDate: z.string().date().optional(),
-});
+export const RecurringTransactionFilterSchema = z.compile(
+  z.object({
+    startDate: z.string().date().optional(),
+    endDate: z.string().date().optional(),
+  })
+);
 
-export const RecurringTransactionResponseSchema = z.object({
-  ...recurringTransactionInput,
-  ...recurringTransactionGenerated,
-});
+export const RecurringTransactionResponseSchema = z.compile(
+  z.object({
+    ...recurringTransactionInput,
+    ...recurringTransactionGenerated,
+  })
+);
 
-export const RecurringTransactionsResponseSchema = z.array(
-  RecurringTransactionResponseSchema
+export const RecurringTransactionsResponseSchema = z.compile(
+  z.array(RecurringTransactionResponseSchema)
 );
 
 export type RecurringTransactionInput = z.infer<typeof RecurringTransactionInputSchema>;

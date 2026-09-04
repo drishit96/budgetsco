@@ -63,7 +63,7 @@
     "stripe": "12.6.0",
     "swagger-ui-express": "^5.0.1",
     "workbox-background-sync": "^7.4.1",
-    "zod": "^4.4.3"
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@playwright/test": "^1.38.1",
