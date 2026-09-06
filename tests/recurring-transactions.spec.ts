@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { add } from "date-fns";
-import { formatDate_DD_MMMM_YYYY, formatDate_YYYY_MM_DD } from "~/utils/date.utils";
+import { formatDate } from "~/utils/date.utils";
 
 test.describe.serial("recurringTransactionsGroup", () => {
   test("can create recurring transaction", async ({ page }) => {
@@ -142,7 +142,7 @@ test.describe.serial("recurringTransactionsGroup", () => {
     await page.locator('input[name="interval"]').fill("2");
 
     const currentDate = new Date();
-    await page.locator('input[type="date"]').fill(formatDate_YYYY_MM_DD(currentDate));
+    await page.locator('input[type="date"]').fill(formatDate(currentDate, "yyyy-MM-dd"));
     await page.getByRole("button", { name: "Save" }).click();
 
     // Verify the updated recurring transaction details
@@ -193,7 +193,7 @@ test.describe.serial("recurringTransactionsGroup", () => {
 
     const nextDate = add(new Date(), { months: 2 });
     await expect(page.locator("[data-test-id=more-Business-150]").last()).toContainText(
-      formatDate_DD_MMMM_YYYY(nextDate)
+      formatDate(nextDate, "dd MMMM yyyy")
     );
   });
 

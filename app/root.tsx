@@ -221,11 +221,11 @@ export default function App() {
   });
   const [userPreferredCurrency, setUserPreferredCurrency] =
     useState<Currency>(null);
-  const [userPreferredLocale, setUserPreferredLocale] = useState<string | null>(null);
+  const [userPreferredLocale, setUserPreferredLocale] = useState<string>("");
 
   useEffect(() => {
     setUserPreferredCurrency(localStorage.getItem("currency") as Currency);
-    setUserPreferredLocale(localStorage.getItem("locale"));
+    setUserPreferredLocale(localStorage.getItem("locale") ?? "");
   }, []);
   const location = useLocation();
   let matches = useMatches();
