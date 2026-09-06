@@ -1,5 +1,5 @@
 import type { PasskeyResponse } from "~/routes/settings/security/passkeys";
-import { formatDate_DD_MMMM_YYYY_hh_mm_aa } from "~/utils/date.utils";
+import { formatDate } from "~/utils/date.utils";
 import ListItem from "./ListItem";
 import type { Navigation, SubmitOptions } from "@remix-run/react";
 import { useOutletContext, useSubmit } from "@remix-run/react";
@@ -56,13 +56,13 @@ export default function Passkey({
           <p className="text-sm text-secondary">
             Created on:{" "}
             {passkey.createdAt
-              ? formatDate_DD_MMMM_YYYY_hh_mm_aa(new Date(passkey.createdAt))
+              ? formatDate(new Date(passkey.createdAt), "dd MMMM yyyy, hh:mm aa")
               : "Never"}
           </p>
           <p className="text-sm text-secondary">
             Last used:{" "}
             {passkey.lastUsed
-              ? formatDate_DD_MMMM_YYYY_hh_mm_aa(new Date(passkey.lastUsed))
+              ? formatDate(new Date(passkey.lastUsed), "dd MMMM yyyy, hh:mm aa")
               : "Never"}
           </p>
         </div>

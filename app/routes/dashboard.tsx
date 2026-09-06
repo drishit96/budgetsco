@@ -47,7 +47,7 @@ import { prepareBannerData } from "~/utils/banner.utils";
 import { getThisMonthTarget } from "~/modules/reports/reports.service";
 import { StatisticsCard } from "~/components/StatisticsCard";
 import type { MetaFunction } from "@remix-run/react/dist/routeModules";
-import { formatDate_MMMM_YYYY } from "~/utils/date.utils";
+import { formatDate } from "~/utils/date.utils";
 import type { Currency } from "~/utils/number.utils";
 import { abs, calculate, subtract } from "~/utils/number.utils";
 import { trackEvent } from "~/utils/analytics.utils.server";
@@ -430,7 +430,7 @@ export default function Index() {
 
         <div className="w-full md:w-3/4 lg:w-2/3 xl:w-1/2 mt-1 p-2 rounded-md bg-elevated-10">
           <p className="text-center text-primary font-bold p-1">
-            {formatDate_MMMM_YYYY(new Date(targetDetails.thisMonth.date))}
+            {formatDate(new Date(targetDetails.thisMonth.date), "MMMM yyyy")}
           </p>
           <Spacer size={0.5} />
           <div className="flex flex-wrap gap-1">

@@ -5,7 +5,7 @@ import { Form, Link, useOutletContext, useSubmit } from "@remix-run/react";
 import type { TransactionResponse } from "~/modules/transaction/transaction.schema";
 import type { AppContext } from "~/root";
 import { getTransactionColor } from "~/utils/colors.utils";
-import { formatDate_DD_MMMM_YYYY } from "~/utils/date.utils";
+import { formatDate } from "~/utils/date.utils";
 import { formatNumber } from "~/utils/number.utils";
 import EditIcon from "./icons/EditIcon";
 import InfoIcon from "./icons/InfoIcon";
@@ -67,7 +67,7 @@ export function Transaction({
           <Spacer size={1} />
           <div className="flex">
             <span className="text-gray-500">
-              {formatDate_DD_MMMM_YYYY(new Date(transaction.createdAt))}
+              {formatDate(new Date(transaction.createdAt), "dd MMMM yyyy")}
             </span>
             <span className="grow"></span>
             <span className="text-gray-500">{transaction.paymentMode}</span>

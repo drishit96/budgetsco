@@ -1,7 +1,7 @@
 import type { BannerData } from "~/components/BannerCarousel/types";
 import type { AppContext } from "~/root";
 import { getCurrencyName } from "./category.utils";
-import { getBoolSettingFromLocalStorage } from "./setting.utils";
+import { getStorage } from "./setting.utils";
 
 export interface DashboardLoaderData {
   overDueTransactions: any[];
@@ -36,7 +36,7 @@ export function prepareBannerData(
 
   // Security banner - MFA/Passkey setup
   if (!context.isMFAOn && !context.isPasskeyPresent) {
-    const show2FABanner = getBoolSettingFromLocalStorage("show2FASuggestion", true);
+    const show2FABanner = getStorage("show2FASuggestion", true);
     if (show2FABanner) {
       banners.push({
         id: "security-setup",
@@ -55,7 +55,7 @@ export function prepareBannerData(
   }
 
   // Currency setup banner
-  const showCurrency = getBoolSettingFromLocalStorage("showChangeCurrencyBanner", true);
+  const showCurrency = getStorage("showChangeCurrencyBanner", true);
   if (showCurrency) {
     banners.push({
       id: "currency-setup",
@@ -80,7 +80,7 @@ export function prepareBannerData(
     additionalContext.browserSupportsNotification &&
     additionalContext.notificationPermission !== "granted"
   ) {
-    const shouldShowNotification = getBoolSettingFromLocalStorage(
+    const shouldShowNotification = getStorage(
       "showNotificationBanner",
       true
     );

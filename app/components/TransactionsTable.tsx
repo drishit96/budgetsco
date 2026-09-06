@@ -11,7 +11,7 @@ import {
 } from "@tanstack/react-table";
 import type { TransactionResponse } from "~/modules/transaction/transaction.schema";
 import type { AppContext } from "~/root";
-import { formatDate_YYYY_MM_DD } from "~/utils/date.utils";
+import { formatDate } from "~/utils/date.utils";
 import { formatNumber } from "~/utils/number.utils";
 import EditIcon from "./icons/EditIcon";
 import RepeatIcon from "./icons/RepeatIcon";
@@ -28,7 +28,7 @@ function getColumns(context: AppContext, navigation: Navigation, submit: SubmitF
     columnHelper.accessor("createdAt", {
       header: () => "Date",
       cell: (info) => (
-        <div className="text-end">{formatDate_YYYY_MM_DD(new Date(info.getValue()))}</div>
+        <div className="text-end">{formatDate(new Date(info.getValue()), "yyyy-MM-dd")}</div>
       ),
     }),
     columnHelper.accessor("type", {

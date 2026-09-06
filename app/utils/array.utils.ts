@@ -1,4 +1,4 @@
-import { formatDate_MMMM_YYYY } from "./date.utils";
+import { formatDate } from "./date.utils";
 import { isNullOrEmpty } from "./text.utils";
 
 export function groupBy<T>(array: T[], key: keyof T, includeKeyInObject = false) {
@@ -24,13 +24,13 @@ export function groupBy<T>(array: T[], key: keyof T, includeKeyInObject = false)
 
 export function groupByDate<T>(array: T[], key: keyof T) {
   return Map.groupBy(array, (item) =>
-    formatDate_MMMM_YYYY(new Date(item[key] as unknown as string))
+    formatDate(new Date(item[key] as unknown as string), "MMMM yyyy")
   );
 }
 
 export function groupByDateToObject<T>(array: T[], key: keyof T) {
   return Object.groupBy(array, (item) =>
-    formatDate_MMMM_YYYY(new Date(item[key] as unknown as string))
+    formatDate(new Date(item[key] as unknown as string), "MMMM yyyy")
   ) as { [key: string]: T[] };
 }
 

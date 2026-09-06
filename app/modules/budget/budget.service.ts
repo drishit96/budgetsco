@@ -1,7 +1,7 @@
 import { subMonths } from "date-fns";
 import { z } from "zod";
 import prisma from "~/lib/prisma";
-import { formatDate_YYY_MM, getFirstDateOfThisMonth } from "~/utils/date.utils";
+import { formatDate, getFirstDateOfThisMonth } from "~/utils/date.utils";
 import { AIUsageData, generateStructuredObject } from "~/modules/ai/ai.service";
 import { AIProviderConfig } from "~/modules/ai/aiProvider.schema";
 import { parseMonthlyCategoryWiseTargetInput } from "../transaction/transaction.schema";
@@ -85,7 +85,7 @@ export async function estimateBudgetWithAI(
     last3MonthsData.length > 0
       ? `category,amount,month\n${last3MonthsData
           .map(
-            (item) => `${item.category},${item.amount},${formatDate_YYY_MM(item.date)}`
+            (item) => `${item.category},${item.amount},${formatDate(item.date, "yyyy-MM")}`
           )
           .join("\n")}`
       : "";
@@ -95,8 +95,9 @@ export async function estimateBudgetWithAI(
       ? `category,amount,month\n${previousYearData
           .map(
             (item) =>
-              `${item.category},${item.amount},${formatDate_YYY_MM(
-                previousYearSameMonth
+              `${item.category},${item.amount},${formatDate(
+                previousYearSameMonth,
+                "yyyy-MM"
               )}`
           )
           .join("\n")}`

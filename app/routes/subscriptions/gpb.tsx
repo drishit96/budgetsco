@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { logError } from "~/utils/logger.utils.server";
 import { Spacer } from "~/components/Spacer";
 import type { AppContext } from "~/root";
-import { formatDate_DD_MMMM_YYYY_hh_mm_aa } from "~/utils/date.utils";
+import { formatDate } from "~/utils/date.utils";
 import { Ripple } from "@rmwc/ripple";
 import Banner from "~/components/Banner";
 import type { MetaFunction } from "@remix-run/react/dist/routeModules";
@@ -247,8 +247,9 @@ export default function GPB() {
                   {subscription.status === "SUBSCRIPTION_STATE_CANCELED"
                     ? "Cancels on:"
                     : "Renews on:"}{" "}
-                  {formatDate_DD_MMMM_YYYY_hh_mm_aa(
-                    new Date(Number(subscription.expiry))
+                  {formatDate(
+                    new Date(Number(subscription.expiry)),
+                    "dd MMMM yyyy, hh:mm aa"
                   )}
                 </p>
                 <Spacer />

@@ -49,7 +49,7 @@ import { isNullOrEmpty } from "~/utils/text.utils";
 import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import { logError } from "~/utils/logger.utils.server";
 import {
-  formatDate_YYYY_MM_DD,
+  formatDate,
   getFirstDateOfMonth,
   getFirstDateOfThisMonth,
 } from "~/utils/date.utils";
@@ -134,8 +134,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     monthData,
     transaction,
     isPastMonth:
-      formatDate_YYYY_MM_DD(getFirstDateOfMonth(transaction.createdAt)) !==
-      formatDate_YYYY_MM_DD(getFirstDateOfThisMonth(timezone)),
+      formatDate(getFirstDateOfMonth(transaction.createdAt), "yyyy-MM-dd") !==
+      formatDate(getFirstDateOfThisMonth(timezone), "yyyy-MM-dd"),
   });
 };
 

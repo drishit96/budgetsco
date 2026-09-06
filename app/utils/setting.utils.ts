@@ -1,81 +1,30 @@
-export function saveBoolSettingToLocalStorage(settingName: string, value: boolean) {
+export function getStorage<T>(key: string, defaultValue: T): T {
   try {
-    if (window && window.localStorage) {
-      window.localStorage.setItem(settingName, value.toString());
-    }
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export function getBoolSettingFromLocalStorage(
-  settingName: string,
-  defaultValue: boolean
-) {
-  try {
-    if (window && window.localStorage) {
-      const value = window.localStorage.getItem(settingName);
+    if (typeof window !== "undefined" && window.localStorage) {
+      const value = window.localStorage.getItem(key);
       if (value == null) return defaultValue;
-      return value === "true";
-    }
-    return defaultValue;
-  } catch (error) {
-    console.log(error);
-    return false;
-  }
-}
-
-export function getStringSettingFromLocalStorage(
-  settingName: string,
-  defaultValue: string
-) {
-  try {
-    if (window && window.localStorage) {
-      const value = window.localStorage.getItem(settingName);
-      if (value == null) return defaultValue;
-      return value;
-    }
-    return defaultValue;
-  } catch (error) {
-    console.log(error);
-    return defaultValue;
-  }
-}
-
-export function saveStringSettingToLocalStorage(settingName: string, value: string) {
-  try {
-    if (window && window.localStorage) {
-      window.localStorage.setItem(settingName, value);
+      if (typeof defaultValue === "boolean") {
+        return (value === "true") as unknown as T;
+      }
+      if (typeof defaultValue === "object" && defaultValue !== null) {
+        return JSON.parse(value) as T;
+      }
+      return value as unknown as T;
     }
   } catch (error) {
     console.log(error);
   }
+  return defaultValue;
 }
 
-export function getDictionaryFromLocalStorage(
-  settingName: string,
-  defaultValue: { [key: string]: string }
-) {
+export function setStorage<T>(key: string, value: T): void {
   try {
-    if (window && window.localStorage) {
-      const value = window.localStorage.getItem(settingName);
-      if (value == null) return defaultValue;
-      return JSON.parse(value) as { [key: string]: string };
-    }
-    return defaultValue;
-  } catch (error) {
-    console.log(error);
-    return defaultValue;
-  }
-}
-
-export function saveDictionaryToLocalStorage(
-  settingName: string,
-  value: { [key: string]: string }
-) {
-  try {
-    if (window && window.localStorage) {
-      window.localStorage.setItem(settingName, JSON.stringify(value));
+    if (typeof window !== "undefined" && window.localStorage) {
+      const val =
+        typeof value === "object" && value !== null
+          ? JSON.stringify(value)
+          : String(value);
+      window.localStorage.setItem(key, val);
     }
   } catch (error) {
     console.log(error);
@@ -83,7 +32,7 @@ export function saveDictionaryToLocalStorage(
 }
 
 export function getCurrentAppTheme() {
-  return getStringSettingFromLocalStorage("theme", "system");
+  return getStorage("theme", "system");
 }
 
 export function setAppTheme(theme: string) {
@@ -97,5 +46,5 @@ export function setAppTheme(theme: string) {
     document.documentElement.setAttribute("data-theme", theme);
   }
 
-  saveStringSettingToLocalStorage("theme", theme);
+  setStorage("theme", theme);
 }

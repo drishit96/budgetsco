@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Form, useSubmit } from "@remix-run/react";
 import { isMobileDevice } from "~/utils/browser.utils";
 import { getAllMonths, getAllYears } from "~/utils/category.utils";
-import { format_MMMM_YYYY } from "~/utils/date.utils";
+import { formatMonthYear } from "~/utils/date.utils";
 import CompareIcon from "./icons/CompareIcon";
 import EditIcon from "./icons/EditIcon";
 import { Spacer } from "./Spacer";
@@ -62,8 +62,8 @@ export default function MonthYearSelector({
                 setShowCompareSetting((prev) => !prev);
               }}
             >
-              <span>{`${format_MMMM_YYYY(startMonth - 1, startYear)} - 
-    ${format_MMMM_YYYY(endMonth - 1, endYear)}`}</span>
+              <span>{`${formatMonthYear(startMonth - 1, startYear)} - 
+    ${formatMonthYear(endMonth - 1, endYear)}`}</span>
               <span className="grow"></span>
               <EditIcon size={24} />
             </button>

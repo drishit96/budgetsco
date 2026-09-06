@@ -12,7 +12,7 @@ import {
 } from "~/modules/subscriptions/str.subscription.service";
 import type { AppContext } from "~/root";
 import { getSessionData } from "~/utils/auth.utils.server";
-import { formatDate_DD_MMMM_YYYY_hh_mm_aa } from "~/utils/date.utils";
+import { formatDate } from "~/utils/date.utils";
 import { logError } from "~/utils/logger.utils.server";
 
 export const meta: MetaFunction = ({ matches }) => {
@@ -171,8 +171,9 @@ export default function STR() {
 
               <p className="text-sm">
                 Renews on:{" "}
-                {formatDate_DD_MMMM_YYYY_hh_mm_aa(
-                  new Date(Number((subscription.expiry ?? 0) * 1000))
+                {formatDate(
+                  new Date(Number((subscription.expiry ?? 0) * 1000)),
+                  "dd MMMM yyyy, hh:mm aa"
                 )}
               </p>
               <Spacer size={3} />

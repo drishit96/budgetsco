@@ -25,7 +25,7 @@ import {
 import type { Currency } from "~/utils/number.utils";
 import { isNullOrEmpty } from "~/utils/text.utils";
 import type { MetaFunction } from "@remix-run/react/dist/routeModules";
-import { saveBoolSettingToLocalStorage } from "~/utils/setting.utils";
+import { setStorage } from "~/utils/setting.utils";
 import { ErrorText } from "~/components/ErrorText";
 import { ComboBox } from "~/components/ComboBox";
 import { trackEvent, trackUserProfileUpdate } from "~/utils/analytics.utils.server";
@@ -115,7 +115,7 @@ export default function ChangeCurrency() {
       if (actionData.data.newCurrency) {
         context.setUserPreferredCurrency(actionData.data.newCurrency as Currency);
         localStorage.setItem("currency", actionData.data.newCurrency);
-        saveBoolSettingToLocalStorage("showChangeCurrencyBanner", false);
+        setStorage("showChangeCurrencyBanner", false);
         context.setSnackBarMsg("Currency updated");
       }
 

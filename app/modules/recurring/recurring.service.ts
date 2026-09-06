@@ -4,7 +4,7 @@ import {
   getNextExecutionDate,
   parseDate,
   getFirstDateOfThisMonth,
-  formatDate_YYYY_MM_DD,
+  formatDate,
 } from "~/utils/date.utils";
 import prisma from "../../lib/prisma";
 import type { TransactionType } from "../transaction/transaction.schema";
@@ -489,7 +489,7 @@ ${transactions
     (t) =>
       `"${t.description || ""}",${t.amount},${t.type},${t.category},${
         t.paymentMode
-      },${formatDate_YYYY_MM_DD(t.createdAtLocal)}`
+      },${formatDate(t.createdAtLocal, "yyyy-MM-dd")}`
   )
   .join("\n")}`;
 

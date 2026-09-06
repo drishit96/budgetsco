@@ -8,7 +8,7 @@ import {
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { getSessionData } from "~/utils/auth.utils.server";
 import { getCategoriesByTransactionType } from "~/utils/category.utils";
-import { formatDate_YYY_MM, getFirstDateOfThisMonth } from "~/utils/date.utils";
+import { formatDate, getFirstDateOfThisMonth } from "~/utils/date.utils";
 import { logError } from "~/utils/logger.utils.server";
 
 export let action: ActionFunction = async ({ request }) => {
@@ -59,7 +59,7 @@ export let action: ActionFunction = async ({ request }) => {
     const isTargetSaved = await editMonthlyTargetTask;
     if (isTargetSaved) {
       trackEvent(request, EventNames.BUDGET_EDITED, {
-        month: formatDate_YYY_MM(getFirstDateOfThisMonth(timezone)),
+        month: formatDate(getFirstDateOfThisMonth(timezone), "yyyy-MM"),
         numberOfCategoriesModified: Object.keys(parsedBudget.breakdown).length.toString(),
       });
       return Response.json({ success: true });

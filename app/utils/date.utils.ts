@@ -17,7 +17,7 @@ export function getFirstDateOfMonth(date: Date) {
 }
 
 export function getFirstDateOfXMonthsBeforeFormatted(difference = 1, timezone: string) {
-  return formatDate_YYY_MM(getFirstDateOfXMonthsBefore(difference, timezone));
+  return formatDate(getFirstDateOfXMonthsBefore(difference, timezone), "yyyy-MM");
 }
 
 export function getFirstDateOfXMonthsBefore(difference = 1, timezone: string) {
@@ -66,49 +66,27 @@ export function getCurrentLocalDateInUTC(timezone: string) {
   }
 }
 
-export function formatDate_YYY_MM(date: Date) {
-  return format(date, "yyyy-MM");
-}
-
-export function format_MMMM_YYYY(month: number, year: number) {
-  const date = new Date(Date.UTC(year, month));
-  return format(date, "MMMM yyyy");
-}
-
-export function format_MMM_YYYY(month: number, year: number) {
-  const date = new Date(Date.UTC(year, month));
-  return format(date, "MMM yyyy");
-}
-
-export function formatDate_MMMM_YYYY(date: Date) {
-  return format(date, "MMMM yyyy");
-}
-
-export function formatDate_MMM_YYYY(date: Date) {
-  return format(date, "MMM yyyy");
-}
-
-export function formatDate_DD_MMMM_YYYY(date: Date) {
-  return format(date, "dd MMMM yyyy");
-}
-
-export function formatDate_DD_MMMM_YYYY_hh_mm_aa(date: Date) {
-  return format(date, "dd MMMM yyyy, hh:mm aa");
-}
-
-export function formatDate_DD_MMMM_YYYY_hh_mm(date: Date) {
-  return format(date, "yyyy-MM-dd hh:mm");
-}
-
-export function formatDate_YYYY_MM_DD(date: Date, silentError = false) {
+export function formatDate(
+  date: Date,
+  pattern: string = "yyyy-MM-dd",
+  silentError = false
+) {
   if (silentError) {
     try {
-      return format(date, "yyyy-MM-dd");
-    } catch (error) {
+      return format(date, pattern);
+    } catch {
       return "";
     }
   }
-  return format(date, "yyyy-MM-dd");
+  return format(date, pattern);
+}
+
+export function formatMonthYear(
+  month: number,
+  year: number,
+  pattern: string = "MMMM yyyy"
+) {
+  return format(new Date(Date.UTC(year, month)), pattern);
 }
 
 export function parseDate(dateString: string) {
