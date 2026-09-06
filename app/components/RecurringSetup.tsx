@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getListOfHours, getListOfMinutes } from "~/utils/date.utils";
 import { isNotNullAndEmpty } from "~/utils/text.utils";
-import { ErrorValidation } from "./ErrorValidation";
+import { ErrorText } from "./ErrorText";
 import { Spacer } from "./Spacer";
 
 const hours = getListOfHours();
@@ -79,7 +79,7 @@ export default function RecurringSetup({
           <option value="month">month(s)</option>
           <option value="year">year(s)</option>
         </select>
-        <ErrorValidation error={errors?.interval} />
+        <ErrorText error={errors?.interval} />
       </div>
 
       {date && (
@@ -125,7 +125,7 @@ export default function RecurringSetup({
 
           <input name="startDate" type="hidden" value={dateString} />
 
-          <ErrorValidation error={errors?.startDate} />
+          <ErrorText error={errors?.startDate} />
         </>
       )}
     </fieldset>

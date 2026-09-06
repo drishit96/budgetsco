@@ -9,7 +9,7 @@ import {
   useOutletContext,
   useSubmit,
 } from "@remix-run/react";
-import { ErrorValidation } from "~/components/ErrorValidation";
+import { ErrorText } from "~/components/ErrorText";
 import { Input } from "~/components/Input";
 import { Spacer } from "~/components/Spacer";
 import { useEffect, useState } from "react";
@@ -318,7 +318,7 @@ export default function Login() {
 
         <div className="flex flex-col items-center justify-center">
           <div className="w-full text-center">
-            <ErrorValidation error={actionData?.apiError || error} />
+            <ErrorText error={actionData?.apiError || error} />
             {showSuccessText && <SuccessText text="Log in successfull, redirecting..." />}
           </div>
           <Spacer />

@@ -4,10 +4,10 @@ import { InlineSpacer } from "./InlineSpacer";
 
 export function ErrorText({
   error,
-  showIcon,
+  showIcon = false,
 }: {
   error: string | undefined;
-  showIcon: boolean;
+  showIcon?: boolean;
 }) {
   return (
     <>

@@ -26,7 +26,7 @@ import type { Currency } from "~/utils/number.utils";
 import { isNullOrEmpty } from "~/utils/text.utils";
 import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import { saveBoolSettingToLocalStorage } from "~/utils/setting.utils";
-import { ErrorValidation } from "~/components/ErrorValidation";
+import { ErrorText } from "~/components/ErrorText";
 import { ComboBox } from "~/components/ComboBox";
 import { trackEvent, trackUserProfileUpdate } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
@@ -150,7 +150,7 @@ export default function ChangeCurrency() {
               itemToString={(item) => (item ? `${item.label}` : "")}
             />
             <input type="hidden" name="currency" value={currentValue?.value} />
-            <ErrorValidation error={actionData?.errors?.currency} />
+            <ErrorText error={actionData?.errors?.currency} />
 
             <button type="submit" className="fixed bottom-8 right-8 shadow-xl focus-ring">
               <Ripple>

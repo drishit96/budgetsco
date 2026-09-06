@@ -1,4 +1,4 @@
-import { ErrorValidation } from "./ErrorValidation";
+import { ErrorText } from "./ErrorText";
 import { InfoText } from "./InfoText";
 
 export function Input({
@@ -78,7 +78,7 @@ export function Input({
         ) : null}
       </label>
       <InfoText text={info} />
-      <ErrorValidation error={error} />
+      <ErrorText error={error} />
     </div>
   );
 }

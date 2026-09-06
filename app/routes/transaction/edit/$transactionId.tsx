@@ -15,7 +15,7 @@ import {
 } from "@remix-run/react";
 
 import CheckIcon from "~/components/icons/CheckIcon";
-import { ErrorValidation } from "~/components/ErrorValidation";
+import { ErrorText } from "~/components/ErrorText";
 import { InfoText } from "~/components/InfoText";
 import { InlineSpacer } from "~/components/InlineSpacer";
 import NumberInputLarge from "~/components/NumberInputLarge";
@@ -342,7 +342,7 @@ export default function EditTransaction() {
                 />
               </p>
               <div className="flex flex-col items-center">
-                <ErrorValidation error={actionData?.errors?.amount} />
+                <ErrorText error={actionData?.errors?.amount} />
               </div>
 
               <Spacer size={3} />
@@ -381,7 +381,7 @@ export default function EditTransaction() {
                         </option>
                       ))}
                     </select>
-                    <ErrorValidation error={actionData?.errors?.type} />
+                    <ErrorText error={actionData?.errors?.type} />
                   </label>
                   <Spacer size={3} />
 
@@ -405,7 +405,7 @@ export default function EditTransaction() {
                     items={categories}
                     itemToString={(item) => (item ? item.label : "")}
                   />
-                  <ErrorValidation
+                  <ErrorText
                     error={
                       actionData?.errors?.category ??
                       actionData?.errors?.category2 ??
@@ -443,7 +443,7 @@ export default function EditTransaction() {
                     itemToString={(item) => (item ? item.value : "")}
                   />
                   <input type="hidden" name="paymentMode" value={paymentMode} />
-                  <ErrorValidation error={actionData?.errors?.paymentMode} />
+                  <ErrorText error={actionData?.errors?.paymentMode} />
 
                   <Spacer size={3} />
                   <textarea

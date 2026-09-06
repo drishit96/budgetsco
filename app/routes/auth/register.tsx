@@ -10,7 +10,7 @@ import {
   useOutletContext,
   useSubmit,
 } from "@remix-run/react";
-import { ErrorValidation } from "~/components/ErrorValidation";
+import { ErrorText } from "~/components/ErrorText";
 import { Input } from "~/components/Input";
 import { Spacer } from "~/components/Spacer";
 import { useEffect, useState } from "react";
@@ -296,7 +296,7 @@ export default function Register() {
             </div>
           </Form>
         </div>
-        <ErrorValidation error={error} />
+        <ErrorText error={error} />
         <Spacer />
       </main>
     </>
