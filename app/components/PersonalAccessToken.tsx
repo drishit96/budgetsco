@@ -6,7 +6,7 @@ import { Spacer } from "./Spacer";
 import ListItem from "./ListItem";
 import TrashIcon from "./icons/TrashIcon";
 import EditIcon from "./icons/EditIcon";
-import { formatDate_DD_MMMM_YYYY } from "~/utils/date.utils";
+import { formatDate } from "~/utils/date.utils";
 
 export default function PersonalAccessToken({
   token,
@@ -50,7 +50,7 @@ export default function PersonalAccessToken({
           <p className="text-sm text-secondary">
             Expires on:{" "}
             {token.expiresAt
-              ? formatDate_DD_MMMM_YYYY(new Date(token.expiresAt))
+              ? formatDate(new Date(token.expiresAt), "dd MMMM yyyy")
               : "Never"}
           </p>
         </div>

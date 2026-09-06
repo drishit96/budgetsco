@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { add } from "date-fns/add";
-import { formatDate_DD_MMMM_YYYY } from "~/utils/date.utils";
+import { formatDate } from "~/utils/date.utils";
 
 test("can edit budget", async ({ page }) => {
   await page.goto("http://localhost:3000/dashboard");
@@ -169,7 +169,7 @@ test.describe.serial("Personal Access Tokens", () => {
 
     await page.getByRole("button", { name: "Save" }).click();
     await expect(page.getByText("Test Token Updated")).toBeVisible();
-    const dateToVerify = formatDate_DD_MMMM_YYYY(add(new Date(), { days: 30 }));
+    const dateToVerify = formatDate(add(new Date(), { days: 30 }), "dd MMMM yyyy");
     await expect(page.getByText(`Expires on: ${dateToVerify}`)).toBeVisible();
 
     await page.getByRole("button", { name: /Test Token Updated/ }).click();

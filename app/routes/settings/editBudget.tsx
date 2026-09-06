@@ -19,7 +19,7 @@ import useConfirmOnBackPress from "~/lib/useConfirmOnBackPress.hook";
 import type { MetaFunction } from "@remix-run/react/dist/routeModules";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
-import { formatDate_MMM_YYYY, getFirstDateOfThisMonth } from "~/utils/date.utils";
+import { formatDate, getFirstDateOfThisMonth } from "~/utils/date.utils";
 import { logError } from "~/utils/logger.utils.server";
 
 export const meta: MetaFunction = ({ matches }) => {
@@ -90,7 +90,7 @@ export let action: ActionFunction = async ({ request }) => {
 
       const isTargetSaved = await editMonthlyTargetTask;
       if (isTargetSaved) {
-        const month = formatDate_MMM_YYYY(getFirstDateOfThisMonth(timezone));
+        const month = formatDate(getFirstDateOfThisMonth(timezone), "MMM yyyy");
         trackEvent(request, EventNames.BUDGET_EDITED, {
           month,
           numberOfCategoriesModified: categoryBudgetMap.size.toString(),

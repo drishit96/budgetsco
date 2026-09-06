@@ -1,8 +1,7 @@
 import { groupBy } from "~/utils/array.utils";
 import prisma from "../../lib/prisma";
 import {
-  formatDate_MMM_YYYY,
-  formatDate_YYY_MM,
+  formatDate,
   getFirstDateOfThisMonth,
   getFirstDateOfXMonthsBefore,
   getFirstDateOfXMonthsBeforeFormatted,
@@ -451,7 +450,7 @@ export async function getTargetsForComparison(
     });
 
     let monthData = targetAchievementData.find(
-      (d) => formatDate_YYY_MM(d.date) === month
+      (d) => formatDate(d.date, "yyyy-MM") === month
     );
     monthData = monthData ?? {
       date: parseDate(month),
@@ -460,7 +459,7 @@ export async function getTargetsForComparison(
     };
 
     let compareToMonthData = targetAchievementData.find(
-      (d) => formatDate_YYY_MM(d.date) === compareToMonth
+      (d) => formatDate(d.date, "yyyy-MM") === compareToMonth
     );
     compareToMonthData = compareToMonthData ?? {
       date: parseDate(compareToMonth),
@@ -516,7 +515,7 @@ async function getExpensePerCategoryForComparison(
     const expenses = categoryExpenses.map((categoryExpense) => {
       return {
         ...categoryExpense,
-        date: formatDate_YYY_MM(categoryExpense.date),
+        date: formatDate(categoryExpense.date, "yyyy-MM"),
       };
     });
     const map = groupBy(expenses, "category");
@@ -601,7 +600,7 @@ async function getAmountPerCategoryForTimeRange(
     return categoryAmounts.map((categoryAmount) => ({
       category: categoryAmount.category,
       [type]: categoryAmount.amount,
-      date: formatDate_MMM_YYYY(categoryAmount.date),
+      date: formatDate(categoryAmount.date, "MMM yyyy"),
     })) as CategoryAmount<Prisma.Decimal, TransactionType>[];
   } catch (error) {
     console.log(error);
@@ -634,7 +633,7 @@ async function getAmountPerPaymentModeForTimeRange(
     return paymentModeAmounts.map((paymentModeAmount) => ({
       category: paymentModeAmount.paymentMode,
       [type]: paymentModeAmount.amount,
-      date: formatDate_MMM_YYYY(paymentModeAmount.date),
+      date: formatDate(paymentModeAmount.date, "MMM yyyy"),
     })) as CategoryAmount<Prisma.Decimal, TransactionType>[];
   } catch (error) {
     console.log(error);
@@ -661,7 +660,7 @@ async function getTargets(userId: string, startDate: Date, endDate: Date) {
   return targets.map((target) => {
     return {
       ...target,
-      date: formatDate_MMM_YYYY(target.date),
+      date: formatDate(target.date, "MMM yyyy"),
     };
   });
 }

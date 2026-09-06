@@ -5,7 +5,7 @@ import { Form, Link, useOutletContext, useSubmit } from "@remix-run/react";
 import type { RecurringTransactionResponse } from "~/modules/recurring/recurring.schema";
 import type { AppContext } from "~/root";
 import { getTransactionColor } from "~/utils/colors.utils";
-import { formatDate_DD_MMMM_YYYY } from "~/utils/date.utils";
+import { formatDate } from "~/utils/date.utils";
 import { formatNumber } from "~/utils/number.utils";
 import CheckIcon from "./icons/CheckIcon";
 import InfoIcon from "./icons/InfoIcon";
@@ -81,7 +81,7 @@ export function RecurringTransaction({
           <Spacer size={1} />
           <div className="flex">
             <span className="text-secondary">
-              {formatDate_DD_MMMM_YYYY(new Date(transaction.executionDate))}
+              {formatDate(new Date(transaction.executionDate), "dd MMMM yyyy")}
             </span>
             <span className="grow"></span>
             <span className="text-secondary">

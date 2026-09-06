@@ -1,19 +1,21 @@
-import { formatDate_MMMM_YYYY } from "./date.utils";
+import { formatDate } from "./date.utils";
 import { isNullOrEmpty } from "./text.utils";
 
 export function groupBy<T>(array: T[], key: keyof T, includeKeyInObject = false) {
-  let map = new Map<string, T[]>();
-  for (let item of array) {
-    const searchKey = (item[key] as unknown as string).trim();
-    if (isNullOrEmpty(searchKey)) continue;
-    if (includeKeyInObject) {
-      item = { ...item };
-      delete item[key];
-    }
-    if (map.has(searchKey)) {
-      map.get(searchKey)!.push(item);
-    } else {
-      map.set(searchKey, [item]);
+  const validItems = array.filter(
+    (item) => !isNullOrEmpty((item[key] as unknown as string)?.trim())
+  );
+  const map = Map.groupBy(validItems, (item) => (item[key] as unknown as string).trim());
+  if (includeKeyInObject) {
+    for (const [k, group] of map.entries()) {
+      map.set(
+        k,
+        group.map((item) => {
+          const copy = { ...item };
+          delete copy[key];
+          return copy;
+        })
+      );
     }
   }
 
@@ -21,33 +23,15 @@ export function groupBy<T>(array: T[], key: keyof T, includeKeyInObject = false)
 }
 
 export function groupByDate<T>(array: T[], key: keyof T) {
-  let map = new Map<string, T[]>();
-  for (const item of array) {
-    let searchKey = item[key] as unknown as string;
-    searchKey = formatDate_MMMM_YYYY(new Date(searchKey));
-    if (map.has(searchKey)) {
-      map.get(searchKey)!.push(item);
-    } else {
-      map.set(searchKey, [item]);
-    }
-  }
-
-  return map;
+  return Map.groupBy(array, (item) =>
+    formatDate(new Date(item[key] as unknown as string), "MMMM yyyy")
+  );
 }
 
 export function groupByDateToObject<T>(array: T[], key: keyof T) {
-  let map: { [key: string]: T[] } = {};
-  for (const item of array) {
-    let searchKey = item[key] as unknown as string;
-    searchKey = formatDate_MMMM_YYYY(new Date(searchKey));
-    if (map[searchKey]) {
-      map[searchKey]!.push(item);
-    } else {
-      map[searchKey] = [item];
-    }
-  }
-
-  return map;
+  return Object.groupBy(array, (item) =>
+    formatDate(new Date(item[key] as unknown as string), "MMMM yyyy")
+  ) as { [key: string]: T[] };
 }
 
 export function* getBatch<T>(array: T[], size: number) {

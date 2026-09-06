@@ -26,8 +26,7 @@ import {
 import type { AppContext } from "~/root";
 import { getSessionData } from "~/utils/auth.utils.server";
 import {
-  formatDate_MMMM_YYYY,
-  formatDate_YYY_MM,
+  formatDate,
   getFirstDateOfThisMonth,
   parseDate,
 } from "~/utils/date.utils";
@@ -83,9 +82,9 @@ export let loader: LoaderFunction = async ({ request }): Promise<any> => {
       types,
       categories,
       paymentModes,
-      prevMonth: formatDate_YYY_MM(sub(currentMonth, { months: 1 })),
-      currentMonth: formatDate_YYY_MM(currentMonth),
-      nextMonth: formatDate_YYY_MM(add(currentMonth, { months: 1 })),
+      prevMonth: formatDate(sub(currentMonth, { months: 1 }), "yyyy-MM"),
+      currentMonth: formatDate(currentMonth, "yyyy-MM"),
+      nextMonth: formatDate(add(currentMonth, { months: 1 }), "yyyy-MM"),
       transactions: await transactions,
     },
     {
@@ -221,7 +220,7 @@ export default function TransactionHistory() {
                 </Ripple>
 
                 <span className="text-primary">
-                  {formatDate_MMMM_YYYY(parseDate(currentMonth))}
+                  {formatDate(parseDate(currentMonth), "MMMM yyyy")}
                 </span>
 
                 <Ripple unbounded>

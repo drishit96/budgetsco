@@ -17,7 +17,7 @@ export function getFirstDateOfMonth(date: Date) {
 }
 
 export function getFirstDateOfXMonthsBeforeFormatted(difference = 1, timezone: string) {
-  return formatDate_YYY_MM(getFirstDateOfXMonthsBefore(difference, timezone));
+  return formatDate(getFirstDateOfXMonthsBefore(difference, timezone), "yyyy-MM");
 }
 
 export function getFirstDateOfXMonthsBefore(difference = 1, timezone: string) {
@@ -36,79 +36,57 @@ export function getFirstDateOfXMonthsAfter(difference = 1, timezone: string) {
  * @returns date
  */
 export function getCurrentLocalDateInUTC(timezone: string) {
-  const dateRegex = new RegExp(/(\d\d)\/(\d\d)\/(\d\d\d\d), (\d\d):(\d\d):(\d\d)/);
-  const localeDate = new Date().toLocaleString("en-GB", {
-    timeZone: timezone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
+  try {
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: timezone,
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric",
+      hourCycle: "h23",
+    });
+    const parts = Object.fromEntries(
+      formatter.formatToParts(new Date()).map((p) => [p.type, p.value])
+    );
 
-  const regexMatchResult = localeDate.match(dateRegex);
-  if (regexMatchResult == null || regexMatchResult.length == 0) {
+    return new Date(
+      Date.UTC(
+        Number(parts.year),
+        Number(parts.month) - 1,
+        Number(parts.day),
+        Number(parts.hour),
+        Number(parts.minute),
+        Number(parts.second)
+      )
+    );
+  } catch (e) {
     return new Date();
   }
-
-  const [, date, month, year, hour, min, sec] = regexMatchResult;
-
-  return new Date(
-    Date.UTC(
-      Number(year),
-      Number(month) - 1,
-      Number(date),
-      Number(hour),
-      Number(min),
-      Number(sec)
-    )
-  );
 }
 
-export function formatDate_YYY_MM(date: Date) {
-  return format(date, "yyyy-MM");
-}
-
-export function format_MMMM_YYYY(month: number, year: number) {
-  const date = new Date(Date.UTC(year, month));
-  return format(date, "MMMM yyyy");
-}
-
-export function format_MMM_YYYY(month: number, year: number) {
-  const date = new Date(Date.UTC(year, month));
-  return format(date, "MMM yyyy");
-}
-
-export function formatDate_MMMM_YYYY(date: Date) {
-  return format(date, "MMMM yyyy");
-}
-
-export function formatDate_MMM_YYYY(date: Date) {
-  return format(date, "MMM yyyy");
-}
-
-export function formatDate_DD_MMMM_YYYY(date: Date) {
-  return format(date, "dd MMMM yyyy");
-}
-
-export function formatDate_DD_MMMM_YYYY_hh_mm_aa(date: Date) {
-  return format(date, "dd MMMM yyyy, hh:mm aa");
-}
-
-export function formatDate_DD_MMMM_YYYY_hh_mm(date: Date) {
-  return format(date, "yyyy-MM-dd hh:mm");
-}
-
-export function formatDate_YYYY_MM_DD(date: Date, silentError = false) {
+export function formatDate(
+  date: Date,
+  pattern: string = "yyyy-MM-dd",
+  silentError = false
+) {
   if (silentError) {
     try {
-      return format(date, "yyyy-MM-dd");
-    } catch (error) {
+      return format(date, pattern);
+    } catch {
       return "";
     }
   }
-  return format(date, "yyyy-MM-dd");
+  return format(date, pattern);
+}
+
+export function formatMonthYear(
+  month: number,
+  year: number,
+  pattern: string = "MMMM yyyy"
+) {
+  return format(new Date(Date.UTC(year, month)), pattern);
 }
 
 export function parseDate(dateString: string) {
@@ -156,11 +134,7 @@ export function getListOfHours() {
 }
 
 export function getListOfMinutes() {
-  return [
-    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
-    24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
-    45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
-  ] as const;
+  return Array.from({ length: 60 }, (_, i) => i);
 }
 
 export function getNextExecutionDate(

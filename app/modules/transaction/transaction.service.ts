@@ -9,8 +9,7 @@ import { parseTransactionsResponse } from "./transaction.schema";
 
 import prisma from "../../lib/prisma";
 import {
-  formatDate_YYY_MM,
-  formatDate_YYYY_MM_DD,
+  formatDate,
   getCurrentLocalDateInUTC,
   getFirstDateOfMonth,
   getFirstDateOfThisMonth,
@@ -668,7 +667,7 @@ export async function getExpenseTargets(
     return targetAchievementData.map((item) => ({
       budget: item.budget,
       expense: item.expense,
-      month: formatDate_YYY_MM(item.date),
+      month: formatDate(item.date, "yyyy-MM"),
     }));
   } catch (error) {
     logError(error);
@@ -746,7 +745,7 @@ export async function editMonthlyTarget(
       valuesArr.push(
         Prisma.sql`(${Prisma.join([
           userId,
-          Prisma.sql`CAST(${formatDate_YYYY_MM_DD(date)} AS DATE)`,
+          Prisma.sql`CAST(${formatDate(date, "yyyy-MM-dd")} AS DATE)`,
           "expense",
           category,
           0,

@@ -17,7 +17,7 @@ import { InlineSpacer } from "~/components/InlineSpacer";
 import type { AppContext } from "~/root";
 import { add } from "date-fns";
 import { logError } from "~/utils/logger.utils.server";
-import { formatDate_YYYY_MM_DD } from "~/utils/date.utils";
+import { formatDate } from "~/utils/date.utils";
 import { firstLetterToUpperCase } from "~/utils/text.utils";
 import { ErrorText } from "~/components/ErrorText";
 import { getDefaultTokenInput, getPermissionsFromForm } from "~/utils/token.utils";
@@ -264,7 +264,7 @@ export default function CreateNewToken() {
                 type="date"
                 name="expiresAt"
                 className="form-input input text-base"
-                value={formatDate_YYYY_MM_DD(tokenInputForm.expiresAt, true)}
+                value={formatDate(tokenInputForm.expiresAt, "yyyy-MM-dd", true)}
                 onChange={(e) => {
                   const date = new Date(e.target.value);
                   setTokenInputForm({ ...tokenInputForm, expiresAt: date });

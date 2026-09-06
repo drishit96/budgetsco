@@ -15,16 +15,15 @@ import {
 } from "@remix-run/react";
 
 import styles from "./styles/app.css?url";
-import Report from "./components/Report";
+import Report from "./components/icons/Report";
 import GenericError from "./components/GenericError";
 import type { ReactElement } from "react";
 import { useEffect, useRef, useState } from "react";
 import { Spacer } from "./components/Spacer";
 import { isNotNullAndEmpty } from "./utils/text.utils";
-import Back from "./components/Back";
+import Back from "./components/icons/Back";
 import { Ripple } from "@rmwc/ripple";
 import SettingIcon from "./components/icons/SettingIcon";
-import usePreferredCurrency from "./lib/usePreferredCurrency.hook";
 import type { Currency } from "./utils/number.utils";
 import {
   Dialog,
@@ -40,7 +39,6 @@ import type {
   ErrorBoundaryComponent,
   MetaFunction,
 } from "@remix-run/react/dist/routeModules";
-import usePreferredLocale from "./lib/usePreferredLocale.hook";
 import type { UserSessionData } from "./utils/auth.utils.server";
 import {
   getSessionCookieWithUpdatedPreferences,
@@ -221,8 +219,14 @@ export default function App() {
     show: false,
     content: <></>,
   });
-  const [userPreferredCurrency, setUserPreferredCurrency] = usePreferredCurrency();
-  const [userPreferredLocale, setUserPreferredLocale] = usePreferredLocale();
+  const [userPreferredCurrency, setUserPreferredCurrency] =
+    useState<Currency>(null);
+  const [userPreferredLocale, setUserPreferredLocale] = useState<string | null>(null);
+
+  useEffect(() => {
+    setUserPreferredCurrency(localStorage.getItem("currency") as Currency);
+    setUserPreferredLocale(localStorage.getItem("locale"));
+  }, []);
   const location = useLocation();
   let matches = useMatches();
   const navigation = useNavigation();
@@ -236,8 +240,8 @@ export default function App() {
     setDialogProps,
     userPreferredCurrency,
     setUserPreferredCurrency,
-    userPreferredLocale,
-    setUserPreferredLocale,
+    userPreferredLocale: userPreferredLocale as string,
+    setUserPreferredLocale: setUserPreferredLocale as React.Dispatch<React.SetStateAction<string>>,
     setBottomSheetProps,
     isActiveSubscription,
     currency,

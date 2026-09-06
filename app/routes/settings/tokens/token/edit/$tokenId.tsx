@@ -28,7 +28,7 @@ import {
 import { getUserIdFromSession } from "~/utils/auth.utils.server";
 import type { MetaFunction } from "@remix-run/node";
 import { firstLetterToUpperCase, isNullOrEmpty } from "~/utils/text.utils";
-import { formatDate_YYYY_MM_DD } from "~/utils/date.utils";
+import { formatDate } from "~/utils/date.utils";
 import { getDefaultTokenInput, getPermissionsFromForm } from "~/utils/token.utils";
 import { logError } from "~/utils/logger.utils.server";
 
@@ -283,7 +283,7 @@ export default function EditToken() {
                 type="date"
                 name="expiresAt"
                 className="form-input input text-base"
-                value={formatDate_YYYY_MM_DD(tokenInputForm.expiresAt, true)}
+                value={formatDate(tokenInputForm.expiresAt, "yyyy-MM-dd", true)}
                 onChange={(e) => {
                   const date = new Date(e.target.value);
                   setTokenInputForm((prev) => ({ ...prev, expiresAt: date }));

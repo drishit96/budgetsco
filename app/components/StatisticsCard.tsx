@@ -19,7 +19,7 @@ export function StatisticsCard({
   perc?: number;
   color?: Color;
   currency: Currency;
-  locale: string;
+  locale?: string | null;
 }) {
   return (
     <div

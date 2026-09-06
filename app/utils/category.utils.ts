@@ -1,10 +1,8 @@
 import type { TransactionType } from "~/modules/transaction/transaction.schema";
 import { getListOfAllMonths, getListOfYearsSince } from "./date.utils";
 import {
-  getDictionaryFromLocalStorage,
-  getStringSettingFromLocalStorage,
-  saveDictionaryToLocalStorage,
-  saveStringSettingToLocalStorage,
+  getStorage,
+  setStorage,
 } from "./setting.utils";
 
 function getAllExpenseCategories() {
@@ -488,25 +486,25 @@ export function saveLastModifiedToLocalStorage(timestamp: number) {
 }
 
 export function getLastUsedType(): TransactionType {
-  return getStringSettingFromLocalStorage("lastUsedType", "expense") as TransactionType;
+  return getStorage<TransactionType>("lastUsedType", "expense");
 }
 
 export function saveLastUsedType(type: TransactionType) {
-  saveStringSettingToLocalStorage("lastUsedType", type.toString());
+  setStorage("lastUsedType", type);
 }
 
 export function getLastUsedCategory(): { [key: string]: string } {
-  return getDictionaryFromLocalStorage("lastUsedCategory", {});
+  return getStorage<{ [key: string]: string }>("lastUsedCategory", {});
 }
 
 export function saveLastUsedCategory(category: { [key: string]: string }) {
-  saveDictionaryToLocalStorage("lastUsedCategory", category);
+  setStorage("lastUsedCategory", category);
 }
 
 export function getLastUsedPaymentMode() {
-  return getStringSettingFromLocalStorage("lastUsedPaymentMode", "Cash");
+  return getStorage("lastUsedPaymentMode", "Cash");
 }
 
 export function saveLastUsedPaymentMode(paymentMode: string) {
-  saveStringSettingToLocalStorage("lastUsedPaymentMode", paymentMode);
+  setStorage("lastUsedPaymentMode", paymentMode);
 }

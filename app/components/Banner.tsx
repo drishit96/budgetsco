@@ -1,10 +1,7 @@
 import { Link } from "@remix-run/react";
 import { Ripple } from "@rmwc/ripple";
 import { useEffect, useState } from "react";
-import {
-  getBoolSettingFromLocalStorage,
-  saveBoolSettingToLocalStorage,
-} from "~/utils/setting.utils";
+import { getStorage, setStorage } from "~/utils/setting.utils";
 import BulbIcon from "./icons/BulbIcon";
 import ErrorIcon from "./icons/ErrorIcon";
 import InfoIcon from "./icons/InfoIcon";
@@ -95,14 +92,14 @@ export default function Banner({
   useEffect(() => {
     setShowBanner(
       permanentDismissSettingName
-        ? getBoolSettingFromLocalStorage(permanentDismissSettingName, true)
+        ? getStorage(permanentDismissSettingName, true)
         : true
     );
   }, []);
 
   const handleDismiss = (permanent = false) => {
     if (permanent && permanentDismissSettingName) {
-      saveBoolSettingToLocalStorage(permanentDismissSettingName, false);
+      setStorage(permanentDismissSettingName, false);
     }
 
     if (carouselMode && onDismiss) {

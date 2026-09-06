@@ -6,7 +6,7 @@ import { Spacer } from "~/components/Spacer";
 import type { ComparisonReportResponse } from "~/modules/reports/reports.service";
 import { getComparisonReports } from "~/modules/reports/reports.service";
 import { StatisticsCard } from "~/components/StatisticsCard";
-import { format_MMMM_YYYY, format_MMM_YYYY } from "~/utils/date.utils";
+import { formatMonthYear } from "~/utils/date.utils";
 import { useEffect } from "react";
 import type { ReportsPageContext } from "../reports";
 import MonthYearSelector from "~/components/MonthYearSelector";
@@ -149,7 +149,7 @@ export default function CompareReport() {
                   <p className="font-bold">{categoryExpense.category}</p>
 
                   <div className="flex">
-                    <p className="text-primary">{format_MMM_YYYY(month - 1, year)}</p>
+                    <p className="text-primary">{formatMonthYear(month - 1, year, "MMM yyyy")}</p>
                     <span className="grow"></span>
                     <p className="text-primary">
                       {formatToCurrency(
@@ -178,7 +178,7 @@ export default function CompareReport() {
                   <Spacer size={0.5} />
                   <div className="flex">
                     <p className="text-primary">
-                      {format_MMMM_YYYY(compareToMonth - 1, compareToYear)}
+                      {formatMonthYear(compareToMonth - 1, compareToYear, "MMMM yyyy")}
                     </p>
                     <span className="grow"></span>
                     <p className="text-primary">
