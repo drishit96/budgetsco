@@ -221,11 +221,11 @@ export default function App() {
   });
   const [userPreferredCurrency, setUserPreferredCurrency] =
     useState<Currency>(null);
-  const [userPreferredLocale, setUserPreferredLocale] = useState<string>("");
+  const [userPreferredLocale, setUserPreferredLocale] = useState<string | null>(null);
 
   useEffect(() => {
     setUserPreferredCurrency(localStorage.getItem("currency") as Currency);
-    setUserPreferredLocale(localStorage.getItem("locale") ?? "");
+    setUserPreferredLocale(localStorage.getItem("locale"));
   }, []);
   const location = useLocation();
   let matches = useMatches();
@@ -240,8 +240,8 @@ export default function App() {
     setDialogProps,
     userPreferredCurrency,
     setUserPreferredCurrency,
-    userPreferredLocale,
-    setUserPreferredLocale,
+    userPreferredLocale: userPreferredLocale as string,
+    setUserPreferredLocale: setUserPreferredLocale as React.Dispatch<React.SetStateAction<string>>,
     setBottomSheetProps,
     isActiveSubscription,
     currency,

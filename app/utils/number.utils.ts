@@ -4,14 +4,14 @@ import { isNullOrEmpty } from "./text.utils";
 
 export type Currency = typeof CURRENCY_CODES[number] | null;
 
-export function formatNumber(number: number | string, locale?: string) {
-  return new Intl.NumberFormat(locale ?? "en-US", { minimumFractionDigits: 2 }).format(
+export function formatNumber(number: number | string, locale?: string | null) {
+  return new Intl.NumberFormat(locale || "en-US", { minimumFractionDigits: 2 }).format(
     number as number
   );
 }
 
-export function formatPercentage(number: number | string, locale?: string) {
-  return new Intl.NumberFormat(locale ?? "en-US", {
+export function formatPercentage(number: number | string, locale?: string | null) {
+  return new Intl.NumberFormat(locale || "en-US", {
     minimumFractionDigits: 1,
     minimumIntegerDigits: 1,
     maximumFractionDigits: 1,
@@ -20,10 +20,10 @@ export function formatPercentage(number: number | string, locale?: string) {
 
 export function formatToCurrency(
   number: number | string,
-  locale?: string,
+  locale?: string | null,
   currency?: Currency
 ) {
-  return new Intl.NumberFormat(locale ?? "en-US", {
+  return new Intl.NumberFormat(locale || "en-US", {
     style: "currency",
     currency: currency ?? "INR",
     maximumFractionDigits: 2,
@@ -32,18 +32,18 @@ export function formatToCurrency(
 
 export function formatToCurrencyCompact(
   number: number | string,
-  locale?: string,
+  locale?: string | null,
   currency?: Currency
 ) {
-  return new Intl.NumberFormat(locale ?? "en-US", {
+  return new Intl.NumberFormat(locale || "en-US", {
     style: "currency",
     currency: currency ?? "INR",
     notation: "compact",
   }).format(number as number);
 }
 
-export function getCurrencySymbol(locale?: string, currency?: Currency) {
-  const formatter = new Intl.NumberFormat(locale ?? "en-US", {
+export function getCurrencySymbol(locale?: string | null, currency?: Currency) {
+  const formatter = new Intl.NumberFormat(locale || "en-US", {
     style: "currency",
     currency: currency ?? "INR",
   });
