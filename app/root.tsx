@@ -25,13 +25,6 @@ import Back from "./components/icons/Back";
 import { Ripple } from "@rmwc/ripple";
 import SettingIcon from "./components/icons/SettingIcon";
 import type { Currency } from "./utils/number.utils";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  DialogButton,
-} from "@rmwc/dialog";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import clsx from "clsx";
 import DashboardIcon from "./components/icons/DashboardIcon";
@@ -98,14 +91,14 @@ export const loader = async ({
   if (sessionData == null) return Response.json({});
   const userPreferences = await getUserPreferencesAfterTimestamp(
     sessionData.lastModified,
-    sessionData.userId
+    sessionData.userId,
   );
 
   if (userPreferences != null) {
     const headers: Headers = new Headers({
       "Set-Cookie": await getSessionCookieWithUpdatedPreferences(
         request,
-        userPreferences
+        userPreferences,
       ),
     });
 
@@ -204,6 +197,7 @@ export default function App() {
     lastModified,
   } = useLoaderData<typeof loader>();
   const snackBarRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const [snackBarMsg, setSnackBarMsg] = useState("");
   const [showLoader, setShowLoader] = useState(false);
   const [dialogProps, setDialogProps] = useState<DialogProps>({
@@ -215,12 +209,22 @@ export default function App() {
     onPositiveClick: () => {},
     onNegativeClick: () => {},
   });
+
+  useEffect(() => {
+    if (dialogProps.showDialog) {
+      if (dialogRef.current) {
+        dialogRef.current.returnValue = "";
+        dialogRef.current.showModal();
+      }
+    } else if (dialogRef.current?.open) {
+      dialogRef.current.close();
+    }
+  }, [dialogProps.showDialog]);
   const [bottomSheetProps, setBottomSheetProps] = useState<BottomSheetProps>({
     show: false,
     content: <></>,
   });
-  const [userPreferredCurrency, setUserPreferredCurrency] =
-    useState<Currency>(null);
+  const [userPreferredCurrency, setUserPreferredCurrency] = useState<Currency>(null);
   const [userPreferredLocale, setUserPreferredLocale] = useState<string | null>(null);
 
   useEffect(() => {
@@ -241,7 +245,9 @@ export default function App() {
     userPreferredCurrency,
     setUserPreferredCurrency,
     userPreferredLocale: userPreferredLocale as string,
-    setUserPreferredLocale: setUserPreferredLocale as React.Dispatch<React.SetStateAction<string>>,
+    setUserPreferredLocale: setUserPreferredLocale as React.Dispatch<
+      React.SetStateAction<string>
+    >,
     setBottomSheetProps,
     isActiveSubscription,
     currency,
@@ -265,7 +271,7 @@ export default function App() {
       loadingProgress.current?.classList.remove(
         "duration-1000",
         "w-full",
-        "bg-yellow-500"
+        "bg-yellow-500",
       );
       loadingProgress.current?.classList.add("w-0");
     }
@@ -329,7 +335,7 @@ export default function App() {
       if (event.data.type === "NEW_REQUEST_IN_RETRY_QUEUE") {
         localStorage?.setItem("requestsPending", "true");
         setSnackBarMsg(
-          "Looks like you're offline. We will sync your transactions when you're back online"
+          "Looks like you're offline. We will sync your transactions when you're back online",
         );
       } else if (event.data.type === "REQUESTS_SYNCED") {
         setSnackBarMsg("Transactions synced successfully");
@@ -366,7 +372,7 @@ export default function App() {
             {
               "opacity-0 pointer-events-none": !showLoader,
               "opacity-100": showLoader,
-            }
+            },
           )}
         >
           {showLoader && (
@@ -505,18 +511,31 @@ export default function App() {
           </div>
         </div>
 
-        <Dialog
-          open={dialogProps.showDialog}
-          onClose={(evt) => {
+        <dialog
+          ref={dialogRef}
+          role="alertdialog"
+          aria-labelledby={dialogProps.title ? "dialog-title" : undefined}
+          aria-describedby="dialog-message"
+          className="fixed inset-0 m-auto p-0 border border-primary rounded-lg shadow-2xl bg-base text-primary w-[calc(100vw-32px)] sm:w-full sm:max-w-140 min-w-70 max-h-[calc(100%-32px)]"
+          onClick={(e) => {
+            if (e.target === dialogRef.current) {
+              dialogRef.current.close("close");
+            }
+          }}
+          onCancel={() => {
+            if (typeof dialogProps.onNegativeClick === "function") {
+              dialogProps.onNegativeClick();
+            }
+          }}
+          onClose={() => {
+            const action = dialogRef.current?.returnValue;
             if (
-              evt.detail.action === "accept" &&
-              dialogProps.onPositiveClick != null &&
+              action === "accept" &&
               typeof dialogProps.onPositiveClick === "function"
             ) {
               dialogProps.onPositiveClick();
             } else if (
-              evt.detail.action === "close" &&
-              dialogProps.onNegativeClick != null &&
+              action === "close" &&
               typeof dialogProps.onNegativeClick === "function"
             ) {
               dialogProps.onNegativeClick();
@@ -527,17 +546,44 @@ export default function App() {
             }));
           }}
         >
-          <DialogTitle>{dialogProps.title}</DialogTitle>
-          <DialogContent>{dialogProps.message}</DialogContent>
-          <DialogActions>
-            <DialogButton action="close">
-              {dialogProps.showDialog && (dialogProps.negativeButton ?? "Cancel")}
-            </DialogButton>
-            <DialogButton action="accept" isDefaultAction>
-              {dialogProps.showDialog && (dialogProps.positiveButton ?? "Ok")}
-            </DialogButton>
-          </DialogActions>
-        </Dialog>
+          <form method="dialog" className="flex flex-col">
+            {dialogProps.title && (
+              <h2
+                id="dialog-title"
+                className="text-2xl font-normal leading-8 text-primary-dark pt-5 px-6 pb-2"
+              >
+                {dialogProps.title}
+              </h2>
+            )}
+            <div
+              id="dialog-message"
+              className="text-base leading-6 text-primary px-6 py-3 overflow-y-auto"
+            >
+              {dialogProps.message}
+            </div>
+            <div className="flex justify-end items-center gap-2 p-3 px-6 min-h-13">
+              <Ripple>
+                <button
+                  type="submit"
+                  value="close"
+                  className="cursor-pointer text-accent hover:bg-black/5 dark:hover:bg-white/5 font-medium text-sm px-3 py-2 rounded transition-colors focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus:outline-none"
+                >
+                  {dialogProps.negativeButton ?? "Cancel"}
+                </button>
+              </Ripple>
+              <Ripple>
+                <button
+                  type="submit"
+                  value="accept"
+                  autoFocus
+                  className="cursor-pointer text-accent hover:bg-black/5 dark:hover:bg-white/5 font-medium text-sm px-3 py-2 rounded transition-colors focus-visible:ring-2 focus-visible:ring-emerald-700 focus-visible:ring-offset-2 focus-visible:ring-offset-background focus:outline-none"
+                >
+                  {dialogProps.positiveButton ?? "Ok"}
+                </button>
+              </Ripple>
+            </div>
+          </form>
+        </dialog>
 
         <BottomSheet
           show={bottomSheetProps.show}
