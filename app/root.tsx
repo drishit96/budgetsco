@@ -7,6 +7,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useFetcher,
   useLoaderData,
   useLocation,
   useMatches,
@@ -20,7 +21,8 @@ import GenericError from "./components/GenericError";
 import type { ReactElement } from "react";
 import { useEffect, useRef, useState } from "react";
 import { Spacer } from "./components/Spacer";
-import { isNotNullAndEmpty } from "./utils/text.utils";
+import { isNotNullAndEmpty, isNullOrEmpty } from "./utils/text.utils";
+import { regenerateUserIdToken } from "./utils/firebase.utils";
 import Back from "./components/icons/Back";
 import { Ripple } from "@rmwc/ripple";
 import SettingIcon from "./components/icons/SettingIcon";
@@ -94,6 +96,13 @@ export const loader = async ({
     sessionData.userId,
   );
 
+  const refreshSession =
+    sessionData &&
+    sessionData?.expiresOn &&
+    Date.now() > sessionData?.expiresOn * 1000 - 172_800_000
+      ? true
+      : false;
+
   if (userPreferences != null) {
     const headers: Headers = new Headers({
       "Set-Cookie": await getSessionCookieWithUpdatedPreferences(
@@ -102,7 +111,10 @@ export const loader = async ({
       ),
     });
 
-    return Response.json({ ...userPreferences, updateLocalStore: true }, { headers });
+    return Response.json(
+      { ...userPreferences, updateLocalStore: true, refreshSession },
+      { headers },
+    );
   }
   const {
     isActiveSubscription,
@@ -121,6 +133,7 @@ export const loader = async ({
     isMFAOn,
     isPasskeyPresent,
     paymentGateway,
+    refreshSession,
   });
 };
 
@@ -195,7 +208,33 @@ export default function App() {
     isPasskeyPresent,
     paymentGateway,
     lastModified,
+    refreshSession,
   } = useLoaderData<typeof loader>();
+  const refreshSessionFetcher = useFetcher<{ sessionRefreshed?: boolean }>();
+  const isRefreshCallSentRef = useRef(false);
+
+  useEffect(() => {
+    if (refreshSession && !isRefreshCallSentRef.current) {
+      isRefreshCallSentRef.current = true;
+      regenerateUserIdToken().then((idToken) => {
+        if (isNullOrEmpty(idToken)) return;
+
+        const form = new FormData();
+        form.set("idToken", idToken);
+        refreshSessionFetcher.submit(form, {
+          method: "POST",
+          action: "/api/refreshSession",
+        });
+      });
+    }
+  }, [refreshSession]);
+
+  useEffect(() => {
+    if (refreshSessionFetcher.data?.sessionRefreshed) {
+      setSnackBarMsg("Session refreshed");
+    }
+  }, [refreshSessionFetcher.data?.sessionRefreshed]);
+
   const snackBarRef = useRef<HTMLDivElement>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [snackBarMsg, setSnackBarMsg] = useState("");

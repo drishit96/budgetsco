@@ -19,11 +19,7 @@ import {
   getRecentTransactions,
 } from "~/modules/transaction/transaction.service";
 import type { AppContext } from "~/root";
-import {
-  getSessionCookie,
-  getSessionData,
-  getUserPreferencesFromSessionCookie,
-} from "~/utils/auth.utils.server";
+import { getSessionData } from "~/utils/auth.utils.server";
 import { Ripple } from "@rmwc/ripple";
 import {
   deleteRecurringTransaction,
@@ -35,11 +31,7 @@ import {
 import type { RecurringTransactionsResponse } from "~/modules/recurring/recurring.schema";
 import { RecurringTransaction } from "~/components/RecurringTransaction";
 import { isNotNullAndEmpty, isNullOrEmpty } from "~/utils/text.utils";
-import {
-  getFCMRegistrationToken,
-  isNotificationSupported,
-  regenerateUserIdToken,
-} from "~/utils/firebase.utils";
+import { getFCMRegistrationToken, isNotificationSupported } from "~/utils/firebase.utils";
 import { saveNotificationToken } from "~/modules/user/user.service";
 import { getUserPreferencesAfterTimestamp } from "~/modules/settings/settings.service";
 import BannerCarousel from "~/components/BannerCarousel/BannerCarousel";
@@ -77,7 +69,7 @@ export const action: ActionFunction = async ({ request }) => {
           const { isTransactionMarkedAsDone, type } = await markTransactionAsDone(
             userId,
             timezone,
-            transactionId
+            transactionId,
           );
 
           if (isTransactionMarkedAsDone) {
@@ -90,22 +82,6 @@ export const action: ActionFunction = async ({ request }) => {
 
           return { isTransactionMarkedAsDone };
         }
-      } else if (formName === "REFRESH_SESSION_FORM") {
-        const idToken = form.get("idToken")?.toString();
-        if (isNotNullAndEmpty(idToken)) {
-          const preferences = await getUserPreferencesFromSessionCookie(request);
-          if (preferences == null) {
-            throw new Error(`userPreferences missing for userId: ${userId}`);
-          }
-          return Response.json(
-            { sessionRefreshed: true },
-            {
-              headers: {
-                "Set-Cookie": await getSessionCookie(idToken, preferences),
-              },
-            }
-          );
-        }
       } else if (formName === "SAVE_REGISTRATION_TOKEN") {
         const token = form.get("token")?.toString();
         if (isNotNullAndEmpty(token)) {
@@ -117,7 +93,7 @@ export const action: ActionFunction = async ({ request }) => {
         if (isNotNullAndEmpty(transactionId)) {
           const isTransactionSkipped = await skipRecurringTransaction(
             userId,
-            transactionId
+            transactionId,
           );
 
           if (isTransactionSkipped) {
@@ -166,7 +142,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const targetDetails = getThisMonthTarget(userId, timezone);
   const getLatestPreferences = getUserPreferencesAfterTimestamp(
     sessionData.lastModified,
-    userId
+    userId,
   );
   await Promise.allSettled([
     overDueTransactions,
@@ -177,12 +153,6 @@ export const loader: LoaderFunction = async ({ request }) => {
   ]);
 
   const headers: { [key: string]: string } = {};
-  const refreshSession =
-    sessionData &&
-    sessionData?.expiresOn &&
-    Date.now() > sessionData?.expiresOn * 1000 - 172_800_000
-      ? true
-      : false;
 
   return Response.json(
     {
@@ -192,12 +162,11 @@ export const loader: LoaderFunction = async ({ request }) => {
       targetDetails: await targetDetails,
       askUserForNewTarget: (await targetDetails) == null,
       recommendToSetBudget: (await targetDetails)?.thisMonth?.budget?.isZero(),
-      refreshSession,
     },
     {
       status: 200,
       headers,
-    }
+    },
   );
 };
 
@@ -205,7 +174,7 @@ function renderRecurringTransactions(
   recurringTransactions: RecurringTransactionsResponse,
   navigation: Navigation,
   setExpandedTransactionIndex: React.Dispatch<React.SetStateAction<number | undefined>>,
-  expandedTransactionIndex?: number
+  expandedTransactionIndex?: number,
 ) {
   return recurringTransactions.map((transaction, index) => {
     return (
@@ -229,7 +198,7 @@ function renderTransactions(
   setExpandedRecurringTransactionIndex: React.Dispatch<
     React.SetStateAction<number | undefined>
   >,
-  expandedRecurringTransactionIndex?: number
+  expandedRecurringTransactionIndex?: number,
 ) {
   return transactions.map((transaction, index) => {
     return (
@@ -252,7 +221,6 @@ export default function Index() {
   const [listParent] = useAutoAnimate<HTMLUListElement>();
   const context = useOutletContext<AppContext>();
   const submit = useSubmit();
-  const [isRefreshCallSent, setIsRefreshCallSent] = useState(false);
   const [expandedOverdueTransactionIndex, setExpandedOverdueTransactionIndex] = useState<
     number | undefined
   >(undefined);
@@ -269,7 +237,6 @@ export default function Index() {
     targetDetails,
     askUserForNewTarget,
     recommendToSetBudget,
-    refreshSession,
   }: {
     overDueTransactions: RecurringTransactionsResponse;
     upcomingTransactions: RecurringTransactionsResponse;
@@ -280,23 +247,7 @@ export default function Index() {
     };
     askUserForNewTarget: boolean;
     recommendToSetBudget: boolean;
-    refreshSession: boolean;
   } = useLoaderData<typeof loader>();
-
-  if (refreshSession && !isRefreshCallSent) {
-    regenerateUserIdToken().then((idToken) => {
-      if (isNullOrEmpty(idToken)) return;
-
-      context.setSnackBarMsg("Session refreshed");
-
-      const form = new FormData();
-      form.set("formName", "REFRESH_SESSION_FORM");
-      form.set("idToken", idToken);
-      submit(form, { method: "POST" });
-
-      setIsRefreshCallSent(true);
-    });
-  }
 
   async function requestNotificationPermission() {
     const { token, error } = await getFCMRegistrationToken();
@@ -319,7 +270,7 @@ export default function Index() {
   async function checkForUnAcknowledgedPurchases() {
     if ("getDigitalGoodsService" in window) {
       const service = await window.getDigitalGoodsService(
-        "https://play.google.com/billing"
+        "https://play.google.com/billing",
       );
       if (service) {
         const existingPurchases = await service.listPurchases();
@@ -354,13 +305,12 @@ export default function Index() {
           targetDetails,
           askUserForNewTarget,
           recommendToSetBudget,
-          refreshSession,
         },
         {
           browserSupportsNotification,
           notificationPermission: Notification.permission,
-        }
-      )
+        },
+      ),
     );
   }
 
@@ -421,7 +371,7 @@ export default function Index() {
                 overDueTransactions,
                 navigation,
                 setExpandedOverdueTransactionIndex,
-                expandedOverdueTransactionIndex
+                expandedOverdueTransactionIndex,
               )}
             </ul>
             <Spacer />
@@ -465,13 +415,13 @@ export default function Index() {
                 .minus(
                   subtract(
                     targetDetails.prevMonth.budget,
-                    targetDetails.prevMonth.expense
-                  )
+                    targetDetails.prevMonth.expense,
+                  ),
                 )
                 .dividedBy(
                   calculate(targetDetails.prevMonth.budget)
                     .minus(targetDetails.prevMonth.expense)
-                    .abs()
+                    .abs(),
                 )
                 .mul(100)
                 .toNumber()}
@@ -494,7 +444,7 @@ export default function Index() {
                 upcomingTransactions,
                 navigation,
                 setExpandedUpcomingTransactionIndex,
-                expandedUpcomingTransactionIndex
+                expandedUpcomingTransactionIndex,
               )}
             </ul>
           </div>
@@ -514,7 +464,7 @@ export default function Index() {
                 transactions,
                 navigation,
                 setExpandedTransactionIndex,
-                expandedTransactionIndex
+                expandedTransactionIndex,
               )}
             </ul>
             {transactions.length == 0 && (
