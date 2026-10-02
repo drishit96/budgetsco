@@ -63,6 +63,8 @@ COPY --from=build /app/build /app/build
 COPY --from=build /app/public /app/public
 ADD . .
 
-RUN apk add ca-certificates
+RUN apk add ca-certificates && cat /app/supabase-ca.crt >> /etc/ssl/certs/ca-certificates.crt
+
+ENV NODE_EXTRA_CA_CERTS=/app/supabase-ca.crt
 
 CMD ["node", "--enable-source-maps", "./server.js"]
