@@ -15,7 +15,7 @@ test("create budget setup", async ({ page }) => {
   const client = new pg.Client({ connectionString });
   await client.connect();
   try {
-    const userId = "Oq6BtFruTrTKncFtTsVPNiwE7ki2";
+    const userId = "1FgeDbZjUlTUveythpmCyd9q3Zn1";
     const timezone = "Asia/Calcutta";
     const startOfMonth = getFirstDateOfThisMonth(timezone);
     const startOfMonthStr = `${startOfMonth.getUTCFullYear()}-${String(

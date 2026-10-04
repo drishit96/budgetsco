@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import { execSync, spawn } from 'child_process';
-import crypto from 'crypto';
 import pg from 'pg';
 
 // Simple .env parser to load existing environment variables
@@ -27,7 +26,26 @@ function loadEnv() {
   }
 }
 
-async function seedDatabase(connectionUri, schemaName) {
+async function waitForDatabase(connectionUri, timeoutMs = 20000) {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    try {
+      const testClient = new pg.Client({
+        connectionString: connectionUri,
+        connectionTimeoutMillis: 3000
+      });
+      await testClient.connect();
+      await testClient.query('SELECT 1');
+      await testClient.end();
+      return true;
+    } catch {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+    }
+  }
+  return false;
+}
+
+async function seedDatabase(connectionUri) {
   let client;
   for (let attempt = 1; attempt <= 5; attempt++) {
     try {
@@ -40,11 +58,7 @@ async function seedDatabase(connectionUri, schemaName) {
     }
   }
   try {
-    if (schemaName) {
-      await client.query(`SET search_path TO "${schemaName}";`);
-    }
-
-    const userId = 'Oq6BtFruTrTKncFtTsVPNiwE7ki2';
+    const userId = '1FgeDbZjUlTUveythpmCyd9q3Zn1';
     const emailId = 'budgetsco@gmail.com';
     const timezone = 'Asia/Calcutta';
 
@@ -78,11 +92,18 @@ async function main() {
   process.env.E2E = 'true';
   loadEnv();
 
-  const parentConnectionString = process.env.DATABASE_URL;
+  const DEFAULT_LOCAL_TEST_DB_URL =
+    'postgresql://test_user:test_password@localhost:5432/budgetsco_test';
 
-  if (!parentConnectionString) {
-    console.error('Error: DATABASE_URL must be set.');
-    process.exit(1);
+  let targetDatabaseUrl = process.env.TEST_DATABASE_URL;
+  if (!targetDatabaseUrl) {
+    if (process.env.CI) {
+      targetDatabaseUrl =
+        process.env.DATABASE_URL ||
+        'postgresql://test_user:test_password@postgres:5432/budgetsco_test';
+    } else {
+      targetDatabaseUrl = DEFAULT_LOCAL_TEST_DB_URL;
+    }
   }
 
   const envPath = path.resolve(process.cwd(), '.env');
@@ -95,62 +116,47 @@ async function main() {
     console.log('Original .env file backed up.');
   }
 
-  const randomSuffix = crypto.randomBytes(4).toString('hex');
-  const isolatedSchemaName = `test_e2e_${Date.now()}_${randomSuffix}`;
-  let newConnectionUri = null;
-  // Use port 5432 for schema DDL/admin tasks if pooler port 6543 is configured
-  const schemaAdminUrl = parentConnectionString.replace(':6543/', ':5432/');
-
   try {
-    console.log(`Using PostgreSQL schema isolation: "${isolatedSchemaName}"...`);
-    const adminClient = new pg.Client({ connectionString: schemaAdminUrl });
-    await adminClient.connect();
-    await adminClient.query(`CREATE SCHEMA "${isolatedSchemaName}";`);
-    await adminClient.end();
-    console.log(`Created isolated schema "${isolatedSchemaName}".`);
+    console.log(`Connecting to test database: ${targetDatabaseUrl}...`);
+    let isDbReady = await waitForDatabase(targetDatabaseUrl, 3000);
 
-    const urlObj = new URL(schemaAdminUrl);
-    urlObj.searchParams.set('schema', isolatedSchemaName);
-    const existingOptions = urlObj.searchParams.get('options');
-    const searchPathOption = `-csearch_path=${isolatedSchemaName}`;
-    urlObj.searchParams.set(
-      'options',
-      existingOptions ? `${existingOptions} ${searchPathOption}` : searchPathOption
-    );
-    newConnectionUri = urlObj.toString();
-
-    console.log('Waiting for the database endpoint to accept connections...');
-    let connected = false;
-    for (let attempt = 1; attempt <= 15; attempt++) {
+    if (!isDbReady && !process.env.CI) {
+      console.log('Test database not responding. Starting test database via Docker Compose...');
       try {
-        const testClient = new pg.Client({ connectionString: newConnectionUri, connectionTimeoutMillis: 5000 });
-        await testClient.connect();
-        await testClient.query('SELECT 1');
-        await testClient.end();
-        connected = true;
-        console.log('Database endpoint is ready and accepting connections.');
-        break;
-      } catch (err) {
-        console.log(`Waiting for database endpoint to become ready (attempt ${attempt}/15)...`);
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        execSync('docker compose -f docker-compose.test.yml up -d', { stdio: 'inherit' });
+      } catch (composeErr) {
+        console.warn('docker compose failed, trying docker-compose...');
+        execSync('docker-compose -f docker-compose.test.yml up -d', { stdio: 'inherit' });
       }
+      isDbReady = await waitForDatabase(targetDatabaseUrl, 25000);
     }
-    if (!connected) {
-      throw new Error('Database endpoint failed to accept connections after 30 seconds.');
-    }
-    await new Promise(resolve => setTimeout(resolve, 1500));
 
-    // Write new DATABASE_URL to .env
+    if (!isDbReady) {
+      throw new Error(
+        `Unable to connect to test database at ${targetDatabaseUrl}. Please ensure PostgreSQL is running.`
+      );
+    }
+    console.log('Database endpoint is ready and accepting connections.');
+
+    // Write test DATABASE_URL to .env
     let envContent = '';
     if (originalEnvExists) {
       const lines = fs.readFileSync(envBackupPath, 'utf-8').split('\n');
       const filteredLines = lines.filter(line => !line.trim().startsWith('DATABASE_URL='));
-      envContent = filteredLines.join('\n') + `\nDATABASE_URL="${newConnectionUri}"\n`;
+      envContent = filteredLines.join('\n') + `\nDATABASE_URL="${targetDatabaseUrl}"\n`;
     } else {
-      envContent = `DATABASE_URL="${newConnectionUri}"\n`;
+      envContent = `DATABASE_URL="${targetDatabaseUrl}"\n`;
     }
     fs.writeFileSync(envPath, envContent, 'utf-8');
-    console.log('.env file temporarily updated with new test DATABASE_URL.');
+    process.env.DATABASE_URL = targetDatabaseUrl;
+    console.log('.env file temporarily updated with test DATABASE_URL.');
+
+    // Ensure build artifacts exist locally before running testserver
+    const buildPath = path.resolve(process.cwd(), 'build/server/index.js');
+    if (!process.env.CI && !fs.existsSync(buildPath)) {
+      console.log('Local build not found. Running pnpm run build...');
+      execSync('pnpm run build', { stdio: 'inherit' });
+    }
 
     console.log('Syncing database schema (prisma db push)...');
     const aiAgentPrefixes = [
@@ -174,7 +180,7 @@ async function main() {
         ([k]) => !aiAgentPrefixes.some(prefix => k.toUpperCase().startsWith(prefix))
       )
     );
-    pushEnv.DATABASE_URL = newConnectionUri;
+    pushEnv.DATABASE_URL = targetDatabaseUrl;
 
     let pushSuccess = false;
     for (let attempt = 1; attempt <= 3; attempt++) {
@@ -193,14 +199,13 @@ async function main() {
     }
 
     console.log('Seeding test data...');
-    await seedDatabase(newConnectionUri, isolatedSchemaName);
+    await seedDatabase(targetDatabaseUrl);
 
     console.log('Running E2E tests...');
-    // Execute playwright test forwarding any CLI arguments
     const args = ['playwright', 'test', ...process.argv.slice(2)];
     const testProcess = spawn('pnpm', args, {
       stdio: 'inherit',
-      env: { ...process.env, DATABASE_URL: newConnectionUri, PW_TEST_HTML_REPORT_OPEN: 'never' }
+      env: { ...process.env, DATABASE_URL: targetDatabaseUrl, PW_TEST_HTML_REPORT_OPEN: 'never' }
     });
 
     const exitCode = await new Promise((resolve) => {
@@ -223,20 +228,6 @@ async function main() {
       if (fs.existsSync(envPath)) {
         fs.unlinkSync(envPath);
         console.log('Temporary .env file cleaned up.');
-      }
-    }
-
-    // Clean up isolated schema if created
-    if (isolatedSchemaName) {
-      try {
-        console.log(`Dropping isolated schema "${isolatedSchemaName}"...`);
-        const cleanupClient = new pg.Client({ connectionString: schemaAdminUrl });
-        await cleanupClient.connect();
-        await cleanupClient.query(`DROP SCHEMA IF EXISTS "${isolatedSchemaName}" CASCADE;`);
-        await cleanupClient.end();
-        console.log(`Cleaned up schema "${isolatedSchemaName}".`);
-      } catch (err) {
-        console.error(`Failed to drop isolated schema ${isolatedSchemaName}:`, err.message);
       }
     }
   }

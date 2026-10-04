@@ -16,6 +16,8 @@
     "dev:worker": "esbuild ./app/entry.worker.ts --outfile=./public/entry.worker.js --bundle --format=esm --define:process.env.NODE_ENV='\"development\"' --watch",
     "start": "cross-env NODE_ENV=production node --enable-source-maps ./server.js",
     "testserver": "cp ./app/lib/test.ui.config.ts ./app/lib/ui.config.ts && cross-env NODE_ENV=production node ./server.js",
+    "test:db:up": "docker compose -f docker-compose.test.yml up -d",
+    "test:db:down": "docker compose -f docker-compose.test.yml down",
     "test:e2e": "node scripts/run-e2e.js"
   },
   "dependencies": {
