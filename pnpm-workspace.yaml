@@ -48,3 +48,4 @@ overrides:
   '@opentelemetry/core': '>=2.8.0'
   uuid: '^11.1.1'
   '@peculiar/asn1-schema': '>=2.9.4'
+  '@grpc/grpc-js': '>=1.14.6'
