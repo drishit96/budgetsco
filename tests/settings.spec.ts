@@ -148,7 +148,7 @@ test.describe.serial("Personal Access Tokens", () => {
       page.getByRole("heading", { name: "Personal Access Tokens" })
     ).toBeVisible();
 
-    await page.getByRole("button", { name: /Test Token/ }).click();
+    await page.locator('[data-test-id="token-Test Token"]').click();
     await page.getByRole("button", { name: "Edit" }).click();
     await expect(page.getByRole("heading", { name: "Edit Token" })).toBeVisible();
 
@@ -172,7 +172,7 @@ test.describe.serial("Personal Access Tokens", () => {
     const dateToVerify = formatDate(add(new Date(), { days: 30 }), "dd MMMM yyyy");
     await expect(page.getByText(`Expires on: ${dateToVerify}`)).toBeVisible();
 
-    await page.getByRole("button", { name: /Test Token Updated/ }).click();
+    await page.locator('[data-test-id="token-Test Token Updated"]').click();
     await page.getByRole("button", { name: "Edit" }).click();
     await expect(page.getByRole("heading", { name: "Edit Token" })).toBeVisible();
 

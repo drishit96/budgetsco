@@ -19,7 +19,6 @@ overrides:
   body-parser: '>=1.20.6'
   '@fastify/busboy': '>=3.2.2'
   axios: '>=1.20.0'
-  '@grpc/grpc-js': '>=1.14.5'
   cookie: '>=0.7.2 <1.0.0'
   cross-spawn: '>=7.0.6'
   send: '>=0.19.0'
@@ -51,3 +50,4 @@ overrides:
   '@opentelemetry/core': '>=2.8.0'
   uuid: '^11.1.1'
   '@peculiar/asn1-schema': '>=2.9.4'
+  '@grpc/grpc-js': '>=1.14.6'
