@@ -78,9 +78,33 @@ async function seedDatabase(connectionUri) {
        ON CONFLICT ("userId") DO UPDATE SET
          "currency" = EXCLUDED."currency",
          "timezone" = EXCLUDED."timezone",
-         "locale" = EXCLUDED."locale"`,
+         "locale" = EXCLUDED."locale",
+         "isActiveSubscription" = false,
+         "isMFAOn" = false,
+         "isPasskeyPresent" = false,
+         "lastModified" = EXCLUDED."lastModified"`,
       [userId, timezone, lastModified]
     );
+
+    console.log('Cleaning up user test data across all tables...');
+    const cleanupQueries = [
+      'DELETE FROM "Transaction" WHERE "userId" = $1',
+      'DELETE FROM "RecurringTransaction" WHERE "userId" = $1',
+      'DELETE FROM "CategoryAmount" WHERE "userId" = $1',
+      'DELETE FROM "MonthlyTarget" WHERE "userId" = $1',
+      'DELETE FROM "PaymentModeAmount" WHERE "userId" = $1',
+      'DELETE FROM "CustomCategory" WHERE "userId" = $1',
+      'DELETE FROM "PersonalAccessToken" WHERE "userId" = $1',
+      'DELETE FROM "NotificationToken" WHERE "userId" = $1',
+      'DELETE FROM "PasskeyTransport" WHERE "id" IN (SELECT "id" FROM "Passkey" WHERE "userId" = $1)',
+      'DELETE FROM "Passkey" WHERE "userId" = $1',
+      'DELETE FROM "PasskeyChallenge" WHERE "userId" = $1',
+      'DELETE FROM "GPBSubscription" WHERE "userId" = $1',
+      'DELETE FROM "STRSubscription" WHERE "userId" = $1',
+    ];
+    for (const query of cleanupQueries) {
+      await client.query(query, [userId]);
+    }
 
     console.log('Seeding completed successfully!');
   } finally {
@@ -108,6 +132,14 @@ async function main() {
 
   const envPath = path.resolve(process.cwd(), '.env');
   const envBackupPath = path.resolve(process.cwd(), '.env.backup');
+
+  // If an orphaned .env.backup exists from an aborted run, restore it first so we don't poison it with test data
+  if (fs.existsSync(envBackupPath)) {
+    console.warn('Found existing .env.backup from a previously aborted run. Restoring original .env first...');
+    fs.copyFileSync(envBackupPath, envPath);
+    fs.unlinkSync(envBackupPath);
+  }
+
   const originalEnvExists = fs.existsSync(envPath);
 
   // Backup existing .env file immediately at the start of main
@@ -115,6 +147,41 @@ async function main() {
     fs.copyFileSync(envPath, envBackupPath);
     console.log('Original .env file backed up.');
   }
+
+  let testProcess = null;
+  let cleanedUp = false;
+
+  const restoreEnv = () => {
+    if (cleanedUp) return;
+    cleanedUp = true;
+    if (originalEnvExists) {
+      if (fs.existsSync(envBackupPath)) {
+        fs.copyFileSync(envBackupPath, envPath);
+        fs.unlinkSync(envBackupPath);
+        console.log('.env file restored from backup.');
+      }
+    } else {
+      if (fs.existsSync(envPath)) {
+        fs.unlinkSync(envPath);
+        console.log('Temporary .env file cleaned up.');
+      }
+    }
+  };
+
+  const onSignal = (signal) => {
+    console.log(`\nReceived ${signal}. Restoring environment before exiting...`);
+    if (testProcess && !testProcess.killed) {
+      try {
+        testProcess.kill(signal);
+      } catch {}
+    }
+    restoreEnv();
+    process.exit(signal === 'SIGINT' ? 130 : 143);
+  };
+
+  process.on('SIGINT', () => onSignal('SIGINT'));
+  process.on('SIGTERM', () => onSignal('SIGTERM'));
+  process.on('SIGHUP', () => onSignal('SIGHUP'));
 
   try {
     console.log(`Connecting to test database: ${targetDatabaseUrl}...`);
@@ -203,7 +270,7 @@ async function main() {
 
     console.log('Running E2E tests...');
     const args = ['playwright', 'test', ...process.argv.slice(2)];
-    const testProcess = spawn('pnpm', args, {
+    testProcess = spawn('pnpm', args, {
       stdio: 'inherit',
       env: { ...process.env, DATABASE_URL: targetDatabaseUrl, PW_TEST_HTML_REPORT_OPEN: 'never' }
     });
@@ -217,19 +284,7 @@ async function main() {
     console.error('An error occurred during test execution orchestration:', error);
     process.exitCode = 1;
   } finally {
-    // Restore original .env
-    if (originalEnvExists) {
-      if (fs.existsSync(envBackupPath)) {
-        fs.copyFileSync(envBackupPath, envPath);
-        fs.unlinkSync(envBackupPath);
-        console.log('.env file restored from backup.');
-      }
-    } else {
-      if (fs.existsSync(envPath)) {
-        fs.unlinkSync(envPath);
-        console.log('Temporary .env file cleaned up.');
-      }
-    }
+    restoreEnv();
   }
 }
 
