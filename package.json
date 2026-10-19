@@ -18,12 +18,13 @@
     "testserver": "cp ./app/lib/test.ui.config.ts ./app/lib/ui.config.ts && cross-env NODE_ENV=production node ./server.js",
     "test:db:up": "docker compose -f docker-compose.test.yml up -d",
     "test:db:down": "docker compose -f docker-compose.test.yml down",
-    "test:e2e": "node scripts/run-e2e.js"
+    "test:e2e": "node scripts/run-e2e.js",
+    "test:e2e:chrome": "node scripts/run-e2e.js --project=chromium"
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^1.0.48",
     "@formkit/auto-animate": "^0.8.4",
-    "@googleapis/androidpublisher": "^4.4.0",
+    "@googleapis/androidpublisher": "^42.2.0",
     "@prisma/adapter-pg": "^7.10.1",
     "@prisma/client": "^7.10.1",
     "@remix-run/express": "^2.17.5",
