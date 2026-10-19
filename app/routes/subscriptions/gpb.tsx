@@ -142,27 +142,49 @@ export default function GPB() {
       },
     };
     const request = new PaymentRequest(paymentMethods, paymentDetails);
+    let paymentResponse: PaymentResponse | undefined;
+    let isCompleted = false;
     try {
-      const paymentResponse = await request.show();
+      paymentResponse = await request.show();
       const { purchaseToken } = paymentResponse.details;
 
       const resp = await fetch("/api/acknowledgePurchase", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           subscriptionId: selectedPlanId,
           purchaseToken,
         }),
       });
 
-      const response: { acknowledged: boolean } = await resp.json();
-      if (response.acknowledged) {
-        await paymentResponse.complete("success");
+      if (!resp.ok) {
+        throw new Error(`Server responded with status ${resp.status}`);
       }
 
-      await paymentResponse.complete("fail");
-
-      location.replace("/dashboard");
+      const response: { acknowledged: boolean } = await resp.json();
+      if (response.acknowledged) {
+        isCompleted = true;
+        await paymentResponse.complete("success");
+        location.replace("/dashboard");
+      } else {
+        isCompleted = true;
+        await paymentResponse.complete("fail");
+        context.setDialogProps({
+          message:
+            "Could not activate your subscription. Please contact support.",
+          showDialog: true,
+          title: "Subscription failed",
+        });
+      }
     } catch (error) {
+      if (paymentResponse && !isCompleted) {
+        try {
+          isCompleted = true;
+          await paymentResponse.complete("fail");
+        } catch {
+          // Ignore if already completed or aborted
+        }
+      }
       let message: string | undefined;
       if (error?.toString().includes("RESULT_CANCELED")) {
         message = "Looks like you closed the window mid way. Please try again.";
