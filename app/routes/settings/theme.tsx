@@ -1,5 +1,5 @@
-import type { MetaFunction } from "@remix-run/react";
-import { useOutletContext } from "@remix-run/react";
+import type { MetaFunction } from "react-router";
+import { useOutletContext } from "react-router";
 import { useEffect, useState } from "react";
 import { Spacer } from "~/components/Spacer";
 import type { AppContext } from "~/root";

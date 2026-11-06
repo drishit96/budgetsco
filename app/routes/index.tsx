@@ -1,5 +1,5 @@
-import { Link } from "@remix-run/react";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import { Link } from "react-router";
+import type { MetaFunction } from "react-router";
 import { Spacer } from "~/components/Spacer";
 
 export const meta: MetaFunction = ({ matches }) => {

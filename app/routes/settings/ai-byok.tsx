@@ -1,13 +1,7 @@
 import { Ripple } from "@rmwc/ripple";
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import type { MetaFunction } from "@remix-run/react";
-import {
-  Form,
-  redirect,
-  useActionData,
-  useLoaderData,
-  useOutletContext,
-} from "@remix-run/react";
+import type { ActionFunction, LoaderFunction } from "react-router";
+import type { MetaFunction } from "react-router";
+import { Form, redirect, useActionData, useLoaderData, useOutletContext } from "react-router";
 import { useEffect, useState } from "react";
 import CheckIcon from "~/components/icons/CheckIcon";
 import { InlineSpacer } from "~/components/InlineSpacer";
@@ -84,7 +78,7 @@ export default function AIBYOK() {
     model: string;
     hasConfig: boolean;
   }>();
-  const actionData = useActionData<typeof action>();
+  const actionData = useActionData<{ success?: boolean; errors?: string }>();
   const [apiKey, setApiKey] = useState("");
   const [baseUrl, setBaseUrl] = useState(savedBaseUrl);
   const [model, setModel] = useState(savedModel);

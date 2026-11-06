@@ -1,4 +1,4 @@
-import { ActionFunction } from "@remix-run/node";
+import { ActionFunction } from "react-router";
 import { EventNames } from "~/lib/anaytics.contants";
 import { parseTransactionInput } from "~/modules/transaction/transaction.schema";
 import {

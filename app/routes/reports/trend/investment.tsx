@@ -1,15 +1,16 @@
-import type { LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import { Link, useLoaderData, useNavigation, useOutletContext } from "@remix-run/react";
+import type { LoaderFunction } from "react-router";
+import { redirect } from "react-router";
+import { Link, useLoaderData, useNavigation, useOutletContext } from "react-router";
 import { Spacer } from "~/components/Spacer";
 import { getSessionData } from "~/utils/auth.utils.server";
 import type { InvestmentTrendReportResponse } from "~/modules/reports/reports.service";
 import { getInvestmentTrendReport } from "~/modules/reports/reports.service";
+import type { Serialize } from "~/types";
 import { INVESTMENT_CHART_COLORS_MAP } from "~/utils/colors.utils";
 import { useEffect, useState } from "react";
 import PieChartCard from "~/components/PieChartCard";
 import { Ripple } from "@rmwc/ripple";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "react-router";
 import LineChartCard from "~/components/LineChartCard";
 import { avg, calculate, max, median, sum } from "~/utils/number.utils";
 import type { TrendingReportContext } from "../trend";
@@ -52,7 +53,7 @@ export let loader: LoaderFunction = async ({ request }) => {
 
 export default function InvestmentTrendReport() {
   const { totalInvestmentDone, categoryInvestmentsByCategory, investmentsByPaymentMode } =
-    useLoaderData<InvestmentTrendReportResponse>();
+    useLoaderData<Serialize<InvestmentTrendReportResponse>>();
 
   const navigation = useNavigation();
   const trendingReportContext = useOutletContext<TrendingReportContext>();

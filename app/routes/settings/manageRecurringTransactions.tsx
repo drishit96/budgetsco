@@ -1,9 +1,9 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import { useLoaderData, useNavigation, useOutletContext, useFetcher } from "@remix-run/react";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
-import type { Navigation } from "@remix-run/router";
+import type { ActionFunction, LoaderFunction } from "react-router";
+import { redirect } from "react-router";
+import { useLoaderData, useNavigation, useOutletContext, useFetcher } from "react-router";
+import type { MetaFunction } from "react-router";
+import type { Navigation } from "react-router";
 import { useState, useEffect } from "react";
 import type { AppContext } from "~/root";
 import { RecurringTransaction } from "~/components/RecurringTransaction";
@@ -70,7 +70,7 @@ export let loader: LoaderFunction = async ({ request }): Promise<any> => {
 
 function renderRecurringTransactions(
   recurringTransactions: RecurringTransactionsResponse,
-  navigation: Navigation,
+  navigation: ReturnType<typeof useNavigation>,
   setExpandedTransactionIndex: React.Dispatch<React.SetStateAction<number | undefined>>,
   expandedTransactionIndex?: number
 ) {

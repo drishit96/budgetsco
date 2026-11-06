@@ -1,4 +1,4 @@
-import type { ActionFunction } from "@remix-run/node";
+import type { ActionFunction } from "react-router";
 import type Stripe from "stripe";
 import { updateSTRSubscriptionStatus } from "~/modules/subscriptions/str.subscription.service";
 import { logError } from "~/utils/logger.utils.server";

@@ -1,6 +1,6 @@
 import "zod/compile";
 import { hydrateRoot } from "react-dom/client";
-import { RemixBrowser } from "@remix-run/react";
+import { HydratedRouter } from "react-router/dom";
 import { startTransition, StrictMode } from "react";
 
 function hydrate() {
@@ -8,7 +8,7 @@ function hydrate() {
     hydrateRoot(
       document,
       <StrictMode>
-        <RemixBrowser />
+        <HydratedRouter />
       </StrictMode>
     );
   });

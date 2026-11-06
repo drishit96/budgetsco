@@ -1,14 +1,8 @@
 import { useEffect, useState } from "react";
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import type { Navigation } from "@remix-run/router";
-import {
-  Link,
-  useLoaderData,
-  useNavigation,
-  useOutletContext,
-  useSubmit,
-} from "@remix-run/react";
+import type { ActionFunction, LoaderFunction } from "react-router";
+import { redirect } from "react-router";
+import type { Navigation } from "react-router";
+import { Link, useLoaderData, useNavigation, useOutletContext, useSubmit } from "react-router";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import AddIcon from "~/components/icons/AddIcon";
 import { Spacer } from "~/components/Spacer";
@@ -38,7 +32,7 @@ import BannerCarousel from "~/components/BannerCarousel/BannerCarousel";
 import { prepareBannerData } from "~/utils/banner.utils";
 import { getThisMonthTarget } from "~/modules/reports/reports.service";
 import { StatisticsCard } from "~/components/StatisticsCard";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "react-router";
 import { formatDate } from "~/utils/date.utils";
 import type { Currency } from "~/utils/number.utils";
 import { abs, calculate, subtract } from "~/utils/number.utils";
@@ -172,7 +166,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 function renderRecurringTransactions(
   recurringTransactions: RecurringTransactionsResponse,
-  navigation: Navigation,
+  navigation: ReturnType<typeof useNavigation>,
   setExpandedTransactionIndex: React.Dispatch<React.SetStateAction<number | undefined>>,
   expandedTransactionIndex?: number,
 ) {
@@ -194,7 +188,7 @@ function renderRecurringTransactions(
 
 function renderTransactions(
   transactions: TransactionResponse[],
-  navigation: Navigation,
+  navigation: ReturnType<typeof useNavigation>,
   setExpandedRecurringTransactionIndex: React.Dispatch<
     React.SetStateAction<number | undefined>
   >,
@@ -230,14 +224,7 @@ export default function Index() {
     number | undefined
   >(undefined);
   const [bannerData, setBannerData] = useState<BannerData[]>([]);
-  const {
-    overDueTransactions,
-    upcomingTransactions,
-    transactions,
-    targetDetails,
-    askUserForNewTarget,
-    recommendToSetBudget,
-  }: {
+  type DashboardData = {
     overDueTransactions: RecurringTransactionsResponse;
     upcomingTransactions: RecurringTransactionsResponse;
     transactions: TransactionResponse[];
@@ -247,7 +234,16 @@ export default function Index() {
     };
     askUserForNewTarget: boolean;
     recommendToSetBudget: boolean;
-  } = useLoaderData<typeof loader>();
+  };
+
+  const {
+    overDueTransactions,
+    upcomingTransactions,
+    transactions,
+    targetDetails,
+    askUserForNewTarget,
+    recommendToSetBudget,
+  } = useLoaderData<DashboardData>();
 
   async function requestNotificationPermission() {
     const { token, error } = await getFCMRegistrationToken();
@@ -305,6 +301,7 @@ export default function Index() {
           targetDetails,
           askUserForNewTarget,
           recommendToSetBudget,
+          refreshSession: context.refreshSession ?? false,
         },
         {
           browserSupportsNotification,

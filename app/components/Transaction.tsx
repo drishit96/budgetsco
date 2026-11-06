@@ -1,7 +1,7 @@
-import type { Navigation } from "@remix-run/router";
+import { useNavigation } from "react-router";
 import { Ripple } from "@rmwc/ripple";
-import type { SubmitOptions } from "@remix-run/react";
-import { Form, Link, useOutletContext, useSubmit } from "@remix-run/react";
+import type { SubmitOptions } from "react-router";
+import { Form, Link, useOutletContext, useSubmit } from "react-router";
 import type { TransactionResponse } from "~/modules/transaction/transaction.schema";
 import type { AppContext } from "~/root";
 import { getTransactionColor } from "~/utils/colors.utils";
@@ -24,7 +24,7 @@ export function Transaction({
   submitAction,
 }: {
   transaction: TransactionResponse;
-  navigation: Navigation;
+  navigation: ReturnType<typeof useNavigation>;
   hideDivider?: boolean;
   index: number;
   expandedIndex?: number;

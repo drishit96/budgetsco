@@ -1,14 +1,14 @@
 import { Ripple } from "@rmwc/ripple";
-import type { LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import { Form, useNavigation } from "@remix-run/react";
+import type { LoaderFunction } from "react-router";
+import { redirect } from "react-router";
+import { Form, useNavigation } from "react-router";
 import { Input } from "~/components/Input";
 import { Spacer } from "~/components/Spacer";
 import { useState } from "react";
 import { sendResetPasswordEmail } from "~/utils/firebase.utils";
 import { getSessionData } from "~/utils/auth.utils.server";
 import { InfoText } from "~/components/InfoText";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "react-router";
 
 export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");

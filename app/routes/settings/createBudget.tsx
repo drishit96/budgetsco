@@ -1,8 +1,8 @@
 import type { AppContext } from "~/root";
 import TargetSetter from "~/components/TargetSetter";
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import { useActionData, useOutletContext } from "@remix-run/react";
+import type { ActionFunction, LoaderFunction } from "react-router";
+import { redirect } from "react-router";
+import { useActionData, useOutletContext } from "react-router";
 import {
   addNewCustomCategories,
   createMonthlyTarget,
@@ -13,7 +13,7 @@ import {
   parseMonthlyCategoryWiseTargetInput,
 } from "~/modules/transaction/transaction.schema";
 import { useEffect } from "react";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "react-router";
 import Decimal from "decimal.js";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";

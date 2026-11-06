@@ -1,8 +1,8 @@
 import type { PasskeyResponse } from "~/routes/settings/security/passkeys";
 import { formatDate } from "~/utils/date.utils";
 import ListItem from "./ListItem";
-import type { Navigation, SubmitOptions } from "@remix-run/react";
-import { useOutletContext, useSubmit } from "@remix-run/react";
+import type { SubmitOptions } from "react-router";
+import { useNavigation, useOutletContext, useSubmit } from "react-router";
 import { Ripple } from "@rmwc/ripple";
 import TrashIcon from "./icons/TrashIcon";
 import { Spacer } from "./Spacer";
@@ -20,7 +20,7 @@ export default function Passkey({
   setExpandedIndex,
 }: {
   passkey: PasskeyResponse;
-  navigation: Navigation;
+  navigation: ReturnType<typeof useNavigation>;
   hideDivider?: boolean;
   index: number;
   expandedIndex?: number;

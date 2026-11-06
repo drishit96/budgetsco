@@ -1,4 +1,4 @@
-import type { ActionFunction } from "@remix-run/node";
+import type { ActionFunction } from "react-router";
 import { getAuthenticationOptions } from "~/modules/settings/security/passkeys.service";
 import { validateChallengeResponse } from "~/modules/user/user.service";
 import { getPasskeyPartialSessionCookie } from "~/utils/auth.utils.server";

@@ -1,18 +1,12 @@
-import type { LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import {
-  Link,
-  Outlet,
-  useLoaderData,
-  useLocation,
-  useOutletContext,
-} from "@remix-run/react";
+import type { LoaderFunction } from "react-router";
+import { redirect } from "react-router";
+import { Link, Outlet, useLoaderData, useLocation, useOutletContext } from "react-router";
 import { Spacer } from "~/components/Spacer";
 import { getSessionData } from "~/utils/auth.utils.server";
 import type { ReportsPageContext } from "../reports";
 import { useEffect, useState } from "react";
 import MonthYearSelector from "~/components/MonthYearSelector";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "react-router";
 import type { TransactionType } from "~/modules/transaction/transaction.schema";
 import { getFirstDateOfXMonthsBeforeFormatted, parseDate } from "~/utils/date.utils";
 import { Ripple } from "@rmwc/ripple";

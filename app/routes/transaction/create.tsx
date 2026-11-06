@@ -1,8 +1,8 @@
-import type { LoaderFunction } from "@remix-run/server-runtime";
+import type { LoaderFunction } from "react-router";
 import { Ripple } from "@rmwc/ripple";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { ActionFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import type { ActionFunction } from "react-router";
+import { redirect } from "react-router";
 
 import {
   Form,
@@ -12,7 +12,7 @@ import {
   useNavigation,
   useOutletContext,
   useSubmit,
-} from "@remix-run/react";
+} from "react-router";
 
 import CheckIcon from "~/components/icons/CheckIcon";
 import { ErrorText } from "~/components/ErrorText";
@@ -49,7 +49,7 @@ import RecurringSetup from "~/components/RecurringSetup";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { parseRecurringTransactionInput } from "~/modules/recurring/recurring.schema";
 import { createNewRecurringTransaction } from "~/modules/recurring/recurring.service";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "react-router";
 import { ComboBox } from "~/components/ComboBox";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";

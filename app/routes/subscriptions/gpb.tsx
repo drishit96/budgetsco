@@ -1,9 +1,9 @@
-import type { LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import type { LoaderFunction } from "react-router";
+import { redirect } from "react-router";
 import { getGPBUserSubscription } from "~/modules/subscriptions/gpb.subscriptions.service";
 import { getSessionData } from "~/utils/auth.utils.server";
 import { getGPBSubscriptionDetails } from "~/utils/gpb.payment.utils.server";
-import { useLoaderData, useOutletContext } from "@remix-run/react";
+import { useLoaderData, useOutletContext } from "react-router";
 import { useEffect, useState } from "react";
 import { logError } from "~/utils/logger.utils.server";
 import { Spacer } from "~/components/Spacer";
@@ -11,7 +11,7 @@ import type { AppContext } from "~/root";
 import { formatDate } from "~/utils/date.utils";
 import { Ripple } from "@rmwc/ripple";
 import Banner from "~/components/Banner";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "react-router";
 
 type GPBPlan = {
   id: string;

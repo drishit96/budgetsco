@@ -1,4 +1,4 @@
-import type { ActionFunction } from "@remix-run/node";
+import type { ActionFunction } from "react-router";
 import type { AuthenticationResponseJSON } from "@simplewebauthn/server";
 import { verifyPasskey } from "~/modules/settings/security/passkeys.service";
 import { getCustomToken, getPasskeyPartialSessionData } from "~/utils/auth.utils.server";

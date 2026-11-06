@@ -1,14 +1,7 @@
 import { Ripple } from "@rmwc/ripple";
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import {
-  Form,
-  Link,
-  useActionData,
-  useNavigation,
-  useOutletContext,
-  useSubmit,
-} from "@remix-run/react";
+import type { ActionFunction, LoaderFunction } from "react-router";
+import { redirect } from "react-router";
+import { Form, Link, useActionData, useNavigation, useOutletContext, useSubmit } from "react-router";
 import { ErrorText } from "~/components/ErrorText";
 import { Input } from "~/components/Input";
 import { Spacer } from "~/components/Spacer";
@@ -39,7 +32,7 @@ import {
   saveNotificationToken,
   validateChallengeResponse,
 } from "~/modules/user/user.service";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "react-router";
 import type { AppContext } from "~/root";
 import type { Currency } from "~/utils/number.utils";
 import type { AuthPageContext } from "../auth";

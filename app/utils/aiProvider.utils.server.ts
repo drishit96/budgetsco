@@ -1,4 +1,4 @@
-import { createCookie } from "@remix-run/node";
+import { createCookie } from "react-router";
 import type { AIProviderConfig } from "~/modules/ai/aiProvider.schema";
 
 export function getAIProviderCookieBuilder() {

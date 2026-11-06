@@ -1,4 +1,4 @@
-import { ActionFunction } from "@remix-run/node";
+import { ActionFunction } from "react-router";
 import { EventNames } from "~/lib/anaytics.contants";
 import { parseCurrencyPreferenceInput } from "~/modules/settings/settings.schema";
 import { updateCurrencyPreference } from "~/modules/settings/settings.service";

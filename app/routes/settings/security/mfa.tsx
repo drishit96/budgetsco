@@ -1,7 +1,7 @@
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import type { ShouldRevalidateFunction, MetaFunction } from "@remix-run/react";
-import { Form, useActionData, useLoaderData, useOutletContext } from "@remix-run/react";
+import type { ActionFunction, LoaderFunction } from "react-router";
+import { redirect } from "react-router";
+import type { ShouldRevalidateFunction, MetaFunction } from "react-router";
+import { Form, useActionData, useLoaderData, useOutletContext } from "react-router";
 import { useEffect } from "react";
 import { InlineSpacer } from "~/components/InlineSpacer";
 import { Input } from "~/components/Input";

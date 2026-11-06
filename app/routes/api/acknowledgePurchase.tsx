@@ -1,5 +1,5 @@
-import type { ActionFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import type { ActionFunction } from "react-router";
+import { redirect } from "react-router";
 import { createGPBSubscription } from "~/modules/subscriptions/gpb.subscriptions.service";
 import { getUserIdFromSession } from "~/utils/auth.utils.server";
 import { isNullOrEmpty } from "~/utils/text.utils";

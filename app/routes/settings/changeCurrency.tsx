@@ -1,14 +1,8 @@
 import { Ripple } from "@rmwc/ripple";
 import { useEffect, useState } from "react";
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import {
-  Form,
-  useActionData,
-  useLoaderData,
-  useNavigation,
-  useOutletContext,
-} from "@remix-run/react";
+import type { ActionFunction, LoaderFunction } from "react-router";
+import { redirect } from "react-router";
+import { Form, useActionData, useLoaderData, useNavigation, useOutletContext } from "react-router";
 import CheckIcon from "~/components/icons/CheckIcon";
 import { InlineSpacer } from "~/components/InlineSpacer";
 import { parseCurrencyPreferenceInput } from "~/modules/settings/settings.schema";
@@ -24,7 +18,7 @@ import {
 } from "~/utils/category.utils";
 import type { Currency } from "~/utils/number.utils";
 import { isNullOrEmpty } from "~/utils/text.utils";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "react-router";
 import { setStorage } from "~/utils/setting.utils";
 import { ErrorText } from "~/components/ErrorText";
 import { ComboBox } from "~/components/ComboBox";

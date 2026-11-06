@@ -5,6 +5,7 @@ node_modules_old
 .env
 .vercel
 .output
+.react-router/
 
 /build/
 /public/build

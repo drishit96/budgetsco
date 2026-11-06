@@ -1,7 +1,7 @@
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import { useOutletContext, useLoaderData } from "@remix-run/react";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { ActionFunction, LoaderFunction } from "react-router";
+import { redirect } from "react-router";
+import { useOutletContext, useLoaderData } from "react-router";
+import type { MetaFunction } from "react-router";
 import { useEffect } from "react";
 import { Spacer } from "~/components/Spacer";
 import { STR_PRICING_TABLE_ID, STR_PUBLISHABLE_KEY } from "~/lib/ui.config";

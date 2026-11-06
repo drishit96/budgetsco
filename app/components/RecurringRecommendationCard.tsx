@@ -1,6 +1,6 @@
 import { Ripple } from "@rmwc/ripple";
 import type { RecurringRecommendation } from "~/modules/recurring/recurringRecommendation.schema";
-import { useOutletContext } from "@remix-run/react";
+import { useOutletContext } from "react-router";
 import type { AppContext } from "~/root";
 import { getTransactionColor } from "~/utils/colors.utils";
 import { formatNumber } from "~/utils/number.utils";

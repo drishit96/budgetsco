@@ -1,5 +1,5 @@
-import type { ActionFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import type { ActionFunction } from "react-router";
+import { redirect } from "react-router";
 import { EventNames } from "~/lib/anaytics.contants";
 import { getSessionData } from "~/utils/auth.utils.server";
 import { getAIProviderConfig } from "~/utils/aiProvider.utils.server";
