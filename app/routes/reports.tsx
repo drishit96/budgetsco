@@ -1,9 +1,9 @@
 import { Ripple } from "@rmwc/ripple";
 import { useEffect, useState } from "react";
-import { Link, Outlet, useOutletContext } from "@remix-run/react";
+import { Link, Outlet, useOutletContext } from "react-router";
 import type { AppContext } from "~/root";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "react-router";
 
 export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");

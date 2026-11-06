@@ -1,4 +1,4 @@
-import { ActionFunction } from "@remix-run/node";
+import { ActionFunction } from "react-router";
 import { EventNames } from "~/lib/anaytics.contants";
 import { parseRecurringTransactionInput } from "~/modules/recurring/recurring.schema";
 import { createNewRecurringTransaction } from "~/modules/recurring/recurring.service";

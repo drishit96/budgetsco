@@ -1,18 +1,12 @@
 import { useEffect, useState } from "react";
-import type { ActionFunction, LoaderFunctionArgs, TypedResponse } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import {
-  useActionData,
-  useOutletContext,
-  useLoaderData,
-  Link,
-  useNavigation,
-} from "@remix-run/react";
+import type { ActionFunction, LoaderFunctionArgs } from "react-router";
+import { redirect } from "react-router";
+import { useActionData, useOutletContext, useLoaderData, Link, useNavigation } from "react-router";
 import PersonalAccessToken from "~/components/PersonalAccessToken";
 import type { AppContext } from "~/root";
 import { getUserIdFromSession } from "~/utils/auth.utils.server";
 import { Spacer } from "~/components/Spacer";
-import type { MetaFunction } from "@remix-run/node";
+import type { MetaFunction } from "react-router";
 import { Ripple } from "@rmwc/ripple";
 import AddIcon from "~/components/icons/AddIcon";
 import { ErrorText } from "~/components/ErrorText";
@@ -28,18 +22,16 @@ export const meta: MetaFunction = ({ matches }) => {
   return [...(rootModule?.meta ?? []), { title: "Personal Access Tokens - Budgetsco" }];
 };
 
+export type TokenItem = {
+  name: string;
+  id: string;
+  createdAt: Date;
+  expiresAt: Date;
+};
+
 export const loader = async ({
   request,
-}: LoaderFunctionArgs): Promise<
-  TypedResponse<
-    {
-      name: string;
-      id: string;
-      createdAt: Date;
-      expiresAt: Date;
-    }[]
-  >
-> => {
+}: LoaderFunctionArgs) => {
   const userId = await getUserIdFromSession(request);
   if (userId == null) return redirect("/auth/login");
   const tokens = await getAllPersonalAccessTokens(userId);
@@ -81,7 +73,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function PersonalAccessTokens() {
   const context = useOutletContext<AppContext>();
-  const tokens = useLoaderData<typeof loader>();
+  const tokens = useLoaderData<TokenItem[]>();
   const actionData = useActionData<{
     formName: string;
     success: boolean;

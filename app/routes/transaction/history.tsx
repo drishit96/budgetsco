@@ -2,17 +2,10 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Ripple } from "@rmwc/ripple";
 import { sub, add } from "date-fns";
 import { useEffect, useState } from "react";
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import type { ShouldRevalidateFunction, MetaFunction } from "@remix-run/react";
-import {
-  useNavigation,
-  Form,
-  Link,
-  useLoaderData,
-  useOutletContext,
-  useSubmit,
-} from "@remix-run/react";
+import type { ActionFunction, LoaderFunction } from "react-router";
+import { redirect } from "react-router";
+import type { ShouldRevalidateFunction, MetaFunction } from "react-router";
+import { useNavigation, Form, Link, useLoaderData, useOutletContext, useSubmit } from "react-router";
 import NextIcon from "~/components/icons/NextIcon";
 import AddIcon from "~/components/icons/AddIcon";
 import PrevIcon from "~/components/icons/PrevIcon";
@@ -109,6 +102,16 @@ export default function TransactionHistory() {
   const navigation = useNavigation();
   const [listParent] = useAutoAnimate<HTMLUListElement>();
   const context = useOutletContext<AppContext>();
+  type HistoryData = {
+    types: string[];
+    categories: string[];
+    paymentModes: string[];
+    prevMonth: string;
+    currentMonth: string;
+    nextMonth: string;
+    transactions: TransactionResponse[];
+  };
+
   const {
     types,
     categories,
@@ -117,15 +120,7 @@ export default function TransactionHistory() {
     currentMonth,
     nextMonth,
     transactions,
-  }: {
-    types: string[];
-    categories: string[];
-    paymentModes: string[];
-    prevMonth: string;
-    currentMonth: string;
-    nextMonth: string;
-    transactions: TransactionResponse[];
-  } = useLoaderData<typeof loader>();
+  } = useLoaderData<HistoryData>();
   const [expandedTransactionIndex, setExpandedTransactionIndex] = useState<
     number | undefined
   >(undefined);

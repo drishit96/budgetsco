@@ -1,10 +1,11 @@
-import type { LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import { useLoaderData, useOutletContext } from "@remix-run/react";
+import type { LoaderFunction } from "react-router";
+import { redirect } from "react-router";
+import { useLoaderData, useOutletContext } from "react-router";
 import { getSessionData } from "~/utils/auth.utils.server";
 import { Spacer } from "~/components/Spacer";
 import type { ComparisonReportResponse } from "~/modules/reports/reports.service";
 import { getComparisonReports } from "~/modules/reports/reports.service";
+import type { Serialize } from "~/types";
 import { StatisticsCard } from "~/components/StatisticsCard";
 import { formatMonthYear } from "~/utils/date.utils";
 import { useEffect } from "react";
@@ -12,7 +13,7 @@ import type { ReportsPageContext } from "../reports";
 import MonthYearSelector from "~/components/MonthYearSelector";
 import { abs, calculate, formatToCurrency } from "~/utils/number.utils";
 import Bar from "~/components/Bar";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "react-router";
 
 export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
@@ -69,7 +70,7 @@ export default function CompareReport() {
     remainingBudgetForCompareToMonth,
     categoryExpenses,
     maxExpense,
-  } = useLoaderData<ComparisonReportResponse>();
+  } = useLoaderData<Serialize<ComparisonReportResponse>>();
   const reportsPageContext = useOutletContext<ReportsPageContext>();
 
   useEffect(() => {

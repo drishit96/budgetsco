@@ -1,5 +1,5 @@
-import type { LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import type { LoaderFunction } from "react-router";
+import { redirect } from "react-router";
 import { getRegistrationOptions } from "~/modules/settings/security/passkeys.service";
 import { getSessionData } from "~/utils/auth.utils.server";
 

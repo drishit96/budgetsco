@@ -1,11 +1,11 @@
-import type { LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import type { LoaderFunction } from "react-router";
+import { redirect } from "react-router";
+import { useLoaderData } from "react-router";
 import { useEffect, useState } from "react";
 import { getSessionData } from "~/utils/auth.utils.server";
 import { sendVerificationEmail } from "~/utils/firebase.utils";
 import Banner from "~/components/Banner";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "react-router";
 
 export const meta: MetaFunction = ({ matches }) => {
   const rootModule = matches.find((match) => match.id === "root");

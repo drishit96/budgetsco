@@ -1,4 +1,4 @@
-import { ActionFunction } from "@remix-run/node";
+import { ActionFunction } from "react-router";
 import { EventNames } from "~/lib/anaytics.contants";
 import { markTransactionAsDone } from "~/modules/recurring/recurring.service";
 import { trackEvent } from "~/utils/analytics.utils.server";

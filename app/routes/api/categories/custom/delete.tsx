@@ -1,4 +1,4 @@
-import type { ActionFunction } from "@remix-run/node";
+import type { ActionFunction } from "react-router";
 import { EventNames } from "~/lib/anaytics.contants";
 import { removeCustomCategories } from "~/modules/transaction/transaction.service";
 import { getSessionData } from "~/utils/auth.utils.server";

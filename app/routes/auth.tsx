@@ -1,6 +1,6 @@
 import { Ripple } from "@rmwc/ripple";
 import { useState } from "react";
-import { Link, Outlet, useOutletContext } from "@remix-run/react";
+import { Link, Outlet, useOutletContext } from "react-router";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import type { AppContext } from "~/root";
 

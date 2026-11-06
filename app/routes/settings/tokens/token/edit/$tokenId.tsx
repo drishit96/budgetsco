@@ -1,13 +1,7 @@
 import { useEffect, useState } from "react";
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import {
-  useActionData,
-  useLoaderData,
-  useOutletContext,
-  useNavigation,
-  Form,
-} from "@remix-run/react";
+import type { ActionFunction, LoaderFunction } from "react-router";
+import { redirect } from "react-router";
+import { useActionData, useLoaderData, useOutletContext, useNavigation, Form } from "react-router";
 import { add } from "date-fns";
 import type { AppContext } from "~/root";
 import { Spacer } from "~/components/Spacer";
@@ -26,7 +20,7 @@ import {
   type TokenPermissions,
 } from "~/modules/settings/tokens/tokens.schema";
 import { getUserIdFromSession } from "~/utils/auth.utils.server";
-import type { MetaFunction } from "@remix-run/node";
+import type { MetaFunction } from "react-router";
 import { firstLetterToUpperCase, isNullOrEmpty } from "~/utils/text.utils";
 import { formatDate } from "~/utils/date.utils";
 import { getDefaultTokenInput, getPermissionsFromForm } from "~/utils/token.utils";

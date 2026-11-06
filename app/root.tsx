@@ -1,5 +1,5 @@
-import type { LinksFunction, LoaderFunctionArgs, TypedResponse } from "@remix-run/node";
-import type { ShouldRevalidateFunction } from "@remix-run/react";
+import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from "react-router";
+import type { ShouldRevalidateFunction } from "react-router";
 import {
   Link,
   Links,
@@ -13,7 +13,7 @@ import {
   useMatches,
   useNavigation,
   useRouteError,
-} from "@remix-run/react";
+} from "react-router";
 
 import styles from "./styles/app.css?url";
 import Report from "./components/icons/Report";
@@ -30,10 +30,6 @@ import type { Currency } from "./utils/number.utils";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import clsx from "clsx";
 import DashboardIcon from "./components/icons/DashboardIcon";
-import type {
-  ErrorBoundaryComponent,
-  MetaFunction,
-} from "@remix-run/react/dist/routeModules";
 import type { UserSessionData } from "./utils/auth.utils.server";
 import {
   getSessionCookieWithUpdatedPreferences,
@@ -80,7 +76,7 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export const ErrorBoundary: ErrorBoundaryComponent = () => {
+export const ErrorBoundary = () => {
   let error = useRouteError();
   console.log(error);
   return <GenericError />;
@@ -88,7 +84,7 @@ export const ErrorBoundary: ErrorBoundaryComponent = () => {
 
 export const loader = async ({
   request,
-}: LoaderFunctionArgs): Promise<TypedResponse<Partial<UserSessionData>>> => {
+}: LoaderFunctionArgs) => {
   const sessionData = await getSessionData(request);
   if (sessionData == null) return Response.json({});
   const userPreferences = await getUserPreferencesAfterTimestamp(
@@ -192,6 +188,7 @@ export type AppContext = {
   userPreferredLocale: string;
   setUserPreferredLocale: React.Dispatch<React.SetStateAction<string>>;
   setBottomSheetProps: React.Dispatch<React.SetStateAction<BottomSheetProps>>;
+  refreshSession?: boolean;
 } & Partial<UserSessionData>;
 
 export default function App() {
@@ -209,7 +206,7 @@ export default function App() {
     paymentGateway,
     lastModified,
     refreshSession,
-  } = useLoaderData<typeof loader>();
+  } = useLoaderData<Partial<UserSessionData> & { refreshSession?: boolean }>();
   const refreshSessionFetcher = useFetcher<{ sessionRefreshed?: boolean }>();
   const isRefreshCallSentRef = useRef(false);
 
@@ -295,6 +292,7 @@ export default function App() {
     isMFAOn,
     isPasskeyPresent,
     paymentGateway,
+    refreshSession,
   };
 
   useEffect(() => {

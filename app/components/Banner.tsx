@@ -1,4 +1,4 @@
-import { Link } from "@remix-run/react";
+import { Link } from "react-router";
 import { Ripple } from "@rmwc/ripple";
 import { useEffect, useState } from "react";
 import { getStorage, setStorage } from "~/utils/setting.utils";

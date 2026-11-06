@@ -1,4 +1,4 @@
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "react-router";
 import { Spacer } from "~/components/Spacer";
 
 export const meta: MetaFunction = ({ matches }) => {

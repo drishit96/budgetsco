@@ -1,12 +1,6 @@
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import {
-  useActionData,
-  useLoaderData,
-  useNavigation,
-  useOutletContext,
-  useSubmit,
-} from "@remix-run/react";
+import type { ActionFunction, LoaderFunction } from "react-router";
+import { redirect } from "react-router";
+import { useActionData, useLoaderData, useNavigation, useOutletContext, useSubmit } from "react-router";
 import { Ripple } from "@rmwc/ripple";
 import { startRegistration } from "@simplewebauthn/browser";
 import type { RegistrationResponseJSON } from "@simplewebauthn/server";
@@ -105,11 +99,7 @@ export default function Passkeys() {
   const submit = useSubmit();
   const navigation = useNavigation();
 
-  const {
-    passkeys,
-  }: {
-    passkeys: PasskeyResponse[];
-  } = useLoaderData<typeof loader>();
+  const { passkeys } = useLoaderData<{ passkeys: PasskeyResponse[] }>();
 
   const [errorValue, setErrorValue] = useState("");
   const context = useOutletContext<AppContext>();

@@ -1,4 +1,4 @@
-import { LoaderFunction } from "@remix-run/node";
+import { LoaderFunction } from "react-router";
 import { getSessionData } from "~/utils/auth.utils.server";
 import { logError } from "~/utils/logger.utils.server";
 

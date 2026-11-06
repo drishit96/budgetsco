@@ -1,4 +1,4 @@
-import { Links, Meta, Scripts } from "@remix-run/react";
+import { Links, Meta, Scripts } from "react-router";
 
 export default function GenericError() {
   return (

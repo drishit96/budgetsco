@@ -1,8 +1,8 @@
 import "zod/compile";
 import newrelic from "newrelic";
 import { renderToPipeableStream } from "react-dom/server";
-import type { EntryContext, HandleDataRequestFunction } from "@remix-run/node";
-import { RemixServer } from "@remix-run/react";
+import type { EntryContext, HandleDataRequestFunction } from "react-router";
+import { ServerRouter } from "react-router";
 import { PassThrough } from "stream";
 import { isbot } from "isbot";
 
@@ -10,7 +10,7 @@ const ABORT_DELAY = 5000;
 
 export const addSecurityHeaders = (
   responseHeaders: Headers,
-  remixContext?: EntryContext
+  reactRouterContext?: EntryContext
 ) => {
   responseHeaders.set("X-Content-Type-Options", "nosniff");
   responseHeaders.set("X-Frame-Options", "DENY");
@@ -22,11 +22,11 @@ export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext
+  reactRouterContext: EntryContext
 ) {
   return isbot(request.headers.get("user-agent"))
-    ? handleBotRequest(request, responseStatusCode, responseHeaders, remixContext)
-    : handleBrowserRequest(request, responseStatusCode, responseHeaders, remixContext);
+    ? handleBotRequest(request, responseStatusCode, responseHeaders, reactRouterContext)
+    : handleBrowserRequest(request, responseStatusCode, responseHeaders, reactRouterContext);
 }
 
 export const handleDataRequest: HandleDataRequestFunction = async (
@@ -42,20 +42,20 @@ function handleBrowserRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext
+  reactRouterContext: EntryContext
 ) {
   newrelic.getTransaction();
   return new Promise((resolve, reject) => {
     let didError = false;
 
     const { pipe, abort } = renderToPipeableStream(
-      <RemixServer context={remixContext} url={request.url} />,
+      <ServerRouter context={reactRouterContext} url={request.url} />,
       {
         onShellReady() {
           const body = new PassThrough();
 
           responseHeaders.set("Content-Type", "text/html");
-          addSecurityHeaders(responseHeaders, remixContext);
+          addSecurityHeaders(responseHeaders, reactRouterContext);
 
           resolve(
             new Response(body as any, {
@@ -85,13 +85,13 @@ function handleBotRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext
+  reactRouterContext: EntryContext
 ) {
   return new Promise((resolve, reject) => {
     let didError = false;
 
     const { pipe, abort } = renderToPipeableStream(
-      <RemixServer context={remixContext} url={request.url} />,
+      <ServerRouter context={reactRouterContext} url={request.url} />,
       {
         onAllReady() {
           const body = new PassThrough();
@@ -99,7 +99,7 @@ function handleBotRequest(
           responseHeaders.set("Content-Type", "text/html");
 
           resolve(
-            new Response(body, {
+            new Response(body as any, {
               headers: responseHeaders,
               status: didError ? 500 : responseStatusCode,
             })

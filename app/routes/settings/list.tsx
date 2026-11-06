@@ -1,8 +1,8 @@
 import { Ripple } from "@rmwc/ripple";
 import { useEffect, useState } from "react";
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import { Form, Link, useLoaderData, useOutletContext, useSubmit } from "@remix-run/react";
+import type { ActionFunction, LoaderFunction } from "react-router";
+import { redirect } from "react-router";
+import { Form, Link, useLoaderData, useOutletContext, useSubmit } from "react-router";
 import type { AppContext } from "~/root";
 import {
   getSessionCookieBuilder,
@@ -10,7 +10,7 @@ import {
   getUserIdFromSession,
 } from "~/utils/auth.utils.server";
 import { Spacer } from "~/components/Spacer";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "react-router";
 import { getCurrentAppTheme } from "~/utils/setting.utils";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";

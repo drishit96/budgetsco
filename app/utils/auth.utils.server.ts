@@ -1,6 +1,6 @@
 import { cert, initializeApp, getApps } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
-import { createCookie } from "@remix-run/node";
+import { createCookie } from "react-router";
 import type { UserPreferenceResponse } from "~/modules/settings/settings.schema";
 import { authenticator } from "otplib";
 import { logError } from "./logger.utils.server";

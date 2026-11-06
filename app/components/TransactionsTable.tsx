@@ -1,5 +1,5 @@
-import type { Navigation, SubmitFunction, SubmitOptions } from "@remix-run/react";
-import { Form, Link, useNavigation, useOutletContext, useSubmit } from "@remix-run/react";
+import type { SubmitFunction, SubmitOptions } from "react-router";
+import { Form, Link, useNavigation, useOutletContext, useSubmit } from "react-router";
 import { Ripple } from "@rmwc/ripple";
 import type { SortingState } from "@tanstack/react-table";
 import {
@@ -23,7 +23,7 @@ import Decimal from "decimal.js";
 
 const columnHelper = createColumnHelper<TransactionResponse>();
 
-function getColumns(context: AppContext, navigation: Navigation, submit: SubmitFunction) {
+function getColumns(context: AppContext, navigation: ReturnType<typeof useNavigation>, submit: SubmitFunction) {
   return [
     columnHelper.accessor("createdAt", {
       header: () => "Date",

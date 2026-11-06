@@ -1,5 +1,5 @@
 {
-  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx"],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2019", "ES2024"],
     "isolatedModules": true,
@@ -12,12 +12,12 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./app/*"],
+      "~/*": ["./app/*"]
     },
     "noEmit": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
     "skipLibCheck": true,
-    "types": ["@remix-run/node", "vite/client"]
+    "types": ["@react-router/node", "vite/client"]
   }
 }

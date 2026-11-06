@@ -1,10 +1,11 @@
-import type { LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import { Link, useLoaderData, useOutletContext, useRouteError } from "@remix-run/react";
+import type { LoaderFunction, MetaFunction } from "react-router";
+import { redirect } from "react-router";
+import { Link, useLoaderData, useOutletContext, useRouteError } from "react-router";
 import { getSessionData } from "~/utils/auth.utils.server";
 import { Spacer } from "~/components/Spacer";
 import type { ThisMonthReportResponse } from "~/modules/reports/reports.service";
 import { getThisMonthReport } from "~/modules/reports/reports.service";
+import type { Serialize } from "~/types";
 import { StatisticsCard } from "~/components/StatisticsCard";
 import GenericError from "~/components/GenericError";
 import { useEffect } from "react";
@@ -20,17 +21,12 @@ import { calculate, max, subtract, formatToCurrency, sum } from "~/utils/number.
 import { ErrorText } from "~/components/ErrorText";
 import { SuccessText } from "~/components/SuccessText";
 import { Ripple } from "@rmwc/ripple";
-import type {
-  ErrorBoundaryComponent,
-  MetaFunction,
-} from "@remix-run/react/dist/routeModules";
-
 export const meta: MetaFunction = ({ matches }) => {
   let rootModule = matches.find((match) => match.id === "root");
   return [...(rootModule?.meta ?? []), { title: "This month's report - Budgetsco" }];
 };
 
-export const ErrorBoundary: ErrorBoundaryComponent = () => {
+export const ErrorBoundary = () => {
   let error = useRouteError();
   console.log(error);
   return <GenericError />;
@@ -110,7 +106,7 @@ export default function ThisMonthReport() {
     investmentDone,
     paymentModeExpense,
     categoryWiseTargetInvestment,
-  } = useLoaderData<ThisMonthReportResponse>();
+  } = useLoaderData<Serialize<ThisMonthReportResponse>>();
   const reportsPageContext = useOutletContext<ReportsPageContext>();
 
   const moneyDistribution = [

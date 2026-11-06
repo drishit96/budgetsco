@@ -1,5 +1,5 @@
-import type { Navigation, SubmitOptions } from "@remix-run/react";
-import { useOutletContext, useSubmit, useNavigate } from "@remix-run/react";
+import type { SubmitOptions } from "react-router";
+import { useOutletContext, useSubmit, useNavigate, useNavigation } from "react-router";
 import { Ripple } from "@rmwc/ripple";
 import type { AppContext } from "~/root";
 import { Spacer } from "./Spacer";
@@ -22,7 +22,7 @@ export default function PersonalAccessToken({
     createdAt: Date;
     expiresAt: Date;
   };
-  navigation: Navigation;
+  navigation: ReturnType<typeof useNavigation>;
   hideDivider?: boolean;
   index: number;
   expandedIndex?: number;

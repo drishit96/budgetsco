@@ -1,7 +1,7 @@
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import type { Navigation } from "@remix-run/router";
+import type { Navigation } from "react-router";
 import { Ripple } from "@rmwc/ripple";
-import { Form, Link, useOutletContext, useSubmit } from "@remix-run/react";
+import { Form, Link, useNavigation, useOutletContext, useSubmit } from "react-router";
 import type { RecurringTransactionResponse } from "~/modules/recurring/recurring.schema";
 import type { AppContext } from "~/root";
 import { getTransactionColor } from "~/utils/colors.utils";
@@ -25,7 +25,7 @@ export function RecurringTransaction({
   setExpandedIndex,
 }: {
   transaction: RecurringTransactionResponse;
-  navigation: Navigation;
+  navigation: ReturnType<typeof useNavigation>;
   hideDivider?: boolean;
   manageView?: boolean;
   index: number;

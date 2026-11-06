@@ -1,14 +1,8 @@
 import { Ripple } from "@rmwc/ripple";
 import { useEffect } from "react";
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import {
-  Form,
-  useActionData,
-  useLoaderData,
-  useNavigation,
-  useOutletContext,
-} from "@remix-run/react";
+import type { ActionFunction, LoaderFunction } from "react-router";
+import { redirect } from "react-router";
+import { Form, useActionData, useLoaderData, useNavigation, useOutletContext } from "react-router";
 import { Badge } from "~/components/Badge";
 import CheckIcon from "~/components/icons/CheckIcon";
 import InfoIcon from "~/components/icons/InfoIcon";
@@ -22,7 +16,7 @@ import { getSessionData } from "~/utils/auth.utils.server";
 import { getAllTransactionTypes } from "~/utils/category.utils";
 import { formatToCurrency } from "~/utils/number.utils";
 import { isNotNullAndEmpty, isNullOrEmpty } from "~/utils/text.utils";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "react-router";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
 

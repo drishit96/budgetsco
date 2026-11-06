@@ -1,8 +1,8 @@
 import type { Transaction } from "~/generated/prisma/client";
 import { Ripple } from "@rmwc/ripple";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "react-router";
+import { redirect } from "react-router";
 
 import {
   Form,
@@ -12,7 +12,7 @@ import {
   useNavigation,
   useOutletContext,
   useSubmit,
-} from "@remix-run/react";
+} from "react-router";
 
 import CheckIcon from "~/components/icons/CheckIcon";
 import { ErrorText } from "~/components/ErrorText";
@@ -46,7 +46,7 @@ import {
   subtract,
 } from "~/utils/number.utils";
 import { isNullOrEmpty } from "~/utils/text.utils";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "react-router";
 import { logError } from "~/utils/logger.utils.server";
 import {
   formatDate,
@@ -150,7 +150,7 @@ export default function EditTransaction() {
       budget: string;
       expense: string;
     };
-    transaction: Transaction;
+    transaction: Omit<Transaction, "amount"> & { amount: string };
     isPastMonth: boolean;
   }>();
   const context = useOutletContext<AppContext>();
@@ -158,7 +158,7 @@ export default function EditTransaction() {
   const categoryRemainingBudgetMap = useRef<{
     [key: string]: number | null | undefined;
   }>({});
-  const [amount, setAmount] = useState(transaction.amount);
+  const [amount, setAmount] = useState<string>(transaction.amount);
   const [showRemainingBudget, setShowRemainingBudget] = useState(
     transaction.type === "expense"
   );

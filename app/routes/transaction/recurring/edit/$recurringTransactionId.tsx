@@ -1,7 +1,7 @@
 import { Ripple } from "@rmwc/ripple";
 import { useEffect, useState } from "react";
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "react-router";
+import { redirect } from "react-router";
 
 import {
   Form,
@@ -10,7 +10,7 @@ import {
   useNavigation,
   useOutletContext,
   useSubmit,
-} from "@remix-run/react";
+} from "react-router";
 
 import CheckIcon from "~/components/icons/CheckIcon";
 import { ErrorText } from "~/components/ErrorText";
@@ -38,7 +38,7 @@ import {
 } from "~/modules/recurring/recurring.service";
 import RecurringSetup from "~/components/RecurringSetup";
 import { addNewCustomCategory } from "~/modules/transaction/transaction.service";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "react-router";
 import { ComboBox } from "~/components/ComboBox";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import { EventNames } from "~/lib/anaytics.contants";
@@ -141,7 +141,9 @@ export default function EditRecurringTransaction() {
   const navigation = useNavigation();
   const { startDate, recurringTransaction } = useLoaderData<{
     startDate: string;
-    recurringTransaction: RecurringTransactionResponse;
+    recurringTransaction: Omit<RecurringTransactionResponse, "amount"> & {
+      amount: string;
+    };
   }>();
   const [transactionType, setTransactionType] = useState<TransactionType>(
     recurringTransaction.type

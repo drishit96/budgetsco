@@ -1,5 +1,5 @@
-import type { MetaFunction } from "@remix-run/react";
-import { Link, useOutletContext } from "@remix-run/react";
+import type { MetaFunction } from "react-router";
+import { Link, useOutletContext } from "react-router";
 import { Ripple } from "@rmwc/ripple";
 import { useEffect } from "react";
 import { Badge } from "~/components/Badge";

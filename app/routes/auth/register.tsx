@@ -1,6 +1,6 @@
 import { Ripple } from "@rmwc/ripple";
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "react-router";
+import { redirect } from "react-router";
 import {
   Form,
   Link,
@@ -9,7 +9,7 @@ import {
   useNavigation,
   useOutletContext,
   useSubmit,
-} from "@remix-run/react";
+} from "react-router";
 import { ErrorText } from "~/components/ErrorText";
 import { Input } from "~/components/Input";
 import { Spacer } from "~/components/Spacer";
@@ -34,7 +34,7 @@ import {
   getUserPreferences,
 } from "~/modules/settings/settings.service";
 import { isNotNullAndEmpty, isNullOrEmpty } from "~/utils/text.utils";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "react-router";
 import type { AuthPageContext } from "../auth";
 import Turnstile from "~/components/Turnstile";
 import { trackEvent, trackUserProfileUpdate } from "~/utils/analytics.utils.server";

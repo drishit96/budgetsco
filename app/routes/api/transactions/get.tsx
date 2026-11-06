@@ -1,4 +1,4 @@
-import { LoaderFunction } from "@remix-run/node";
+import { LoaderFunction } from "react-router";
 import { parseTransactionFilter } from "~/modules/transaction/transaction.schema";
 import { getTransactions } from "~/modules/transaction/transaction.service";
 import { getSessionData } from "~/utils/auth.utils.server";

@@ -1,4 +1,4 @@
-import type { ActionFunction } from "@remix-run/node";
+import type { ActionFunction } from "react-router";
 import type { GPBNotificaction } from "~/modules/subscriptions/gpb.subscriptions.service";
 import { updateSubscriptionStatus } from "~/modules/subscriptions/gpb.subscriptions.service";
 import { isNullOrEmpty } from "~/utils/text.utils";

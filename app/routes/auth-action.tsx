@@ -1,13 +1,7 @@
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import {
-  Form,
-  useLoaderData,
-  useNavigation,
-  useOutletContext,
-  useSubmit,
-} from "@remix-run/react";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { ActionFunction, LoaderFunction } from "react-router";
+import { redirect } from "react-router";
+import { Form, useLoaderData, useNavigation, useOutletContext, useSubmit } from "react-router";
+import type { MetaFunction } from "react-router";
 import { Ripple } from "@rmwc/ripple";
 import { useEffect, useState } from "react";
 import { Input } from "~/components/Input";

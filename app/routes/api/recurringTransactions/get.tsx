@@ -1,4 +1,4 @@
-import { LoaderFunction } from "@remix-run/node";
+import { LoaderFunction } from "react-router";
 import { parseRecurringTransactionFilter } from "~/modules/recurring/recurring.schema";
 import { getRecurringTransactions } from "~/modules/recurring/recurring.service";
 import { getSessionData } from "~/utils/auth.utils.server";

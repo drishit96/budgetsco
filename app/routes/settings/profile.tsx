@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "react-router";
+import { redirect } from "react-router";
 import {
   Form,
   useActionData,
@@ -8,14 +8,14 @@ import {
   useNavigation,
   useOutletContext,
   useSubmit,
-} from "@remix-run/react";
+} from "react-router";
 import {
   getUserPreferences,
   updateCollectAnalyticsPreference,
 } from "~/modules/settings/settings.service";
 import type { AppContext } from "~/root";
 import { getSessionData, getUserIdFromSession } from "~/utils/auth.utils.server";
-import type { MetaFunction } from "@remix-run/react/dist/routeModules";
+import type { MetaFunction } from "react-router";
 import { trackUserProfileUpdate } from "~/utils/analytics.utils.server";
 import { InlineSpacer } from "~/components/InlineSpacer";
 
