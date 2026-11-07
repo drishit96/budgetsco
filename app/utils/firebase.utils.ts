@@ -6,6 +6,7 @@ import {
   confirmPasswordReset,
   createUserWithEmailAndPassword,
   getAuth,
+  inMemoryPersistence,
   sendEmailVerification,
   sendPasswordResetEmail,
   setPersistence,
@@ -18,7 +19,7 @@ let app: FirebaseApp = initializeApp(firebaseConfig);
 
 export function getClientAuth() {
   const auth = getAuth(app);
-  setPersistence(auth, { type: "NONE" });
+  setPersistence(auth, inMemoryPersistence);
   return auth;
 }
 
