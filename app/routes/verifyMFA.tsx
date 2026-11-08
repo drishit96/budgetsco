@@ -14,6 +14,7 @@ import { saveNotificationToken } from "~/modules/user/user.service";
 import type { AppContext } from "~/root";
 import { trackEvent } from "~/utils/analytics.utils.server";
 import {
+  clearPartialSessionCookie,
   getPartialSessionData,
   getSessionData,
   getSessionCookie,
@@ -72,6 +73,10 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   trackEvent(request, EventNames.LOGGED_IN, undefined, userId);
+  const headers = new Headers();
+  headers.append("Set-Cookie", await getSessionCookie(idToken, userPreferences));
+  headers.append("Set-Cookie", await clearPartialSessionCookie());
+
   return Response.json(
     {
       customCategories: await getCustomCategoriesTask,
@@ -80,9 +85,7 @@ export const action: ActionFunction = async ({ request }) => {
       lastModified: userPreferences?.lastModified,
     },
     {
-      headers: {
-        "Set-Cookie": await getSessionCookie(idToken, userPreferences),
-      },
+      headers,
     }
   );
 };

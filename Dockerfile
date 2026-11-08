@@ -67,4 +67,6 @@ RUN apk add ca-certificates && cat /app/supabase-ca.crt >> /etc/ssl/certs/ca-cer
 
 ENV NODE_EXTRA_CA_CERTS=/app/supabase-ca.crt
 
+USER node
+
 CMD ["node", "--enable-source-maps", "./server.js"]

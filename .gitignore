@@ -3,6 +3,9 @@ node_modules_old
 
 .cache
 .env
+.env.*
+.env.backup
+pc-api-*.json
 .vercel
 .output
 .react-router/
@@ -29,3 +32,5 @@ newrelic_agent.log
 /playwright/.cache/
 .vscode/
 /app/generated/
+
+.agents/skills
