@@ -1,10 +1,97 @@
 import type { androidpublisher_v3 } from "@googleapis/androidpublisher";
 import { auth, androidpublisher } from "@googleapis/androidpublisher";
+import { OAuth2Client } from "google-auth-library";
+import { logError, logWarn } from "./logger.utils.server";
 import { isNullOrEmpty } from "./text.utils";
 
 const PACKAGE_NAME = "com.app.budgetsco";
 
 let playDeveloperApiClient: androidpublisher_v3.Androidpublisher | null = null;
+let oidcClient: OAuth2Client | null = null;
+
+function getOidcClient() {
+  if (!oidcClient) {
+    oidcClient = new OAuth2Client();
+  }
+  return oidcClient;
+}
+
+function getExpectedServiceAccountEmail(): string | null {
+  if (process.env.FIREBASE_ADMIN_KEY) {
+    try {
+      const parsed = JSON.parse(process.env.FIREBASE_ADMIN_KEY);
+      return parsed.client_email || parsed.clientEmail || null;
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
+function getExpectedAudience(request: Request): string | string[] {
+  const url = new URL(request.url);
+  const endpointUrl = `${url.origin}${url.pathname}`;
+
+  if (process.env.GPAY_PUBSUB_AUDIENCE) {
+    const configured = process.env.GPAY_PUBSUB_AUDIENCE.split(",").map((s) => s.trim());
+    return Array.from(new Set([...configured, endpointUrl]));
+  }
+
+  return endpointUrl;
+}
+
+export async function verifyGPBPubSubRequest(request: Request): Promise<boolean> {
+  try {
+    const authHeader = request.headers.get("authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      logWarn("GPB Pub/Sub webhook rejected: missing or malformed Authorization header");
+      return false;
+    }
+
+    const idToken = authHeader.substring(7).trim();
+    if (!idToken) {
+      logWarn("GPB Pub/Sub webhook rejected: empty bearer token");
+      return false;
+    }
+
+    const expectedServiceAccount = getExpectedServiceAccountEmail();
+    if (!expectedServiceAccount) {
+      logWarn("GPB Pub/Sub webhook rejected: expected service account email not configured");
+      return false;
+    }
+
+    const audience = getExpectedAudience(request);
+
+    const client = getOidcClient();
+    const ticket = await client.verifyIdToken({
+      idToken,
+      audience,
+    });
+
+    const payload = ticket.getPayload();
+    if (!payload) {
+      logWarn("GPB Pub/Sub webhook rejected: empty token payload");
+      return false;
+    }
+
+    if (payload.email !== expectedServiceAccount) {
+      logWarn(
+        `GPB Pub/Sub webhook rejected: service account mismatch (expected: ${expectedServiceAccount}, received: ${payload.email})`
+      );
+      return false;
+    }
+
+    if (!payload.email_verified) {
+      logWarn("GPB Pub/Sub webhook rejected: service account email not verified");
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    logError(error);
+    return false;
+  }
+}
 
 function getPlayDeveloperApiClient() {
   if (!playDeveloperApiClient) {

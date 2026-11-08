@@ -46,6 +46,7 @@
     "express": "^4.21.2",
     "firebase": "^11.10.0",
     "firebase-admin": "^13.10.0",
+    "google-auth-library": "^11.3.3",
     "isbot": "^5.2.2",
     "lodash.defaultsdeep": "^4.6.1",
     "match-sorter": "^8.3.0",
