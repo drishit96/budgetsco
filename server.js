@@ -18,6 +18,8 @@ const viteDevServer =
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 app.use(compression());
 app.disable("x-powered-by");
 
