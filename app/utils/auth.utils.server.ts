@@ -215,6 +215,13 @@ export async function getPartialSessionCookie(userId: string, idToken: string) {
   });
 }
 
+export async function clearPartialSessionCookie() {
+  return getPartialSessionCookieBuilder().serialize("", {
+    expires: new Date("1970-01-01"),
+    maxAge: 0,
+  });
+}
+
 export async function getPasskeyPartialSessionCookie(webAuthnUserID: string) {
   return getPasskeyPartialSessionCookieBuilder().serialize({
     webAuthnUserID,

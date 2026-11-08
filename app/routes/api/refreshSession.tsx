@@ -2,6 +2,7 @@ import type { ActionFunction } from "react-router";
 import {
   getSessionCookie,
   getSessionData,
+  getUserDataFromIdToken,
   getUserPreferencesFromSessionCookie,
 } from "~/utils/auth.utils.server";
 import { logError } from "~/utils/logger.utils.server";
@@ -23,6 +24,11 @@ export const action: ActionFunction = async ({ request }) => {
 
     if (!isNotNullAndEmpty(idToken)) {
       return Response.json({ error: "Missing idToken" }, { status: 400 });
+    }
+
+    const tokenUser = await getUserDataFromIdToken(idToken);
+    if (tokenUser == null || tokenUser.userId !== sessionData.userId) {
+      return Response.json({ error: "Token identity mismatch" }, { status: 403 });
     }
 
     const preferences = await getUserPreferencesFromSessionCookie(request);

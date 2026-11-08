@@ -2,6 +2,7 @@
 *.log
 .DS_Store
 .env
+.env.*
 .vercel
 /.cache
 /public/build
@@ -12,3 +13,10 @@
 storageState.json
 auth.json
 /app/generated
+.git
+.github
+.agents
+tests
+docker-compose*.yml
+playwright.config.ts
+global-setup.ts

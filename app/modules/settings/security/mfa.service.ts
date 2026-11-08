@@ -62,7 +62,7 @@ export async function disable2FA(userId: string) {
       updateIsMFAOnPreference(userId, false),
       prisma.user.update({
         where: { id: userId },
-        data: { mfaSecret: undefined },
+        data: { mfaSecret: null },
       }),
     ]);
   } catch (error) {

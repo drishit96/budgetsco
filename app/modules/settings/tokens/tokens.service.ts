@@ -1,8 +1,13 @@
 import { logError } from "~/utils/logger.utils.server";
 import prisma from "../../../lib/prisma";
 import * as argon2 from "argon2";
-import { nanoid } from "nanoid";
+import { customAlphabet, nanoid } from "nanoid";
 import { isNullOrEmpty } from "~/utils/text.utils";
+
+const generateTokenId = customAlphabet(
+  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+  12
+);
 
 let INVALID_HASH: string;
 (async () => {
@@ -171,7 +176,7 @@ export async function getUserByToken(token: string) {
  * @returns A secure random token.
  */
 function generateToken(): [string, string] {
-  const tokenId = nanoid(12);
+  const tokenId = generateTokenId();
   const token = nanoid(64);
   return [tokenId, `budgetsco_pat_${tokenId}_${token}`];
 }
